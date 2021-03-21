@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -18,6 +19,68 @@ use App\User;
 
 class KaryawanController extends Controller
 {
+    /**
+     * Menampilkan JSON data karyawan
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function json(Request $request)
+    {
+    	// Get data karyawan
+        if(Auth::user()->role == role_admin()){
+			if($request->query('hrd') != null){
+            	$hrd = HRD::find($request->query('hrd'));
+    	    	$karyawan = $hrd ? Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_hrd','=',$request->query('hrd'))->get() : Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
+			}
+			else{
+    	    	$karyawan = Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
+			}
+        }
+        elseif(Auth::user()->role == role_hrd()){
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $karyawan = Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_hrd','=',$hrd->id_hrd)->get();
+			$kantor = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
+        }
+        
+    	// Setting data karyawan
+    	// foreach($karyawan as $data){
+    	    // $data->id_user = User::find($data->id_user);
+    	    // $data->id_hrd = HRD::find($data->id_hrd);
+    	    // $data->posisi = Posisi::find($data->posisi);
+    	    // $data->kantor = Kantor::find($data->kantor);
+    	// }
+        
+        // Return
+        return DataTables::of($karyawan)
+        ->addColumn('checkbox', '<input type="checkbox">')
+        ->addColumn('name', '
+            <span class="d-none">{{ $nama_user }}</span>
+            <a href="/admin/karyawan/detail/{{ $id_karyawan }}">{{ ucwords($nama_user) }}</a>
+            <br>
+            <small class="text-muted">{{ $email }}</small>
+        ')
+        ->editColumn('posisi', '
+            {{ get_posisi_name($posisi) }}
+        ')
+        ->editColumn('status', '
+            <span class="badge {{ $status == 1 ? "badge-success" : "badge-danger" }}">{{ $status == 1 ? "Aktif" : "Tidak Aktif" }}</span>
+        ')
+        ->addColumn('company', '
+            {{ get_perusahaan_name($id_hrd) }}
+            <br>
+            <small class="text-muted">{{ get_hrd_name($id_hrd) }}</small>
+        ')
+        ->addColumn('options', '
+            <div class="btn-group">
+                <a href="/admin/karyawan/detail/{{ $id_karyawan }}" class="btn btn-sm btn-info" data-id="{{ $id_karyawan }}" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+                <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_karyawan }}" data-toggle="tooltip" title="Hapus"><i class="fa fa-trash"></i></a>
+            </div>
+        ')
+        ->removeColumn('password')
+        ->rawColumns(['checkbox', 'name', 'status', 'company', 'options'])
+        ->make(true);
+    }
     /**
      * Menampilkan data karyawan
      * 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use PDF;
+use DataTables;
 use Dompdf\FontMetrics;
 use App\Hasil;
 use App\HRD;
@@ -23,76 +24,12 @@ use App\User;
 class HasilController extends Controller
 {
     /**
-     * Menampilkan data hasil tes
+     * Menampilkan JSON data tes karyawan
      * 
      * @return \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-    	// Get data hasil
-        if(Auth::user()->role == role_admin()){
-            if(Auth::user()->username == 'ajifatur')
-                $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->orderBy('hasil.test_at','desc')->get();
-            else{				
-                $ids = array();
-                $umum = User::where('role','=',5)->get();
-                foreach($umum as $data){
-                    array_push($ids, $data->id_user);
-                }
-                
-				if($request->query('hrd') != null){
-					$hrd = HRD::find($request->query('hrd'));
-                	$hasil = $hrd ? Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('hasil.id_hrd','=',$request->query('hrd'))->whereNotIn('hasil.id_user',$ids)->orderBy('hasil.test_at','desc')->get() : Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('id_hrd','=',$request->query('hrd'))->whereNotIn('hasil.id_user',$ids)->orderBy('hasil.test_at','desc')->get();
-				}
-				else{
-					$hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->whereNotIn('hasil.id_user',$ids)->orderBy('hasil.test_at','desc')->get();
-				}
-            }
-        }
-        elseif(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-            $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('hasil.id_hrd','=',$hrd->id_hrd)->whereIn('users.role',[2,3,4])->orderBy('hasil.test_at','desc')->get();
-        }
-        
-		// Get data user
-		if(count($hasil)>0){
-			foreach($hasil as $key=>$data){
-				$pelamar = $data->role == role_pelamar() ? Pelamar::where('id_user','=',$data->id_user)->first() : null;
-				$karyawan = $data->role == role_karyawan() ? Karyawan::where('id_user','=',$data->id_user)->first() : null;
-				if($karyawan != null){
-					$data->id_user = User::find($data->id_user);
-					$hasil[$key]->posisi = Posisi::find($karyawan->posisi);
-					$hasil[$key]->role = Role::find($data->id_user->role);
-				}
-				elseif($pelamar != null){
-					$data->id_user = User::find($data->id_user);
-					$hasil[$key]->pelamar = Pelamar::where('id_user','=',$data->id_user)->first();
-					$hasil[$key]->posisi = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->find($pelamar->posisi);
-					$hasil[$key]->role = Role::find($data->id_user->role);
-				}
-				else{
-					$data->id_user = User::find($data->id_user);
-					$hasil[$key]->posisi = null;
-					$hasil[$key]->role = Role::find($data->id_user->role);
-				}
-			}
-		}
-
-        // View		
-        return view('hasil/index', [
-            'hasil' => $hasil,
-        ]);
-    }
-
-    /**
-     * Menampilkan data hasil tes karyawan
-     * 
-     * @return \Illuminate\Http\Request
-     * @return \Illuminate\Http\Response
-     */
-    public function employeer(Request $request)
-    {
+    public function json_employeer(Request $request){
         // Get data hasil
         if(Auth::user()->role == role_admin()){            
             if($request->query('hrd') != null && $request->query('tes') != null){
@@ -107,7 +44,7 @@ class HasilController extends Controller
                     // Data hasil
                     $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_karyawan())->where('hasil.id_hrd','=',$request->query('hrd'))->orderBy('hasil.test_at','desc')->get();
                 }
-                elseif($hrd && !$tes){
+                elseif(!$hrd && $tes){
                     // Data hasil
                     $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_karyawan())->where('hasil.id_tes','=',$request->query('tes'))->orderBy('hasil.test_at','desc')->get();
                 }
@@ -132,32 +69,64 @@ class HasilController extends Controller
                 $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_karyawan())->where('hasil.id_hrd','=',$hrd->id_hrd)->orderBy('hasil.test_at','desc')->get();
             }
         }
-        
-        // Get data user
+
         if(count($hasil)>0){
             foreach($hasil as $key=>$data){
-                $karyawan = $data->role == role_karyawan() ? Karyawan::where('id_user','=',$data->id_user)->first() : null;
-                if($karyawan != null){
-                    $data->id_user = User::find($data->id_user);
-                    $hasil[$key]->posisi = Posisi::find($karyawan->posisi);
-                    $hasil[$key]->role = Role::find($data->id_user->role);
-                }
+                $karyawan = Karyawan::join('posisi','karyawan.posisi','=','posisi.id_posisi')->where('id_user','=',$data->id_user)->first();
+                $hasil[$key]->posisi = $karyawan ? $karyawan->nama_posisi : '-';
             }
         }
 
-        // View     
-        return view('hasil/employeer', [
-            'hasil' => $hasil,
-        ]);
+        // Return
+        return DataTables::of($hasil)
+        ->addColumn('checkbox', '<input type="checkbox">')
+        ->addColumn('name', '
+            <span class="d-none">{{ $nama_user }}</span>
+            <a href="/admin/hasil/detail/{{ $id_hasil }}">{{ ucwords($nama_user) }}</a>
+            <br>
+            <small class="text-muted">{{ $username }}</small>
+        ')
+        ->addColumn('company', '
+            {{ get_perusahaan_name($id_hrd) }}
+            <br>
+            <small class="text-muted">{{ get_hrd_name($id_hrd) }}</small>
+        ')
+        ->addColumn('datetime', '
+            <span class="d-none">{{ $test_at != null ? $test_at : "" }}</span>
+            {{ $test_at != null ? date("d/m/Y", strtotime($test_at)) : "-" }}
+            <br>
+            <small class="text-muted">{{ $test_at != null ? date("H:i", strtotime($test_at))." WIB" : "" }}</small>
+        ')
+        ->addColumn('options', '
+            <div class="btn-group">
+                <a href="/admin/hasil/detail/{{ $id_hasil }}" class="btn btn-sm btn-info" data-id="{{ $id_hasil }}" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+                <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_hasil }}" data-toggle="tooltip" title="Hapus"><i class="fa fa-trash"></i></a>
+            </div>
+        ')
+        ->removeColumn('password')
+        ->rawColumns(['checkbox', 'name', 'company', 'datetime', 'options'])
+        ->make(true);
     }
 
     /**
-     * Menampilkan data hasil tes pelamar
+     * Menampilkan data hasil tes karyawan
      * 
      * @return \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function applicant(Request $request)
+    public function employeer(Request $request)
+    {
+        // View     
+        return view('hasil/employeer');
+    }
+
+    /**
+     * Menampilkan JSON data tes pelamar
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function json_applicant(Request $request)
     {
         // Get data hasil
         if(Auth::user()->role == role_admin()){            
@@ -173,7 +142,7 @@ class HasilController extends Controller
                     // Data hasil
                     $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_pelamar())->where('hasil.id_hrd','=',$request->query('hrd'))->orderBy('hasil.test_at','desc')->get();
                 }
-                elseif($hrd && !$tes){
+                elseif(!$hrd && $tes){
                     // Data hasil
                     $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_pelamar())->where('hasil.id_tes','=',$request->query('tes'))->orderBy('hasil.test_at','desc')->get();
                 }
@@ -199,23 +168,117 @@ class HasilController extends Controller
             }
         }
         
-        // Get data user
+        // Get data hasil
         if(count($hasil)>0){
             foreach($hasil as $key=>$data){
                 $pelamar = $data->role == role_pelamar() ? Pelamar::where('id_user','=',$data->id_user)->first() : null;
-                if($pelamar != null){
-                    $data->id_user = User::find($data->id_user);
-                    $hasil[$key]->pelamar = Pelamar::where('id_user','=',$data->id_user)->first();
-                    $hasil[$key]->posisi = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_lowongan','=',$pelamar->posisi)->first();
-                    $hasil[$key]->role = Role::find($data->id_user->role);
-                }
+                $posisi = $pelamar ? Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_lowongan','=',$pelamar->posisi)->first() : null;
+                $hasil[$key]->posisi = $posisi ? $posisi->nama_posisi : '-';
             }
         }
 
+        // Return
+        return DataTables::of($hasil)
+        ->addColumn('checkbox', '<input type="checkbox">')
+        ->addColumn('name', '
+            <span class="d-none">{{ $nama_user }}</span>
+            <a href="/admin/hasil/detail/{{ $id_hasil }}">{{ ucwords($nama_user) }}</a>
+            <br>
+            <small class="text-muted">{{ $username }}</small>
+        ')
+        ->addColumn('company', '
+            {{ get_perusahaan_name($id_hrd) }}
+            <br>
+            <small class="text-muted">{{ get_hrd_name($id_hrd) }}</small>
+        ')
+        ->addColumn('datetime', '
+            <span class="d-none">{{ $test_at != null ? $test_at : "" }}</span>
+            {{ $test_at != null ? date("d/m/Y", strtotime($test_at)) : "-" }}
+            <br>
+            <small class="text-muted">{{ $test_at != null ? date("H:i", strtotime($test_at))." WIB" : "" }}</small>
+        ')
+        ->addColumn('options', '
+            <div class="btn-group">
+                <a href="/admin/hasil/detail/{{ $id_hasil }}" class="btn btn-sm btn-info" data-id="{{ $id_hasil }}" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+                <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_hasil }}" data-toggle="tooltip" title="Hapus"><i class="fa fa-trash"></i></a>
+            </div>
+        ')
+        ->removeColumn('password')
+        ->rawColumns(['checkbox', 'name', 'company', 'datetime', 'options'])
+        ->make(true);
+    }
+
+    /**
+     * Menampilkan data hasil tes pelamar
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function applicant(Request $request)
+    {
         // View     
-        return view('hasil/applicant', [
-            'hasil' => $hasil,
-        ]);
+        return view('hasil/applicant');
+    }
+
+    /**
+     * Menampilkan JSON data tes magang
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function json_internship(Request $request)
+    {          
+        if(Auth::user()->role != role_admin()){
+            abort(404);
+        }
+
+        if($request->query('tes') != null){
+            // Data hasil
+            $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_magang())->where('hasil.id_tes','=',$request->query('tes'))->orderBy('hasil.test_at','desc')->get();
+        }
+        else{
+            // Data hasil
+            $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_magang())->orderBy('hasil.test_at','desc')->get();
+        }
+
+        // Get data hasil
+        if(count($hasil)>0){
+            foreach($hasil as $key=>$data){
+                if($data->jenis_kelamin == 1) $posisi = "Social Media Manager";
+                elseif($data->jenis_kelamin == 2) $posisi = "Content Writer";
+                elseif($data->jenis_kelamin == 3) $posisi = "Event Manager";
+                elseif($data->jenis_kelamin == 4) $posisi = "Creative and Design Manager";
+                elseif($data->jenis_kelamin == 5) $posisi = "Video Editor";
+                $hasil[$key]->posisi = $posisi;
+            }
+        }
+
+        // Return
+        return DataTables::of($hasil)
+        ->addColumn('checkbox', '<input type="checkbox">')
+        ->addColumn('name', '
+            <span class="d-none">{{ $nama_user }}</span>
+            <a href="/admin/hasil/detail/{{ $id_hasil }}">{{ ucwords($nama_user) }}</a>
+            <br>
+            <small class="text-muted">{{ $username }}</small>
+            <br>
+            <small class="text-muted">{{ $password_str }}</small>
+        ')
+        ->addColumn('datetime', '
+            <span class="d-none">{{ $test_at != null ? $test_at : "" }}</span>
+            {{ $test_at != null ? date("d/m/Y", strtotime($test_at)) : "-" }}
+            <br>
+            <small class="text-muted">{{ $test_at != null ? date("H:i", strtotime($test_at))." WIB" : "" }}</small>
+        ')
+        ->addColumn('options', '
+            <div class="btn-group">
+                <a href="/admin/hasil/detail/{{ $id_hasil }}" class="btn btn-sm btn-info" data-id="{{ $id_hasil }}" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+                <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_hasil }}" data-toggle="tooltip" title="Hapus"><i class="fa fa-trash"></i></a>
+            </div>
+        ')
+        ->removeColumn('password')
+        ->rawColumns(['checkbox', 'name', 'datetime', 'options'])
+        ->make(true);
     }
 
     /**
@@ -227,34 +290,14 @@ class HasilController extends Controller
     public function internship(Request $request)
     {
         // Get data hasil
-        if(Auth::user()->role == role_admin()){           
-            if($request->query('tes') != null){
-                // Data hasil
-                $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_magang())->where('hasil.id_tes','=',$request->query('tes'))->orderBy('hasil.test_at','desc')->get();
-            }
-            else{
-                // Data hasil
-                $hasil = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role_magang())->orderBy('hasil.test_at','desc')->get();
-            }
+        if(Auth::user()->role == role_admin()){
+            // View     
+            return view('hasil/internship');
         }
         else{
             // View
             return view('error/404');
         }
-        
-        // Get data user
-        if(count($hasil)>0){
-            foreach($hasil as $key=>$data){
-                $data->id_user = User::find($data->id_user);
-                $hasil[$key]->posisi = $data->jenis_kelamin;
-                $hasil[$key]->role = Role::find($data->id_user->role);
-            }
-        }
-
-        // View     
-        return view('hasil/internship', [
-            'hasil' => $hasil,
-        ]);
     }
 
     /**
@@ -870,10 +913,15 @@ class HasilController extends Controller
     public function delete(Request $request)
     {
         // Menghapus data
-        $hasil = Hasil::find($request->id);
+        $hasil = Hasil::join('users','hasil.id_user','=','users.id_user')->find($request->id);
         $hasil->delete();
 
         // Redirect
-        return redirect('admin/hasil')->with(['message' => 'Berhasil menghapus data.']);
+        if($hasil->role == role_karyawan())
+            return redirect('admin/hasil/karyawan')->with(['message' => 'Berhasil menghapus data.']);
+        elseif($hasil->role == role_pelamar())
+            return redirect('admin/hasil/pelamar')->with(['message' => 'Berhasil menghapus data.']);
+        elseif($hasil->role == role_magang())
+            return redirect('admin/hasil/magang')->with(['message' => 'Berhasil menghapus data.']);
     }
 }

@@ -44,23 +44,51 @@
     });
 
     // Generate dataTable
-    function generate_datatable(table){
-      var datatable = $(table).DataTable({
-        "language": {
-          "lengthMenu": "Menampilkan _MENU_ data",
-          "zeroRecords": "Data tidak tersedia",
-          "info": "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
-          "infoEmpty": "Data tidak ditemukan",
-          "infoFiltered": "(Terfilter dari total _MAX_ data)",
-          "search": "Cari:",
-          "paginate": {
-            "first": "Pertama",
-            "last": "Terakhir",
-            "previous": "<",
-            "next": ">",
-          },
+    function generate_datatable(table, server_side = false, data = []){
+      var config_lang = {
+        "lengthMenu": "Menampilkan _MENU_ data",
+        "zeroRecords": "Data tidak tersedia",
+        "info": "Menampilkan _START_ sampai _END_ dari total _TOTAL_ data",
+        "infoEmpty": "Data tidak ditemukan",
+        "infoFiltered": "(Terfilter dari total _MAX_ data)",
+        "search": "Cari:",
+        "paginate": {
+          "first": "Pertama",
+          "last": "Terakhir",
+          "previous": "<",
+          "next": ">",
         },
+        "processing": "Memproses data..."
+      };
+
+      if(server_side == false){
+        var datatable = $(table).DataTable({
+          "language": config_lang,
+        });
+      }
+      else{
+        var datatable = $(table).DataTable({
+          processing: true,
+          serverSide: true,
+          ajax: data.url,
+          columns: data.columns,
+          columnDefs: [
+            {orderable: false, targets: 0}
+          ],
+          order: [data.order],
+          "lengthMenu": [[10, 50, 100, 200], [10, 50, 100, 200]],
+          "language": config_lang,
+        });
+      }
+      datatable.on('draw.dt', function() {
+          $('[data-toggle="tooltip"]').tooltip();
       });
       return datatable;
+    }
+
+    // Generate JSON url
+    function generate_json_url(url){
+      url = url.replace(/&amp;/g, "&");
+      return url;
     }
   </script>

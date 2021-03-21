@@ -126,6 +126,9 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/hasil/detail/{id}', 'HasilController@detail');
 	Route::post('/admin/hasil/print', 'HasilController@pdf');
 	Route::post('/admin/hasil/delete', 'HasilController@delete');
+	Route::get('/admin/hasil/json/karyawan', 'HasilController@json_employeer');
+	Route::get('/admin/hasil/json/pelamar', 'HasilController@json_applicant');
+	Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
 
 	// Admin Menu
 	Route::get('/admin/list', 'UserController@admin');
@@ -153,6 +156,7 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/karyawan/delete', 'KaryawanController@delete');
 	Route::get('/admin/karyawan/export', 'KaryawanController@export');
 	Route::post('/admin/karyawan/import', 'KaryawanController@import');
+	Route::get('/admin/karyawan/json', 'KaryawanController@json');
 
 	// Pelamar Menu
 	Route::get('/admin/pelamar', 'PelamarController@index');
