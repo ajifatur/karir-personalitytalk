@@ -44,7 +44,7 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
+              <th width="20"><input type="checkbox"></th>
               <th width="200">Kantor</th>
               <th>Alamat</th>
               <th width="120">Telepon</th>
@@ -52,14 +52,13 @@
               @if(Auth::user()->role == role_admin())
               <th width="200">Perusahaan</th>
               @endif
-              <th width="80">Opsi</th>
+              <th width="60">Opsi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $i = 1 ?>
             @foreach($kantor as $data)
             <tr>
-              <td>{{ $i }}</td>
+              <td><input type="checkbox"></td>
               <td>{{ $data->nama_kantor }}</td>
               <td>{{ $data->alamat_kantor }}</td>
               <td>{{ $data->telepon_kantor }}</td>
@@ -68,11 +67,12 @@
               <td>{{ $data->perusahaan }}<br><small class="text-muted">{{ $data->nama_lengkap }}</small></td>
               @endif
               <td>
-                <a href="/admin/kantor/edit/{{ $data->id_kantor }}" class="btn btn-sm btn-info mr-2 mb-2" data-id="{{ $data->id_kantor }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                <a href="#" class="btn btn-sm mr-2 mb-2 {{ $data->nama_kantor == 'Head Office' ? 'btn-dark not-allowed' : 'btn-danger btn-delete' }}" data-id="{{ $data->id_kantor }}" data-toggle="tooltip" data-placement="top" title="{{ $data->nama_kantor == 'Head Office' ? 'Tidak bisa menghapus kantor Head Office' : 'Hapus' }}" style="{{ $data->nama_kantor == 'Head Office' ? 'cursor: not-allowed;' : '' }}"><i class="fa fa-trash"></i></a>
+                <div class="btn-group">
+                  <a href="/admin/kantor/edit/{{ $data->id_kantor }}" class="btn btn-sm btn-warning" data-id="{{ $data->id_kantor }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                  <a href="#" class="btn btn-sm {{ $data->nama_kantor == 'Head Office' ? 'btn-dark not-allowed' : 'btn-danger btn-delete' }}" data-id="{{ $data->id_kantor }}" data-toggle="tooltip" data-placement="top" title="{{ $data->nama_kantor == 'Head Office' ? 'Tidak bisa menghapus kantor Head Office' : 'Hapus' }}" style="{{ $data->nama_kantor == 'Head Office' ? 'cursor: not-allowed;' : '' }}"><i class="fa fa-trash"></i></a>
+                </div>
               </td>
             </tr>
-            <?php $i++; ?>
             @endforeach
           </tbody>
         </table>

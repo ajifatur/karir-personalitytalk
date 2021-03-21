@@ -44,23 +44,22 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
-              <th> Lowongan</th>
+              <th width="20"><input type="checkbox"></th>
+              <th>Lowongan</th>
               <th width="80">Pelamar</th>
               <th width="110">Status</th>
-              <th width="120">Tanggal</th>
+              <th width="120">Waktu Dibuat</th>
               @if(Auth::user()->role == role_admin())
-              <th width="200">Perusahaan</th>
+              <th width="150">Perusahaan</th>
               @endif
-              <th width="170">Opsi</th>
+              <th width="120">Opsi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $i = 1 ?>
             @foreach($lowongan as $data)
             <tr>
-              <td>{{ $i }}</td>
-              <td>{{ ucwords($data->judul_lowongan) }}<br><small class="text-muted"><strong>Posisi:</strong> {{ ucwords($data->nama_posisi) }}</small></td>
+              <td><input type="checkbox"></td>
+              <td>{{ ucwords($data->judul_lowongan) }}<br><small class="text-muted"><i class="fa fa-route mr-2"></i>{{ ucwords($data->nama_posisi) }}</small></td>
               <td>
                 {{ $data->pelamar }} 
                 <br>
@@ -75,21 +74,25 @@
                 </select>
               </td>
               <td>
-      				  <span class="d-none">{{ $data->created_at }}</span> {{ date('d/m/Y', strtotime($data->created_at)) }}
+      				  <span class="d-none">{{ $data->created_at }}</span>
+                {{ date('d/m/Y', strtotime($data->created_at)) }}
+                <br>
+                <small class="text-muted">{{ date('H:i', strtotime($data->created_at)) }} WIB</span>
       			  </td>
               @if(Auth::user()->role == role_admin())
               <td>{{ $data->perusahaan }}<br><small class="text-muted">{{ $data->nama_lengkap }}</small></td>
               @endif
               <td>
-                <span data-toggle="tooltip" data-placement="bottom" title="Lihat URL">
-                  <a href="#" class="btn btn-sm btn-success mr-2 mb-2 show-url" data-id="{{ $data->id_lowongan }}" data-url="{{ $data->url_lowongan }}"  data-toggle="modal" data-target="#showURLModal"><i class="fa fa-link"></i></a>
-                </span>
-                <a href="/admin/lowongan/pelamar/{{ $data->id_lowongan }}" class="btn btn-sm btn-warning mr-2 mb-2" data-id="{{ $data->id_lowongan }}" data-toggle="tooltip" data-placement="top" title="Lihat Pelamar"><i class="fa fa-user-tie"></i></a>
-                <a href="/admin/lowongan/edit/{{ $data->id_lowongan }}" class="btn btn-sm btn-info mr-2 mb-2" data-id="{{ $data->id_lowongan }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                <a href="#" class="btn btn-sm btn-danger mb-2 btn-delete" data-id="{{ $data->id_lowongan }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                <div class="btn-group">
+                  <span data-toggle="tooltip" data-placement="bottom" title="Lihat URL">
+                    <a href="#" class="btn btn-sm btn-success show-url" data-id="{{ $data->id_lowongan }}" data-url="{{ $data->url_lowongan }}"  data-toggle="modal" data-target="#showURLModal"><i class="fa fa-link"></i></a>
+                  </span>
+                  <a href="/admin/lowongan/pelamar/{{ $data->id_lowongan }}" class="btn btn-sm btn-info" data-id="{{ $data->id_lowongan }}" data-toggle="tooltip" data-placement="top" title="Lihat Pelamar"><i class="fa fa-user-tie"></i></a>
+                  <a href="/admin/lowongan/edit/{{ $data->id_lowongan }}" class="btn btn-sm btn-warning" data-id="{{ $data->id_lowongan }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                  <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id_lowongan }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                </div>
               </td>
             </tr>
-            <?php $i++; ?>
             @endforeach
           </tbody>
         </table>

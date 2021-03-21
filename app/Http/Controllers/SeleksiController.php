@@ -224,7 +224,7 @@ class SeleksiController extends Controller
     }
 
     /**
-     * Menghapus data seleksi...
+     * Menghapus data seleksi
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -236,6 +236,6 @@ class SeleksiController extends Controller
         $seleksi->delete();
 
         // Redirect
-        return redirect('admin/seleksi')->with(['message' => 'Berhasil menghapus data.']);
+        return redirect('/admin/seleksi')->with(['message' => 'Berhasil menghapus data.']);
     }
 }

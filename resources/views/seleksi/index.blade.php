@@ -47,24 +47,25 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
+              <th width="20"><input type="checkbox"></th>
               <th>Identitas</th>
               <th width="100">Username</th>
               <th width="150">Posisi</th>
               <th width="100">Hasil</th>
               <th width="100">Waktu Tes</th>
-              <th width="120">Opsi</th>
+              <th width="80">Opsi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $i = 1 ?>
             @foreach($seleksi as $data)
             <tr>
-              <td>{{ $i }}</td>
+              <td><input type="checkbox"></td>
               <td>
                 <a href="/admin/pelamar/detail/{{ $data->id_pelamar }}">{{ ucwords($data->nama_lengkap) }}</a>
                 <br>
-                <small class="text-muted"><strong>Nomor HP:</strong> {{ $data->nomor_hp }}</small>
+                <small class="text-muted"><i class="fa fa-envelope mr-2"></i>{{ $data->email }}</small>
+                <br>
+                <small class="text-muted"><i class="fa fa-phone mr-2"></i>{{ $data->nomor_hp }}</small>
               </td>
               <td>{{ $data->username }}</td>
               <td>{{ $data->nama_posisi }}<br><small class="text-muted">{{ get_perusahaan_name($data->id_hrd) }}</small></td>
@@ -84,17 +85,22 @@
                 <small class="text-muted">{{ $data->waktu_wawancara != null ? date('H:i', strtotime($data->waktu_wawancara)).' WIB' : '' }}</small>
               </td>
               <td>
-                @if($data->hasil == 1 && $data->isKaryawan == false)
-                <a href="#" class="btn btn-sm btn-success mr-2 mb-2 convert" data-id="{{ $data->id_seleksi }}" data-toggle="tooltip" data-placement="top" title="Lantik Menjadi Karyawan"><i class="fa fa-check"></i></a>
-				@endif
-                <a href="#" class="btn btn-sm btn-info mr-2 mb-2 {{ $data->isKaryawan ? 'not-allowed' : 'edit' }}" data-id="{{ $data->id_seleksi }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                <a href="#" class="btn btn-sm btn-danger mb-2 {{ $data->isKaryawan ? 'not-allowed' : 'btn-delete' }}" data-id="{{ $data->id_seleksi }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                <div class="btn-group">
+                  @if($data->hasil == 1 && $data->isKaryawan == false)
+                  <a href="#" class="btn btn-sm btn-success convert" data-id="{{ $data->id_seleksi }}" data-toggle="tooltip" data-placement="top" title="Lantik Menjadi Karyawan"><i class="fa fa-check"></i></a>
+                  @endif
+                  <a href="#" class="btn btn-sm btn-warning {{ $data->isKaryawan ? 'not-allowed' : 'edit' }}" data-id="{{ $data->id_seleksi }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                  <a href="#" class="btn btn-sm btn-danger {{ $data->isKaryawan ? 'not-allowed' : 'btn-delete' }}" data-id="{{ $data->id_seleksi }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                </div>
               </td>
             </tr>
-            <?php $i++; ?>
             @endforeach
           </tbody>
         </table>
+        <form id="form-delete" class="d-none" method="post" action="/admin/seleksi/delete">
+            {{ csrf_field() }}
+            <input type="hidden" name="id">
+        </form>
       </div>
     </div>
   </div>

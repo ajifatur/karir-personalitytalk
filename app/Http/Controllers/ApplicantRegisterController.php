@@ -559,7 +559,7 @@ class ApplicantRegisterController extends Controller
             $pelamar->foto_ijazah = array_key_exists('step_3', $temp_array) ? $temp_array['step_3']['foto_ijazah'] : '';
             $pelamar->id_user = $akun->id_user;
             $pelamar->posisi = $lowongan->id_lowongan;
-            $pelamar->created_at = date("Y-m-d H:i:s");
+            $pelamar->pelamar_at = date("Y-m-d H:i:s");
             $pelamar->save();
 
             // Ambil data akun pelamar

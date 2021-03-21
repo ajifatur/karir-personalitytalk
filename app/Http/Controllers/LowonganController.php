@@ -242,7 +242,7 @@ class LowonganController extends Controller
         // Jika ada data lowongan
         else{
             // Get data pelamar
-            $pelamar = Pelamar::join('users','pelamar.id_user','=','users.id_user')->where('posisi','=',$lowongan->id_lowongan)->orderBy('pelamar.created_at','desc')->get();
+            $pelamar = Pelamar::join('users','pelamar.id_user','=','users.id_user')->where('posisi','=',$lowongan->id_lowongan)->orderBy('pelamar_at','desc')->get();
             foreach($pelamar as $key=>$data){
                 $seleksi = Seleksi::where('id_pelamar','=',$data->id_pelamar)->where('id_lowongan','=',$id)->first();
                 if(!$seleksi){

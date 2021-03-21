@@ -108,7 +108,6 @@
 <!-- JavaScripts -->
 <script type="text/javascript">
   // Call the dataTables jQuery plugin
-  // generate_datatable("#dataTable");
     generate_datatable("#dataTable", true, {
       "url": generate_json_url("/admin/karyawan/json{{ strpos(\Request::getRequestUri(), '?') ? '?'.explode('?', \Request::getRequestUri())[1] : '' }}"),
       "columns": [

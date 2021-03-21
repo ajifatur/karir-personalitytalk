@@ -34,23 +34,23 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
+              <th width="20"><input type="checkbox"></th>
               <th>Agama</th>
-              <th width="80">Opsi</th>
+              <th width="60">Opsi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $i = 1 ?>
             @foreach($agama as $data)
             <tr>
-              <td>{{ $i }}</td>
+              <td><input type="checkbox"></td>
               <td>{{ $data->nama_agama }}</td>
               <td>
-                <a href="/admin/agama/edit/{{ $data->id_agama }}" class="btn btn-sm btn-info mr-2 mb-2" data-id="{{ $data->id_agama }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                <a href="#" class="btn btn-sm btn-danger mr-2 btn-delete mb-2" data-id="{{ $data->id_agama }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                <div class="btn-group">
+                  <a href="/admin/agama/edit/{{ $data->id_agama }}" class="btn btn-sm btn-warning" data-id="{{ $data->id_agama }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                  <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id_agama }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                </div>
               </td>
             </tr>
-            <?php $i++; ?>
             @endforeach
           </tbody>
         </table>

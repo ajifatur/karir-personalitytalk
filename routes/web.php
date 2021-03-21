@@ -165,6 +165,7 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/pelamar/update', 'PelamarController@update');
 	Route::post('/admin/pelamar/delete', 'PelamarController@delete');
 	Route::get('/admin/pelamar/export', 'PelamarController@export');
+	Route::get('/admin/pelamar/json', 'PelamarController@json');
 
 	// // General Member Menu
 	// Route::get('/admin/umum', 'UserController@general');

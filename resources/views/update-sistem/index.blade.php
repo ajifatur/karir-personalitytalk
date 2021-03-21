@@ -17,7 +17,7 @@
       <div class="row">
         @if(count(get_data_update())>0)
           @foreach(get_data_update() as $data)
-          <div class="col-12">
+          <div class="col-12 mb-3">
             <div class="card">
               <h5 class="card-header">
                 {{ $data->judul_update }}

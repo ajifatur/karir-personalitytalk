@@ -51,7 +51,7 @@
             <tr>
               <th width="20"><input type="checkbox"></th>
               <th>Nama</th>
-              <th width="150">Posisi</th>
+              <th width="150">Jabatan</th>
               <th width="150">Perusahaan</th>
               <th width="100">Tes</th>
               <th width="100">Waktu Tes</th>

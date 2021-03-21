@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -20,6 +21,66 @@ use App\User;
 class PelamarController extends Controller
 {
     /**
+     * Menampilkan JSON data pelamar
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function json(Request $request)
+    {
+    	// Get data pelamar
+        if(Auth::user()->role == role_admin()){
+			if($request->query('hrd') != null){
+            	$hrd = HRD::find($request->query('hrd'));
+    	    	$pelamar = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$request->query('hrd'))->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
+			}
+			else{
+    	    	$pelamar = Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
+			}
+        }
+        elseif(Auth::user()->role == role_hrd()){
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	    $pelamar = Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get();
+        }
+        
+        // Return
+        return DataTables::of($pelamar)
+        ->addColumn('checkbox', '<input type="checkbox">')
+        ->addColumn('name', '
+            <span class="d-none">{{ $nama_user }}</span>
+            <a href="/admin/pelamar/detail/{{ $id_pelamar }}">{{ ucwords($nama_user) }}</a>
+            <br>
+            <small class="text-muted"><i class="fa fa-envelope mr-2"></i>{{ $email }}</small>
+            <br>
+            <small class="text-muted"><i class="fa fa-phone mr-2"></i>{{ $nomor_hp }}</small>
+        ')
+        ->editColumn('posisi', '
+            {{ get_posisi_name($posisi) }}
+        ')
+        ->addColumn('datetime', '
+            <span class="d-none">{{ $pelamar_at != null ? $pelamar_at : "" }}</span>
+            {{ $pelamar_at != null ? date("d/m/Y", strtotime($pelamar_at)) : "-" }}
+            <br>
+            <small class="text-muted">{{ date("H:i", strtotime($pelamar_at))." WIB" }}</small>
+        ')
+        ->addColumn('company', '
+            {{ get_perusahaan_name($id_hrd) }}
+            <br>
+            <small class="text-muted">{{ get_hrd_name($id_hrd) }}</small>
+        ')
+        ->addColumn('options', '
+            <div class="btn-group">
+                <a href="/admin/pelamar/detail/{{ $id_pelamar }}" class="btn btn-sm btn-info" data-id="{{ $id_pelamar }}" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+                <a href="/admin/pelamar/edit/{{ $id_pelamar }}" class="btn btn-sm btn-warning" data-id="{{ $id_pelamar }}" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+                <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_pelamar }}" data-toggle="tooltip" title="Hapus"><i class="fa fa-trash"></i></a>
+            </div>
+        ')
+        ->removeColumn('password')
+        ->rawColumns(['checkbox', 'name', 'username', 'posisi', 'datetime', 'company', 'options'])
+        ->make(true);
+    }
+
+    /**
      * Menampilkan data pelamar
      * 
      * @return \Illuminate\Http\Request
@@ -27,33 +88,31 @@ class PelamarController extends Controller
      */
     public function index(Request $request)
     {
-    	// Get data pelamar
-        if(Auth::user()->role == role_admin()){
-			if($request->query('hrd') != null){
-            	$hrd = HRD::find($request->query('hrd'));
-    	    	$pelamar = $hrd ? Pelamar::where('id_hrd','=',$request->query('hrd'))->orderBy('created_at','desc')->get() : Pelamar::orderBy('created_at','desc')->get();
-			}
-			else{
-    	    	$pelamar = Pelamar::orderBy('created_at','desc')->get();
-			}
-        }
-        elseif(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-    	    $pelamar = Pelamar::where('id_hrd','=',$hrd->id_hrd)->orderBy('created_at','desc')->get();
-        }
+    	// // Get data pelamar
+        // if(Auth::user()->role == role_admin()){
+		// 	if($request->query('hrd') != null){
+        //     	$hrd = HRD::find($request->query('hrd'));
+    	//     	$pelamar = $hrd ? Pelamar::where('id_hrd','=',$request->query('hrd'))->orderBy('created_at','desc')->get() : Pelamar::orderBy('created_at','desc')->get();
+		// 	}
+		// 	else{
+    	//     	$pelamar = Pelamar::orderBy('created_at','desc')->get();
+		// 	}
+        // }
+        // elseif(Auth::user()->role == role_hrd()){
+        //     $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	//     $pelamar = Pelamar::where('id_hrd','=',$hrd->id_hrd)->orderBy('created_at','desc')->get();
+        // }
         
-    	// Setting data pelamar
-        foreach($pelamar as $key=>$data){
-            $data->id_user = User::find($data->id_user);
-            $data->id_hrd = HRD::find($data->id_hrd);
-			$lowongan = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->find($data->posisi);
-            $lowongan != null ? $data->posisi = $lowongan : $pelamar->forget($key);
-        }
+    	// // Setting data pelamar
+        // foreach($pelamar as $key=>$data){
+        //     $data->id_user = User::find($data->id_user);
+        //     $data->id_hrd = HRD::find($data->id_hrd);
+		// 	$lowongan = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->find($data->posisi);
+        //     $lowongan != null ? $data->posisi = $lowongan : $pelamar->forget($key);
+        // }
 
     	// View
-    	return view('pelamar/index', [
-    		'pelamar' => $pelamar,
-    	]);
+    	return view('pelamar/index');
     }
 
     /**

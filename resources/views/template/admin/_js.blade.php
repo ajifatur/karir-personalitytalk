@@ -64,6 +64,11 @@
       if(server_side == false){
         var datatable = $(table).DataTable({
           "language": config_lang,
+          columnDefs: [
+            {orderable: false, targets: 0},
+            {orderable: false, targets: -1},
+          ],
+          order: []
         });
       }
       else{
@@ -80,8 +85,9 @@
           "language": config_lang,
         });
       }
-      datatable.on('draw.dt', function() {
+      datatable.on('draw.dt', function(){
           $('[data-toggle="tooltip"]').tooltip();
+          $(table).addClass("ssp");
       });
       return datatable;
     }
