@@ -45,9 +45,7 @@
           <thead>
             <tr>
               <th width="20"><input type="checkbox"></th>
-              <th width="200">Kantor</th>
-              <th>Alamat</th>
-              <th width="120">Telepon</th>
+              <th>Kantor</th>
               <th width="80">Karyawan</th>
               @if(Auth::user()->role == role_admin())
               <th width="200">Perusahaan</th>
@@ -59,9 +57,13 @@
             @foreach($kantor as $data)
             <tr>
               <td><input type="checkbox"></td>
-              <td>{{ $data->nama_kantor }}</td>
-              <td>{{ $data->alamat_kantor }}</td>
-              <td>{{ $data->telepon_kantor }}</td>
+              <td>
+                {{ $data->nama_kantor }}
+                <br>
+                <small class="text-muted"><i class="fa fa-map-marker mr-2"></i>{{ $data->alamat_kantor != '' ? $data->alamat_kantor : '-' }}
+                <br>
+                <small class="text-muted"><i class="fa fa-phone mr-2"></i>{{ $data->telepon_kantor != '' ? $data->telepon_kantor : '-' }}
+              </td>
               <td>{{ number_format(count_karyawan_by_kantor($data->id_kantor),0,'.','.') }}</td>
               @if(Auth::user()->role == role_admin())
               <td>{{ $data->perusahaan }}<br><small class="text-muted">{{ $data->nama_lengkap }}</small></td>
