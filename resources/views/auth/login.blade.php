@@ -1,68 +1,94 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
-
-<head>
-
-  @include('template/admin/_head')
-
+  <head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Sistem Rekruitmen | Promosi | Penjajakan Karyawan</title>
-
-  <style type="text/css">
-    body {height: calc(100vh); background-repeat: no-repeat; background-size: cover; background-position: center;}
-    .wrapper {background: rgba(0,0,0,.3);}
-    .card {width: 500px; background-color: rgba(0,0,0,.6);}
-    .form-control, .form-control:focus {background-color: transparent; color: #fff;}
-    .input-group .form-control {border-right-width: 0;}
-    .input-group-append .btn {color: #fff; border: 1px solid #d1d3e2; border-left-width: 0; border-radius: 10rem;}
-    .custom-checkbox .custom-control-label::before {background-color: transparent;}
-  </style>
-
 </head>
 
-<body background="{{ asset('assets/images/background/hrd.jpg') }}">
-
-  <div class="wrapper h-100">
-    <div class="d-flex justify-content-center h-100">
-      <div class="card my-auto">
-        <div class="card-body">
-          <div class="col px-sm-5 px-4 mb-5">
-            <a href="https://psikologanda.com">
-              <img class="img-fluid" src="{{ asset('assets/images/logo-2.png') }}">
-            </a>
-          </div>
-          @if(isset($message))
-          <div class="alert alert-danger">
-            {{ $message }}
-          </div>
-          @endif
-          <form class="user" method="post" action="/login">
-            {{ csrf_field() }}
-            <div class="form-group">
-              <input type="username" class="form-control form-control-user {{ $errors->has('username') ? 'border-danger' : '' }}" name="username" placeholder="Masukkan Username..." value="{{ old('username') }}">
-              @if($errors->has('username'))
-                <small class="text-danger">{{ $errors->first('username') }}</small>
-              @endif
-            </div>
-            <div class="form-group">
-              <div class="input-group">
-                <input type="password" class="form-control form-control-user {{ $errors->has('password') ? 'border-danger' : '' }}" name="password" placeholder="Masukkan Password...">
-                <div class="input-group-append">
-                  <button class="btn btn-toggle-password" type="button"><i class="fa fa-eye"></i></button>
-                </div>
+<body>
+    <div class="main-wrapper">
+      <div class="wrapper">
+        <div id="content">
+          <div id="sidebar-main"></div>
+          <div id="navbar-main"></div>
+          <div class="main-wrapper mt-5 mt-lg-0">
+              <div class="auth-wrapper d-flex no-block justify-content-center align-items-center">
+                  <div class="container">
+                      <div class="row">
+                          <div class="col-lg-6 d-none d-lg-block">
+                              <div class="d-flex align-items-center h-100">
+                                  <img class="img-fluid" src="https://www.psikologanda.com/assets/images/ilustrasi/undraw_Login_re_4vu2.svg">
+                              </div>
+                          </div>
+                          <div class="col-lg-6">
+                              <div class="wrapper">
+                                  <div class="card border-0 shadow-sm rounded-1">
+                                      <div class="card-header text-center pt-4 bg-transparent mx-4">
+                                          <img width="200" class="mb-3" src="https://www.psikologanda.com/assets/images/logo/1617422635-logo.png">
+                                          <h5 class="h2 mb-0">Selamat Datang</h5>
+                                          <p class="m-0">Untuk tetap terhubung dengan kami, silakan login dengan informasi pribadi Anda melalui Username dan Password 🔔</p>
+                                      </div>
+                                      <div class="card-body">
+                                          <form class="login-form" action="/login" method="post">
+                                              {{ csrf_field() }}
+                                              @if(isset($message))
+                                              <div class="alert alert-danger">
+                                                  {{ $message }}
+                                              </div>
+                                              @endif
+                                              <div class="form-group ">
+                                                  <label class="control-label">Username</label>
+                                                  <div class="input-group input-group-lg">
+                                                      <div class="input-group-prepend">
+                                                          <span class="input-group-text" id="basic-addon1"><i class="ti-email"></i></span>
+                                                      </div>
+                                                      <input class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}" name="username" type="text" placeholder="Username" autofocus>
+                                                  </div>
+                                                  @if($errors->has('username'))
+                                                  <div class="form-control-feedback text-danger">{{ ucfirst($errors->first('username')) }}</div>
+                                                  @endif
+                                              </div>
+                                              <div class="form-group">
+                                                  <label class="control-label">Password</label>
+                                                  <div class="input-group input-group-lg">
+                                                      <div class="input-group-prepend">
+                                                          <span class="input-group-text" id="basic-addon1"><i class="ti-key"></i></span>
+                                                      </div>
+                                                      <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'border-danger' : '' }}" placeholder="Password">
+                                                      <div class="input-group-append">
+                                                          <a href="#" class="input-group-text text-dark {{ $errors->has('password') ? 'border-danger bg-danger' : '' }}" id="btn-toggle-password"><i class="fa fa-eye"></i></a>
+                                                      </div>
+                                                  </div>
+                                                  @if($errors->has('password'))
+                                                  <div class="form-control-feedback text-danger">{{ ucfirst($errors->first('password')) }}</div>
+                                                  @endif
+                                              </div>
+                                              <div class="text-right">
+                                                <div class="form-group">
+                                                  <a href="/recovery-password" class="text-body">Lupa Password?</a>
+                                                </div>
+                                              </div>
+                                              <div class="form-group btn-container">
+                                                  <button type="submit" class="btn btn-primary btn-lg rounded px-4 shadow-sm btn-block">Masuk</button>
+                                                  <a href="/register{{ Session::get('ref') != null ? '?ref='.Session::get('ref') : '' }}" class="btn btn-light btn-lg rounded px-4 shadow-sm btn-block">Daftar</a>
+                                              </div>
+                                          </form>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
               </div>
-            </div>
-            <button type="submit" class="btn btn-outline-primary btn-user btn-block">
-              Login
-            </button>
-          </form>
-          <hr>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+    <div id="footer-main"></div>
   @include('template/admin/_js')
-
+  <script src="https://psikologanda.com/assets/partials/template.js"></script>
 </body>
 
 </html>
