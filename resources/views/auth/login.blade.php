@@ -26,14 +26,14 @@
                       <div class="row">
                           <div class="col-lg-6 d-none d-lg-block">
                               <div class="d-flex align-items-center h-100">
-                                  <img class="img-fluid" src="https://www.psikologanda.com/assets/images/ilustrasi/undraw_Login_re_4vu2_karir.svg">
+                                  <img class="img-fluid" src="{{asset('assets/images/ilustrasi/undraw_professor_8lrt.svg')}}">
                               </div>
                           </div>
                           <div class="col-lg-6">
                               <div class="wrapper">
                                   <div class="card border-0 shadow-sm rounded-1">
                                       <div class="card-header text-center pt-4 bg-transparent mx-4">
-                                          <img width="200" class="mb-3" src="https://www.psikologanda.com/assets/images/logo/1617422635-logo.png">
+                                          <img width="200" class="mb-3" src="https://www.psikologanda.com/assets/images/logo/1598935898-logo.png">
                                           <h5 class="h2 mb-0">Selamat Datang HRD</h5>
                                           <p class="m-0">Untuk tetap terhubung dengan kami, silakan login dengan informasi pribadi Anda melalui Username dan Password 🔔</p>
                                       </div>
