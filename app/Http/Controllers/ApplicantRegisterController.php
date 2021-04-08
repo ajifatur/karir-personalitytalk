@@ -118,7 +118,7 @@ class ApplicantRegisterController extends Controller
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
             'agama' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email',
             'nomor_hp' => 'required',
             'alamat' => 'required',
             'pendidikan_terakhir' => 'required',
@@ -129,7 +129,7 @@ class ApplicantRegisterController extends Controller
         // Mengecek jika ada error
         if($validator->fails()){
             // Kembali ke halaman sebelumnya dan menampilkan pesan error
-            return redirect()->back()->withErrors($validator->errors())->withInput()->with(['url' => $request->url]);
+            return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         // Jika tidak ada error
         else{
@@ -193,11 +193,11 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, 'step-'))){
-    		$this->removePhotoAndSession();
-    		// return redirect('applicant/register/step-1');
-            return redirect('/lowongan/'.$code.'/daftar/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, 'step-')) || !array_key_exists('step_1', $array)){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-2', [
             'array' => $array,
@@ -279,11 +279,11 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, 'step-'))){
-    		$this->removePhotoAndSession();
-    		// return redirect('applicant/register/step-1');
-            return redirect('/lowongan/'.$code.'/daftar/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, 'step-'))){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-3', [
             'array' => $array,
@@ -367,11 +367,11 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, 'step-'))){
-    		$this->removePhotoAndSession();
-    		// return redirect('applicant/register/step-1');
-            return redirect('/lowongan/'.$code.'/daftar/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, 'step-'))){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-4', [
             'array' => $array,
@@ -459,11 +459,11 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, $truePreviousPath)) && !is_int(strpos($previousPath, $currentPath))){
-    		$this->removePhotoAndSession();
-    		// return redirect('applicant/register/step-1');
-            return redirect('/lowongan/'.$code.'/daftar/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, $truePreviousPath)) && !is_int(strpos($previousPath, $currentPath))){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-5', [
             'array' => $array,
@@ -657,7 +657,7 @@ class ApplicantRegisterController extends Controller
         	}
 
             // Delete data temp
-            $temp->delete();
+            // $temp->delete();
         }
 
     	// And then remove session

@@ -62,7 +62,7 @@
 												<td>
 													<strong>Yth HRD,</strong>
 													<br>
-													Sekedar memberitahu bahwa <strong>{{ $pelamar->nama_lengkap }}</strong> telah mendaftar di posisi <strong>{{ $pelamar->posisi->nama_posisi }}</strong> pada tanggal <strong>{{ setFullDate($pelamar->created_at) }}</strong>.
+													Sekedar memberitahu bahwa <strong>{{ $pelamar->nama_lengkap }}</strong> telah mendaftar di posisi <strong>{{ $pelamar->posisi->nama_posisi }}</strong> pada tanggal <strong>{{ setFullDate($pelamar->pelamar_at) }}</strong>.
 													<br>
 													Untuk melihat data diri <strong>{{ $pelamar->nama_lengkap }}</strong> bisa dilihat pada link berikut ini:
 												</td>
