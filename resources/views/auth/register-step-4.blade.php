@@ -33,11 +33,12 @@
           <div class="text-center">
             <h1 class="h4 text-gray-900 mb-5 text-uppercase">Form Data Darurat</h1>
           </div>
-          <form id="form" method="post" action="/applicant/register/step-4" enctype="multipart/form-data">
+          <!-- <form id="form" method="post" action="/applicant/register/step-4" enctype="multipart/form-data"> -->
+          <form id="form" method="post" action="/lowongan/{{ $url_form }}/daftar/step-4" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Nama Orang Tua:</label>
+                <label>Nama Orang Tua: <span class="text-danger">*</span></label>
                 <input name="nama_orang_tua" type="text" class="form-control form-control-sm {{ $errors->has('nama_orang_tua') ? 'is-invalid' : '' }}" placeholder="Masukkan Nama" value="{{ !empty($array) ? $array['nama_orang_tua'] : old('nama_orang_tua') }}">
                 @if($errors->has('nama_orang_tua'))
                 <small class="text-danger">
@@ -46,7 +47,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>No. HP Orang Tua:</label>
+                <label>No. HP Orang Tua: <span class="text-danger">*</span></label>
                 <input name="nomor_hp_orang_tua" type="text" class="form-control form-control-sm {{ $errors->has('nomor_hp_orang_tua') ? 'is-invalid' : '' }}" placeholder="Masukkan Nomor HP" value="{{ !empty($array) ? $array['nomor_hp_orang_tua'] : old('nomor_hp_orang_tua') }}">
                 @if($errors->has('nomor_hp_orang_tua'))
                 <small class="text-danger">
@@ -57,7 +58,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Alamat Orang Tua:</label>
+                <label>Alamat Orang Tua: <span class="text-danger">*</span></label>
                 <textarea name="alamat_orang_tua" class="form-control form-control-sm {{ $errors->has('alamat_orang_tua') ? 'is-invalid' : '' }}" placeholder="Masukkan Alamat" rows="1">{{ !empty($array) ? $array['alamat_orang_tua'] : old('alamat_orang_tua') }}</textarea>
                 @if($errors->has('alamat_orang_tua'))
                 <div class="invalid-feedback">
@@ -66,7 +67,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>Pekerjaan Orang Tua:</label>
+                <label>Pekerjaan Orang Tua: <span class="text-danger">*</span></label>
                 <input name="pekerjaan_orang_tua" type="text" class="form-control form-control-sm {{ $errors->has('pekerjaan_orang_tua') ? 'is-invalid' : '' }}" placeholder="Masukkan Pekerjaan" value="{{ !empty($array) ? $array['pekerjaan_orang_tua'] : old('pekerjaan_orang_tua') }}">
                 @if($errors->has('pekerjaan_orang_tua'))
                 <small class="text-danger">
@@ -79,7 +80,8 @@
               <div class="row">
                 <div class="col-auto ml-auto">
                   <input type="hidden" name="url" value="{{ $url_form }}">
-                  <a href="/applicant/register/step-3" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
+                  <!-- <a href="/applicant/register/step-3" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a> -->
+                  <a href="/lowongan/{{ $url_form }}/daftar/step-3" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
                   <button type="submit" class="btn btn-sm btn-primary">Selanjutnya &raquo;</button>
                 </div>
               </div>

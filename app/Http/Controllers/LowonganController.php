@@ -307,9 +307,9 @@ class LowonganController extends Controller
         	abort(404);
         }
         
-        Session::put('url', $url);
+        // Session::put('url', $url);
 
         // Redirect
-        return redirect('/applicant/register/step-1')->with(['posisi' => $lowongan->posisi]);
+        return redirect('/lowongan/'.$url.'/daftar/step-1')->with(['posisi' => $lowongan->posisi]);
     }
 }

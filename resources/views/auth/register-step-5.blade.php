@@ -34,7 +34,8 @@
           <div class="text-center">
             <h1 class="h4 text-gray-900 mb-5 text-uppercase">Form Data Keahlian</h1>
           </div>
-          <form id="form" method="post" action="/applicant/register/step-5" enctype="multipart/form-data">
+          <!-- <form id="form" method="post" action="/applicant/register/step-5" enctype="multipart/form-data"> -->
+          <form id="form" method="post" action="/lowongan/{{ $url_form }}/daftar/step-5" enctype="multipart/form-data">
             {{ csrf_field() }}
             @if(count($errors)>0)
             <div class="alert alert-danger">
@@ -69,7 +70,8 @@
               <div class="row">
                 <div class="col-auto ml-auto">
                   <input type="hidden" name="url" value="{{ $url_form }}">
-                  <a href="/applicant/register/step-4" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
+                  <!-- <a href="/applicant/register/step-4" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a> -->
+                  <a href="/lowongan/{{ $url_form }}/daftar/step-4" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
                   <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Submit</button>
                 </div>
               </div>

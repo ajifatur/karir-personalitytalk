@@ -25,16 +25,26 @@ Route::group(['middleware' => ['guest']], function(){
 	Route::post('/login', 'Auth\LoginController@login');
 
 	// Applicant Register
-	Route::get('/applicant/register/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
-	Route::post('/applicant/register/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
-	Route::get('/applicant/register/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
-	Route::post('/applicant/register/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
-	Route::get('/applicant/register/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
-	Route::post('/applicant/register/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
-	Route::get('/applicant/register/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
-	Route::post('/applicant/register/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
-	Route::get('/applicant/register/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
-	Route::post('/applicant/register/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
+	Route::get('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
+	Route::post('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
+	Route::get('/lowongan/{code}/daftar/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
+	Route::post('/lowongan/{code}/daftar/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
+	Route::get('/lowongan/{code}/daftar/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
+	Route::post('/lowongan/{code}/daftar/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
+	Route::get('/lowongan/{code}/daftar/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
+	Route::post('/lowongan/{code}/daftar/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
+	Route::get('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
+	Route::post('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
+	// Route::get('/applicant/register/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
+	// Route::post('/applicant/register/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
+	// Route::get('/applicant/register/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
+	// Route::post('/applicant/register/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
+	// Route::get('/applicant/register/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
+	// Route::post('/applicant/register/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
+	// Route::get('/applicant/register/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
+	// Route::post('/applicant/register/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
+	// Route::get('/applicant/register/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
+	// Route::post('/applicant/register/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
 
 	// URL Form
 	Route::get('/lowongan/{url}', 'LowonganController@visitForm');

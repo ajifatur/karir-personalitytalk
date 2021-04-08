@@ -34,11 +34,12 @@
           <div class="text-center">
             <h1 class="h4 text-gray-900 mb-5 text-uppercase">Form Identitas</h1>
           </div>
-          <form id="form" method="post" action="/applicant/register/step-1">
+          <!-- <form id="form" method="post" action="/applicant/register/step-1"> -->
+          <form id="form" method="post" action="/lowongan/{{ $url_form }}/daftar/step-1">
             {{ csrf_field() }}
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Nama Lengkap:</label>
+                <label>Nama Lengkap: <span class="text-danger">*</span></label>
                 <input name="nama_lengkap" type="text" class="form-control form-control-sm {{ $errors->has('nama_lengkap') ? 'is-invalid' : '' }}" placeholder="Masukkan Nama Lengkap" value="{{ !empty($array) ? $array['nama_lengkap'] : old('nama_lengkap') }}">
                 @if($errors->has('nama_lengkap'))
                 <div class="invalid-feedback">
@@ -47,7 +48,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>Email:</label>
+                <label>Email: <span class="text-danger">*</span></label>
                 <input name="email" type="email" class="form-control form-control-sm {{ $errors->has('email') ? 'is-invalid' : '' }}" placeholder="Masukkan Email" value="{{ !empty($array) ? $array['email'] : old('email') }}">
                 @if($errors->has('email'))
                 <div class="invalid-feedback">
@@ -58,7 +59,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Tempat Lahir:</label>
+                <label>Tempat Lahir: <span class="text-danger">*</span></label>
                 <input name="tempat_lahir" type="text" class="form-control form-control-sm {{ $errors->has('tempat_lahir') ? 'is-invalid' : '' }}" placeholder="Masukkan Tempat Lahir" value="{{ !empty($array) ? $array['tempat_lahir'] : old('tempat_lahir') }}">
                 @if($errors->has('tempat_lahir'))
                 <div class="invalid-feedback">
@@ -67,7 +68,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>Tanggal Lahir:</label>
+                <label>Tanggal Lahir: <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <input name="tanggal_lahir" type="text" class="form-control form-control-sm {{ $errors->has('tanggal_lahir') ? 'is-invalid' : '' }}" placeholder="Masukkan Tanggal Lahir" value="{{ !empty($array) ? $array['tanggal_lahir'] : old('tanggal_lahir') }}">
                   <div class="input-group-append">
@@ -83,7 +84,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Jenis Kelamin:</label>
+                <label>Jenis Kelamin: <span class="text-danger">*</span></label>
                 <select name="jenis_kelamin" class="form-control form-control-sm {{ $errors->has('jenis_kelamin') ? 'is-invalid' : '' }}">
                   <option value="" disabled selected>--Pilih--</option>
                   @if(!empty($array))
@@ -101,7 +102,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>Agama:</label>
+                <label>Agama: <span class="text-danger">*</span></label>
                 <select name="agama" class="form-control form-control-sm {{ $errors->has('agama') ? 'is-invalid' : '' }}">
                   <option value="" disabled selected>--Pilih--</option>
                   @if(!empty($array))
@@ -125,7 +126,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Akun Sosial Media:</label>
+                <label>Akun Sosial Media: <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <select name="sosmed" class="col-4 form-control form-control-sm {{ $errors->has('akun_sosmed') ? 'border-danger' : '' }}">
                     @if(!empty($array))
@@ -149,7 +150,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>No. HP:</label>
+                <label>No. HP: <span class="text-danger">*</span></label>
                 <input name="nomor_hp" type="text" class="form-control form-control-sm {{ $errors->has('nomor_hp') ? 'is-invalid' : '' }}" placeholder="Masukkan Nomor HP" value="{{ !empty($array) ? $array['nomor_hp'] : old('nomor_hp') }}">
                 @if($errors->has('nomor_hp'))
                 <div class="invalid-feedback">
@@ -180,7 +181,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Alamat:</label>
+                <label>Alamat: <span class="text-danger">*</span></label>
                 <textarea name="alamat" class="form-control form-control-sm {{ $errors->has('alamat') ? 'is-invalid' : '' }}" placeholder="Masukkan Alamat" rows="1">{{ !empty($array) ? $array['alamat'] : old('alamat') }}</textarea>
                 @if($errors->has('alamat'))
                 <div class="invalid-feedback">
@@ -189,7 +190,7 @@
                 @endif
               </div>
               <div class="form-group col-sm-6">
-                <label>Status Hubungan:</label>
+                <label>Status Hubungan: <span class="text-danger">*</span></label>
                 <select name="status_hubungan" class="form-control form-control-sm {{ $errors->has('status_hubungan') ? 'is-invalid' : '' }}">
                   <option value="" disabled selected>--Pilih--</option>
                   @if(!empty($array))
@@ -211,7 +212,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-sm-6">
-                <label>Pendidikan Terakhir:</label>
+                <label>Pendidikan Terakhir: <span class="text-danger">*</span></label>
                 <textarea name="pendidikan_terakhir" class="form-control form-control-sm {{ $errors->has('pendidikan_terakhir') ? 'is-invalid' : '' }}" placeholder="Masukkan Pendidikan Terakhir" rows="2">{{ !empty($array) ? $array['pendidikan_terakhir'] : old('pendidikan_terakhir') }}</textarea>
                 @if($errors->has('pendidikan_terakhir'))
                 <div class="invalid-feedback">

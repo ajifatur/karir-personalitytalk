@@ -33,11 +33,12 @@
           <div class="text-center">
             <h1 class="h4 text-gray-900 mb-5 text-uppercase">Upload Pas Foto</h1>
           </div>
-          <form id="form" method="post" action="/applicant/register/step-2" enctype="multipart/form-data">
+          <!-- <form id="form" method="post" action="/applicant/register/step-2" enctype="multipart/form-data"> -->
+          <form id="form" method="post" action="/lowongan/{{ $url_form }}/daftar/step-2" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="form-row">
               <div class="form-group col-sm-12">
-                <label>Pas Foto:</label>
+                <label>Pas Foto: <span class="text-danger">*</span></label>
                 <input type="file" name="file_pas_foto" id="pas_foto" class="d-none" accept="image/*">
                 <input name="pas_foto" type="hidden" class="form-control form-control-sm {{ $errors->has('file_pas_foto') ? 'is-invalid' : '' }}" value="{{ !empty($array) ? $array['pas_foto'] : old('pas_foto') }}">
                 <button class="btn btn-sm btn-block {{ $errors->has('file_pas_foto') ? 'btn-outline-danger' : 'btn-outline-primary' }} btn-upload" data-id="pas_foto" type="button"><i class="fa fa-upload"></i> Upload Pas Foto</button>
@@ -58,7 +59,8 @@
               <div class="row">
                 <div class="col-auto ml-auto">
                   <input type="hidden" name="url" value="{{ $url_form }}">
-                  <a href="/applicant/register/step-1" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
+                  <!-- <a href="/applicant/register/step-1" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a> -->
+                  <a href="/lowongan/{{ $url_form }}/daftar/step-1" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
                   <button type="submit" class="btn btn-sm btn-primary">Selanjutnya &raquo;</button>
                 </div>
               </div>

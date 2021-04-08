@@ -33,11 +33,12 @@
           <div class="text-center">
             <h1 class="h4 text-gray-900 mb-5 text-uppercase">Upload Foto Ijazah</h1>
           </div>
-          <form id="form" method="post" action="/applicant/register/step-3" enctype="multipart/form-data">
+          <!-- <form id="form" method="post" action="/applicant/register/step-3" enctype="multipart/form-data"> -->
+          <form id="form" method="post" action="/lowongan/{{ $url_form }}/daftar/step-3" enctype="multipart/form-data">
             {{ csrf_field() }}
             <div class="form-row">
               <div class="form-group col-sm-12">
-                <label>Foto Ijazah:</label>
+                <label>Foto Ijazah: <span class="text-danger">*</span></label>
                 <input type="file" name="file_foto_ijazah" id="foto_ijazah" class="d-none" accept="image/*">
                 <input name="foto_ijazah" type="hidden" class="form-control form-control-sm {{ $errors->has('file_foto_ijazah') ? 'is-invalid' : '' }}" value="{{ !empty($array) ? $array['foto_ijazah'] : old('foto_ijazah') }}">
                 <button class="btn btn-sm btn-block {{ $errors->has('file_foto_ijazah') ? 'btn-outline-danger' : 'btn-outline-primary' }} btn-upload" data-id="foto_ijazah" type="button"><i class="fa fa-upload"></i> Upload Foto Ijazah</button>
@@ -58,7 +59,8 @@
               <div class="row">
                 <div class="col-auto ml-auto">
                   <input type="hidden" name="url" value="{{ $url_form }}">
-                  <a href="/applicant/register/step-2" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
+                  <!-- <a href="/applicant/register/step-2" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a> -->
+                  <a href="/lowongan/{{ $url_form }}/daftar/step-2" class="btn btn-sm btn-danger">&laquo; Sebelumnya</a>
                   <button type="submit" class="btn btn-sm btn-primary">Selanjutnya &raquo;</button>
                 </div>
               </div>
