@@ -282,19 +282,7 @@ class PelamarController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function delete(Request $request)
-    {        
-        if($karyawan != null){
-            $karyawan->delete();
-        }
-        
-        if($seleksi != null){
-            $seleksi->delete();
-        }
-
-        if($pelamar->delete() && $user->delete()){
-            echo "Berhasil menghapus data!";
-        }
-
+    {
         // Menghapus data
         $pelamar = Pelamar::find($request->id);
         $pelamar->delete();
