@@ -288,8 +288,6 @@ class PelamarController extends Controller
         $pelamar->delete();
         $user = User::find($pelamar->id_user);
         $user->delete();
-        $karyawan = Karyawan::where('id_user','=',$pelamar->id_user)->first();
-        if($pelamar) $karyawan->delete();
         $seleksi = Seleksi::where('id_pelamar','=',$request->id)->first();
         if($seleksi) $seleksi->delete();
 
