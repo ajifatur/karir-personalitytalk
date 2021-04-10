@@ -55,7 +55,7 @@ Route::group(['middleware' => ['guest']], function(){
 	Route::post('/register', 'Auth\RegisterController@submitRegistrationForm');
 });
     
-// Admin Capabilities...
+// Admin Capabilities....
 Route::group(['middleware' => ['admin']], function(){
 
 	// Logout
