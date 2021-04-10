@@ -17,7 +17,7 @@
     <div class="card-body">
         <div class="form-row">
           <div class="col-auto p-3 border border-muted mb-2 mr-2">
-            <img src="{{ asset('assets/images/foto-karyawan/'.$karyawan->user->foto) }}" class="img-fluid" width="200" alt="Foto">
+            <img src="{{ $karyawan->user->foto != '' ? asset('assets/images/foto-karyawan/'.$karyawan->user->foto) : asset('assets/images/default/user.png') }}" class="img-fluid" width="200" alt="Foto">
           </div>
         </div>
         <div class="form-row">
@@ -54,6 +54,11 @@
                 <td>{{ $karyawan->nomor_hp }}</td>
               </tr>
               <tr>
+                <td>Perusahaan</td>
+                <td>:</td>
+                <td>{{ get_perusahaan_name($karyawan->id_hrd) }}</td>
+              </tr>
+              <tr>
                 <td>Kantor</td>
                 <td>:</td>
                 <td>{{ $karyawan->kantor ? $karyawan->kantor->nama_kantor : '-' }}</td>
@@ -62,6 +67,11 @@
                 <td>Posisi</td>
                 <td>:</td>
                 <td>{{ $karyawan->posisi ? $karyawan->posisi->nama_posisi : '-' }}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>:</td>
+                <td><span class="badge {{ $karyawan->user->status == 1 ? 'badge-success' : 'badge-danger' }}">{{ $karyawan->user->status == 1 ? 'Aktif' : 'Tidak Aktif' }}</span></td>
               </tr>
               <tr>
                 <td>Awal Bekerja</td>

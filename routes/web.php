@@ -25,16 +25,27 @@ Route::group(['middleware' => ['guest']], function(){
 	Route::post('/login', 'Auth\LoginController@login');
 
 	// Applicant Register
-	Route::get('/applicant/register/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
-	Route::post('/applicant/register/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
-	Route::get('/applicant/register/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
-	Route::post('/applicant/register/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
-	Route::get('/applicant/register/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
-	Route::post('/applicant/register/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
-	Route::get('/applicant/register/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
-	Route::post('/applicant/register/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
-	Route::get('/applicant/register/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
-	Route::post('/applicant/register/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
+	Route::get('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
+	Route::post('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
+	Route::get('/lowongan/{code}/daftar/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
+	Route::post('/lowongan/{code}/daftar/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
+	Route::get('/lowongan/{code}/daftar/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
+	Route::post('/lowongan/{code}/daftar/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
+	Route::get('/lowongan/{code}/daftar/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
+	Route::post('/lowongan/{code}/daftar/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
+	Route::get('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
+	Route::post('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
+	// Route::get('/applicant/register/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
+	// Route::post('/applicant/register/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
+	// Route::get('/applicant/register/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
+	// Route::post('/applicant/register/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
+	// Route::get('/applicant/register/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
+	// Route::post('/applicant/register/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
+	// Route::get('/applicant/register/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
+	// Route::post('/applicant/register/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
+	// Route::get('/applicant/register/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
+	// Route::post('/applicant/register/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
+	//
 
 	// URL Form
 	Route::get('/lowongan/{url}', 'LowonganController@visitForm');
@@ -126,6 +137,9 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/hasil/detail/{id}', 'HasilController@detail');
 	Route::post('/admin/hasil/print', 'HasilController@pdf');
 	Route::post('/admin/hasil/delete', 'HasilController@delete');
+	Route::get('/admin/hasil/json/karyawan', 'HasilController@json_employeer');
+	Route::get('/admin/hasil/json/pelamar', 'HasilController@json_applicant');
+	Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
 
 	// Admin Menu
 	Route::get('/admin/list', 'UserController@admin');
@@ -153,6 +167,7 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/karyawan/delete', 'KaryawanController@delete');
 	Route::get('/admin/karyawan/export', 'KaryawanController@export');
 	Route::post('/admin/karyawan/import', 'KaryawanController@import');
+	Route::get('/admin/karyawan/json', 'KaryawanController@json');
 
 	// Pelamar Menu
 	Route::get('/admin/pelamar', 'PelamarController@index');
@@ -161,6 +176,7 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/pelamar/update', 'PelamarController@update');
 	Route::post('/admin/pelamar/delete', 'PelamarController@delete');
 	Route::get('/admin/pelamar/export', 'PelamarController@export');
+	Route::get('/admin/pelamar/json', 'PelamarController@json');
 
 	// // General Member Menu
 	// Route::get('/admin/umum', 'UserController@general');

@@ -76,6 +76,21 @@
             @endif
           </div>
         </div>
+        <div class="form-group row">
+          <label class="col-lg-2 col-md-3 col-form-label">Status: <span class="text-danger">*</span></label>
+          <div class="col-lg-10 col-md-9">
+            <select name="status" class="form-control {{ $errors->has('status') ? 'is-invalid' : '' }} custom-select">
+                <option value="" disabled selected>--Pilih--</option>
+                <option value="1" {{ old('status') === 1 ? 'selected' : '' }}>Aktif</option>
+                <option value="0" {{ old('status') === 0 ? 'selected' : '' }}>Tidak Aktif</option>
+            </select>
+            @if($errors->has('status'))
+            <div class="invalid-feedback">
+              {{ ucfirst($errors->first('status')) }}
+            </div>
+            @endif
+          </div>
+        </div>
         @if(Auth::user()->role == role_admin())
         <div class="form-group row">
           <label class="col-lg-2 col-md-3 col-form-label">Perusahaan: <span class="text-danger">*</span></label>

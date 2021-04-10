@@ -34,33 +34,38 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
-              <th>Nama</th>
-              <th width="150">Username</th>
-              <th width="150">Email</th>
+              <th width="20"><input type="checkbox"></th>
+              <th>Identitas</th>
+              <th width="100">Username</th>
               <th width="150">Perusahaan</th>
-              <th width="80">Opsi</th>
+              <th width="100">Last Visit</th>
+              <th width="60">Opsi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $i = 1 ?>
             @foreach($hrd as $data)
             <tr>
-              <td>{{ $i }}</td>
-              <td>{{ $data->nama_user }}</td>
+              <td><input type="checkbox"></td>
+              <td>{{ $data->nama_user }}<br><small class="text-muted">{{ $data->email }}</small></td>
               <td>{{ $data->username }}</td>
-              <td>{{ $data->email }}</td>
               <td>{{ $data->perusahaan }}</td>
               <td>
-                <a href="/admin/hrd/edit/{{ $data->id_user }}" class="btn btn-sm btn-info mr-2 mb-2" data-id="{{ $data->id_user }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                @if($data->id_user == Auth::user()->id_user)
-                <a href="#" class="btn btn-sm btn-dark mb-2 not-allowed" data-id="{{ $data->id_user }}" data-toggle="tooltip" data-placement="top" title="Tidak bisa menghapus akun sendiri" style="cursor: not-allowed;"><i class="fa fa-trash"></i></a>
-                @else
-                <a href="#" class="btn btn-sm btn-danger btn-delete mb-2" data-id="{{ $data->id_user }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
-                @endif
+                <span class="d-none">{{ $data->last_visit }}</span>
+                {{ $data->last_visit != '' ? date('d/m/Y', strtotime($data->last_visit)) : '-' }}
+                <br>
+                <small class="text-muted">{{ $data->last_visit != '' ? date('H:i', strtotime($data->last_visit)).' WIB' : '' }}</small>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <a href="/admin/hrd/edit/{{ $data->id_user }}" class="btn btn-sm btn-warning" data-id="{{ $data->id_user }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                  @if($data->id_user == Auth::user()->id_user)
+                  <a href="#" class="btn btn-sm btn-dark not-allowed" data-id="{{ $data->id_user }}" data-toggle="tooltip" data-placement="top" title="Tidak bisa menghapus akun sendiri" style="cursor: not-allowed;"><i class="fa fa-trash"></i></a>
+                  @else
+                  <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id_user }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                  @endif
+                </div>
               </td>
             </tr>
-            <?php $i++; ?>
             @endforeach
           </tbody>
         </table>

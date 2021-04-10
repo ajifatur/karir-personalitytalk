@@ -44,35 +44,37 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th width="50">No.</th>
-                            <th width="150">Jabatan</th>
-                            <th width="150">Tes</th>
-                            <th>Keahlian</th>
+                            <th width="20"><input type="checkbox"></th>
+                            <th>Jabatan</th>
                             <th width="50">Karyawan</th>
                             @if(Auth::user()->role == role_admin())
                             <th width="200">Perusahaan</th>
                             @endif
-                            <th width="80">Opsi</th>
+                            <th width="60">Opsi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php $i = 1; @endphp
                         @foreach($posisi as $data)
                         <tr>
-                            <td>{{ $i }}</td>
-                            <td>{{ ucwords($data->nama_posisi) }}</td>
-                            <td>{{ $data->tes }}</td>
-                            <td>{{ $data->keahlian }}</td>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                {{ ucwords($data->nama_posisi) }}
+                                <br>
+                                <small class="text-muted"><i class="fa fa-clipboard mr-2"></i>{{ $data->tes }}</small>
+                                <br>
+                                <small class="text-muted"><i class="fa fa-thumbs-up mr-2"></i>{{ $data->keahlian }}</small>
+                            </td>
                             <td>{{ number_format(count_karyawan_by_jabatan($data->id_posisi),0,'.','.') }}</td>
                             @if(Auth::user()->role == role_admin())
                             <td>{{ $data->perusahaan }}<br><small class="text-muted">{{ $data->nama_lengkap }}</small></td>
                             @endif
                             <td>
-                                <a href="/admin/posisi/edit/{{ $data->id_posisi }}" class="btn btn-sm btn-info mr-2 mb-2" data-id="{{ $data->id_posisi }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                                <a href="#" class="btn btn-sm btn-danger btn-delete mr-2 mb-2" data-id="{{ $data->id_posisi }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                                <div class="btn-group">
+                                    <a href="/admin/posisi/edit/{{ $data->id_posisi }}" class="btn btn-sm btn-warning" data-id="{{ $data->id_posisi }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                                    <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id_posisi }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                                </div>
                             </td>
                         </tr>
-                        @php $i++; @endphp
                         @endforeach
                     </tbody>
                 </table>

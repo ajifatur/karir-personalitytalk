@@ -49,47 +49,15 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
+              <th width="20"><input type="checkbox"></th>
               <th>Nama</th>
               <th width="150">Jabatan</th>
-              @if(Auth::user()->role == role_admin())
-              <th width="200">Perusahaan</th>
-              @endif
+              <th width="150">Perusahaan</th>
               <th width="100">Tes</th>
-              <th width="120">Waktu Tes</th>
+              <th width="100">Waktu Tes</th>
               <th width="40">Opsi</th>
             </tr>
           </thead>
-          <tbody>
-            <?php $i = 1 ?>
-            @foreach($hasil as $data)
-            <tr>
-              <td>{{ $i }}</td>
-              <td><a href="/admin/hasil/detail/{{ $data->id_hasil }}">{{ ucwords($data->id_user->nama_user) }}</a></td>
-              <td>
-      				  @if($data->posisi != null)
-      				  	<span>{{ $data->posisi->nama_posisi }}</span><br><small class="text-muted">{{ $data->role->nama_role }}</small>
-      				  @else
-      				  	<span>{{ $data->role->nama_role }}</span>
-      				  @endif
-      			  </td>
-              @if(Auth::user()->role == role_admin())
-              <td>{{ get_perusahaan_name($data->id_hrd) }}<br><small class="text-muted">{{ get_hrd_name($data->id_hrd) }}</small></td>
-              @endif
-              <td>{{ $data->nama_tes }}</td>
-              <td>
-                <span class="d-none">{{ $data->test_at != null ? $data->test_at : '' }}</span>
-                {{ $data->test_at != null ? date('d/m/Y', strtotime($data->test_at)) : '-' }}
-                <br>
-                <small class="text-muted">{{ $data->test_at != null ? date('H:i', strtotime($data->test_at)).' WIB' : '' }}</small>
-      			  </td>
-              <td>
-                <a href="#" class="btn btn-sm btn-block btn-danger btn-delete mb-2" data-id="{{ $data->id_hasil }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
-              </td>
-            </tr>
-            <?php $i++; ?>
-            @endforeach
-          </tbody>
         </table>
         <form id="form-delete" class="d-none" method="post" action="/admin/hasil/delete">
             {{ csrf_field() }}
@@ -107,7 +75,19 @@
 <script type="text/javascript">
   $(document).ready(function() {
     // Call the dataTables jQuery plugin
-    generate_datatable("#dataTable");
+    generate_datatable("#dataTable", true, {
+      "url": generate_json_url("/admin/hasil/json/pelamar{{ strpos(\Request::getRequestUri(), '?') ? '?'.explode('?', \Request::getRequestUri())[1] : '' }}"),
+      "columns": [
+        {data: 'checkbox', name: 'checkbox'},
+        {data: 'name', name: 'name'},
+        {data: 'posisi', name: 'posisi'},
+        {data: 'company', name: 'company', visible: {{ Auth::user()->role == role_admin() ? 'true' : 'false' }}},
+        {data: 'nama_tes', name: 'nama_tes'},
+        {data: 'datetime', name: 'datetime'},
+        {data: 'options', name: 'options', orderable: false},
+      ],
+      "order": [5, 'desc']
+    });
 
     // Button Not Allowed
     $(document).on("click", ".not-allowed", function(e){

@@ -25,7 +25,7 @@
             <div class="row">
               <div class="col-sm-auto ml-sm-auto">
                 <p class="font-weight-bold text-md-right">
-                  <small>Melamar tanggal {{ generate_date($pelamar->created_at) }}, pukul {{ date('H:i:s', strtotime($pelamar->created_at)) }}</small>
+                  <small>Melamar tanggal {{ generate_date($pelamar->pelamar_at) }}, pukul {{ date('H:i:s', strtotime($pelamar->pelamar_at)) }}</small>
                   <br>
                   Untuk Jabatan: {{ $pelamar->posisi->nama_posisi }}
                 </p>

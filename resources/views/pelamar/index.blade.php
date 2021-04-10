@@ -44,44 +44,17 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
+              <th width="20"><input type="checkbox"></th>
               <th>Nama</th>
               <th width="100">Username</th>
-              <th width="100">Posisi</th>
-              <th width="120">Tanggal Daftar</th>
-              @if(Auth::user()->role == role_admin())
-              <th width="200">Perusahaan</th>
-              @endif
-              <th width="80">Opsi</th>
+              <th width="150">Jabatan</th>
+              <th width="120">Waktu Daftar</th>
+              <th width="150">Perusahaan</th>
+              <th width="40">Opsi</th>
             </tr>
           </thead>
-          <tbody>
-            <?php $i = 1 ?>
-            @foreach($pelamar as $data)
-            <tr>
-              <td>{{ $i }}</td>
-              <td><a href="/admin/pelamar/detail/{{ $data->id_pelamar }}">{{ ucwords($data->nama_lengkap) }}</a></td>
-              <td>{{ $data->id_user->username }}</td>
-              <td>{{ $data->posisi != null ? $data->posisi->nama_posisi : '' }}</td>
-              <td>
-                <span class="d-none">{{ $data->created_at }}</span>
-      					{{ date('d/m/Y', strtotime($data->created_at)) }}
-                <br>
-                <span class="small text-muted">{{ date('H:i', strtotime($data->created_at)) }} WIB</span>
-      			  </td>
-              @if(Auth::user()->role == role_admin())
-              <td>{{ $data->id_hrd->perusahaan }}<br><small class="text-muted">{{ $data->id_hrd->nama_lengkap }}</small></td>
-              @endif
-              <td>
-                <a href="/admin/pelamar/edit/{{ $data->id_pelamar }}" class="btn btn-sm btn-info mr-2 mb-2 {{ $data->id_user->role != 4 ? 'not-allowed' : '' }}" data-id="{{ $data->id_pelamar }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                <a href="#" class="btn btn-sm btn-danger mb-2 {{ $data->id_user->role != 4 ? 'not-allowed' : 'btn-delete' }}" data-id="{{ $data->id_pelamar }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
-              </td>
-            </tr>
-            <?php $i++; ?>
-            @endforeach
-          </tbody>
         </table>
-        <form id="form-delete" class="d-none" method="post" action="/admin/karyawan/delete">
+        <form id="form-delete" class="d-none" method="post" action="/admin/pelamar/delete">
             {{ csrf_field() }}
             <input type="hidden" name="id">
         </form>
@@ -91,20 +64,25 @@
   
 @endsection
 
-@section('css-extra')
-
-<!-- Custom styles for this page -->
-<link href="{{ asset('templates/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-
-@endsection
-
 @section('js-extra')
 
 <!-- JavaScripts -->
 <script type="text/javascript">
   $(document).ready(function() {
     // Call the dataTables jQuery plugin
-    generate_datatable("#dataTable");
+    generate_datatable("#dataTable", true, {
+      "url": generate_json_url("/admin/pelamar/json{{ strpos(\Request::getRequestUri(), '?') ? '?'.explode('?', \Request::getRequestUri())[1] : '' }}"),
+      "columns": [
+        {data: 'checkbox', name: 'checkbox'},
+        {data: 'name', name: 'name'},
+        {data: 'username', name: 'username'},
+        {data: 'posisi', name: 'posisi'},
+        {data: 'datetime', name: 'datetime'},
+        {data: 'company', name: 'company', visible: {{ Auth::user()->role == role_admin() ? 'true' : 'false' }}},
+        {data: 'options', name: 'options', orderable: false},
+      ],
+      "order": [4, 'desc']
+    });
 
     // Button Not Allowed
     $(document).on("click", ".not-allowed", function(e){

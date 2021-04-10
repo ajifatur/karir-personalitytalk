@@ -54,17 +54,17 @@ class ApplicantRegisterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function showRegistrationFormStep1()
+    public function showRegistrationFormStep1($code)
     {
         // Check session
-        $url_form = Session::get('url');
+        // $url_form = Session::get('url');
         $email = Session::get('email');
 
         // Jika tidak ada session url
-        if($url_form == null){
-    		$this->removePhotoAndSession();
-            abort(404);
-        }
+        // if($url_form == null){
+    	// 	$this->removePhotoAndSession();
+        //     abort(404);
+        // }
 
         // Get data temp
         $temp = Temp::where('email','=',$email)->first();
@@ -98,7 +98,8 @@ class ApplicantRegisterController extends Controller
         	'previousPath' => $previousPath,
         	'truePreviousPath' => $truePreviousPath,
             'step' => $step,
-            'url_form' => $url_form,
+            // 'url_form' => $url_form,
+            'url_form' => $code,
         ]);
     }
 
@@ -117,7 +118,7 @@ class ApplicantRegisterController extends Controller
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
             'agama' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email',
             'nomor_hp' => 'required',
             'alamat' => 'required',
             'pendidikan_terakhir' => 'required',
@@ -128,7 +129,7 @@ class ApplicantRegisterController extends Controller
         // Mengecek jika ada error
         if($validator->fails()){
             // Kembali ke halaman sebelumnya dan menampilkan pesan error
-            return redirect()->back()->withErrors($validator->errors())->withInput()->with(['url' => $request->url]);
+            return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         // Jika tidak ada error
         else{
@@ -161,7 +162,8 @@ class ApplicantRegisterController extends Controller
         }
 
         // Redirect
-        return redirect('applicant/register/step-2');
+        // return redirect('applicant/register/step-2');
+        return redirect('/lowongan/'.$request->url.'/daftar/step-2');
     }
 
     /**
@@ -169,11 +171,12 @@ class ApplicantRegisterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function showRegistrationFormStep2()
+    public function showRegistrationFormStep2($code)
     {
     	// Set variable
         $email = Session::get('email');
-        $url_form = Session::get('url');
+        // $url_form = Session::get('url');
+        // $url_form = $code;
     	$step = 2;
     	$previousURL = URL::previous();
     	$previousURLArray = explode('/', $previousURL);
@@ -190,16 +193,17 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, 'step-'))){
-    		$this->removePhotoAndSession();
-    		return redirect('applicant/register/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, 'step-')) || !array_key_exists('step_1', $array)){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-2', [
             'array' => $array,
         	'previousPath' => $previousPath,
             'step' => $step,
-            'url_form' => $url_form,
+            'url_form' => $code,
         ]);
     }
 
@@ -245,7 +249,8 @@ class ApplicantRegisterController extends Controller
         }
 
         // Redirect
-        return redirect('applicant/register/step-3');
+        // return redirect('applicant/register/step-3');
+        return redirect('/lowongan/'.$request->url.'/daftar/step-3');
     }
 
     /**
@@ -253,11 +258,11 @@ class ApplicantRegisterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function showRegistrationFormStep3()
+    public function showRegistrationFormStep3($code)
     {
     	// Set variable
         $email = Session::get('email');
-        $url_form = Session::get('url');
+        // $url_form = Session::get('url');
     	$step = 3;
     	$previousURL = URL::previous();
     	$previousURLArray = explode('/', $previousURL);
@@ -274,16 +279,17 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, 'step-'))){
-    		$this->removePhotoAndSession();
-    		return redirect('applicant/register/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, 'step-'))){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-3', [
             'array' => $array,
         	'previousPath' => $previousPath,
             'step' => $step,
-            'url_form' => $url_form,
+            'url_form' => $code,
         ]);
     }
 
@@ -329,7 +335,8 @@ class ApplicantRegisterController extends Controller
         }
 
         // Redirect
-        return redirect('applicant/register/step-4');
+        // return redirect('applicant/register/step-4');
+        return redirect('/lowongan/'.$request->url.'/daftar/step-4');
     }
 
     /**
@@ -337,11 +344,11 @@ class ApplicantRegisterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function showRegistrationFormStep4()
+    public function showRegistrationFormStep4($code)
     {
     	// Set variable
         $email = Session::get('email');
-        $url_form = Session::get('url');
+        // $url_form = Session::get('url');
     	$step = 4;
     	$previousURL = URL::previous();
     	$previousURLArray = explode('/', $previousURL);
@@ -360,16 +367,17 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, 'step-'))){
-    		$this->removePhotoAndSession();
-    		return redirect('applicant/register/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, 'step-'))){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-4', [
             'array' => $array,
         	'previousPath' => $previousPath,
             'step' => $step,
-            'url_form' => $url_form,
+            'url_form' => $code,
         ]);
     }
 
@@ -414,7 +422,8 @@ class ApplicantRegisterController extends Controller
         }
 
         // Redirect
-        return redirect('applicant/register/step-5');
+        // return redirect('applicant/register/step-5');
+        return redirect('/lowongan/'.$request->url.'/daftar/step-5');
     }
 
     /**
@@ -422,11 +431,11 @@ class ApplicantRegisterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function showRegistrationFormStep5()
+    public function showRegistrationFormStep5($code)
     {
     	// Set variable
         $email = Session::get('email');
-        $url_form = Session::get('url');
+        // $url_form = Session::get('url');
     	$step = 5;
     	$previousURL = URL::previous();
     	$previousURLArray = explode('/', $previousURL);
@@ -435,7 +444,7 @@ class ApplicantRegisterController extends Controller
     	$currentPath = 'step-5';
     	
     	// Keahlian dari posisi lowongan
-    	$lowongan = Lowongan::where('url_lowongan','=',$url_form)->first();
+    	$lowongan = Lowongan::where('url_lowongan','=',$code)->first();
     	$posisi = Posisi::find($lowongan->posisi);
     	$keahlian = explode(',', $posisi->keahlian);
 
@@ -450,17 +459,18 @@ class ApplicantRegisterController extends Controller
         }
 
     	// Delete session
-    	if(!is_int(strpos($previousPath, $truePreviousPath)) && !is_int(strpos($previousPath, $currentPath))){
-    		$this->removePhotoAndSession();
-    		return redirect('applicant/register/step-1');
-		}
+  //   	if(!is_int(strpos($previousPath, $truePreviousPath)) && !is_int(strpos($previousPath, $currentPath))){
+  //   		$this->removePhotoAndSession();
+  //   		// return redirect('applicant/register/step-1');
+  //           return redirect('/lowongan/'.$code.'/daftar/step-1');
+		// }
 
         return view('auth/register-step-5', [
             'array' => $array,
             'keahlian' => $keahlian,
         	'previousPath' => $previousPath,
             'step' => $step,
-            'url_form' => $url_form,
+            'url_form' => $code,
         ]);
     }
 
@@ -559,7 +569,7 @@ class ApplicantRegisterController extends Controller
             $pelamar->foto_ijazah = array_key_exists('step_3', $temp_array) ? $temp_array['step_3']['foto_ijazah'] : '';
             $pelamar->id_user = $akun->id_user;
             $pelamar->posisi = $lowongan->id_lowongan;
-            $pelamar->created_at = date("Y-m-d H:i:s");
+            $pelamar->pelamar_at = date("Y-m-d H:i:s");
             $pelamar->save();
 
             // Ambil data akun pelamar
@@ -626,7 +636,7 @@ class ApplicantRegisterController extends Controller
         }
 
         // Remove session
-        Session::forget('url');
+        // Session::forget('url');
         Session::forget('email');
     }
 
@@ -647,11 +657,11 @@ class ApplicantRegisterController extends Controller
         	}
 
             // Delete data temp
-            $temp->delete();
+            // $temp->delete();
         }
 
     	// And then remove session
-        Session::forget('url');
+        // Session::forget('url');
     	Session::forget('email');
     }
 }

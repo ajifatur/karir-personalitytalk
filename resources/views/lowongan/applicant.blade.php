@@ -27,21 +27,26 @@
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th width="50">No.</th>
+              <th width="20"><input type="checkbox"></th>
               <th>Nama</th>
-              <th width="150">No. HP</th>
-              <th width="120">Tanggal Daftar</th>
+              <th width="100">Username</th>
+              <th width="120">Waktu Daftar</th>
               <th width="120">Hasil</th>
-              <th width="80">Opsi</th>
+              <th width="60">Opsi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $i = 1 ?>
             @foreach($pelamar as $data)
             <tr>
-              <td>{{ $i }}</td>
-              <td><a href="/admin/pelamar/detail/{{ $data->id_pelamar }}">{{ ucwords($data->nama_lengkap) }}</a></td>
-              <td>{{ $data->nomor_hp }}</td>
+              <td><input type="checkbox"></td>
+              <td>
+                <a href="/admin/pelamar/detail/{{ $data->id_pelamar }}">{{ ucwords($data->nama_lengkap) }}</a>
+                <br>
+                <small class="text-muted"><i class="fa fa-envelope mr-2"></i>{{ $data->email }}</small>
+                <br>
+                <small class="text-muted"><i class="fa fa-phone mr-2"></i>{{ $data->nomor_hp }}</small>
+              </td>
+              <td>{{ $data->username }}</td>
               <td>
                 <span class="d-none">{{ $data->created_at }}</span>
                 {{ date('d/m/Y', strtotime($data->created_at)) }}
@@ -52,11 +57,12 @@
                 <span class="badge badge-{{ $data->badge_color }}">{{ $data->hasil }}</span>
               </td>
               <td>
-                <a href="/admin/pelamar/edit/{{ $data->id_pelamar }}" class="btn btn-sm btn-info mr-2 mb-2 {{ $data->isKaryawan ? 'not-allowed' : '' }}" data-id="{{ $data->id_pelamar }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                <a href="#" class="btn btn-sm btn-danger mb-2 {{ $data->isKaryawan ? 'not-allowed' : 'btn-delete' }}" data-id="{{ $data->id_pelamar }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                <div class="btn-group">
+                  <a href="/admin/pelamar/edit/{{ $data->id_pelamar }}" class="btn btn-sm btn-warning {{ $data->isKaryawan ? 'not-allowed' : '' }}" data-id="{{ $data->id_pelamar }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                  <a href="#" class="btn btn-sm btn-danger {{ $data->isKaryawan ? 'not-allowed' : 'btn-delete' }}" data-id="{{ $data->id_pelamar }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                </div>
               </td>
             </tr>
-            <?php $i++; ?>
             @endforeach
           </tbody>
         </table>

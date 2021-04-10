@@ -16,13 +16,11 @@
   <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
       <div></div>
-      @if(Auth::user()->role == role_admin())
       <div>
           <a class="btn btn-sm btn-primary btn-print" href="#">
             <i class="fas fa-print fa-sm fa-fw text-gray-400"></i> Cetak
           </a>
       </div>
-      @endif
     </div>
     <div class="card-body">
       <form id="form" class="d-none" method="post" action="/admin/hasil/print" target="_blank">

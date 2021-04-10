@@ -53,7 +53,7 @@ class Pelamar extends Model
 		'foto_ijazah',
         'id_user',
 		'posisi',
-		'created_at',
+		'pelamar_at',
 	];
 
     /**

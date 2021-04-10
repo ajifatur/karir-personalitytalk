@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -19,18 +20,18 @@ use App\User;
 class KaryawanController extends Controller
 {
     /**
-     * Menampilkan data karyawan
+     * Menampilkan JSON data karyawan
      * 
      * @return \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function json(Request $request)
     {
     	// Get data karyawan
         if(Auth::user()->role == role_admin()){
 			if($request->query('hrd') != null){
             	$hrd = HRD::find($request->query('hrd'));
-    	    	$karyawan = $hrd ? Karyawan::where('id_hrd','=',$request->query('hrd'))->get() : Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
+    	    	$karyawan = $hrd ? Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_hrd','=',$request->query('hrd'))->get() : Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
 			}
 			else{
     	    	$karyawan = Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
@@ -42,18 +43,49 @@ class KaryawanController extends Controller
 			$kantor = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
         }
         
-    	// Setting data karyawan
-    	foreach($karyawan as $data){
-    	    $data->id_user = User::find($data->id_user);
-    	    $data->id_hrd = HRD::find($data->id_hrd);
-    	    $data->posisi = Posisi::find($data->posisi);
-    	    $data->kantor = Kantor::find($data->kantor);
-    	}
-
+        // Return
+        return DataTables::of($karyawan)
+        ->addColumn('checkbox', '<input type="checkbox">')
+        ->addColumn('name', '
+            <span class="d-none">{{ $nama_user }}</span>
+            <a href="/admin/karyawan/detail/{{ $id_karyawan }}">{{ ucwords($nama_user) }}</a>
+            <br>
+            <small class="text-muted"><i class="fa fa-envelope mr-2"></i>{{ $email }}</small>
+            <br>
+            <small class="text-muted"><i class="fa fa-phone mr-2"></i>{{ $nomor_hp }}</small>
+        ')
+        ->editColumn('posisi', '
+            {{ get_posisi_name($posisi) }}
+        ')
+        ->editColumn('status', '
+            <span class="badge {{ $status == 1 ? "badge-success" : "badge-danger" }}">{{ $status == 1 ? "Aktif" : "Tidak Aktif" }}</span>
+        ')
+        ->addColumn('company', '
+            {{ get_perusahaan_name($id_hrd) }}
+            <br>
+            <small class="text-muted">{{ get_hrd_name($id_hrd) }}</small>
+        ')
+        ->addColumn('options', '
+            <div class="btn-group">
+                <a href="/admin/karyawan/detail/{{ $id_karyawan }}" class="btn btn-sm btn-info" data-id="{{ $id_karyawan }}" data-toggle="tooltip" title="Lihat Detail"><i class="fa fa-eye"></i></a>
+                <a href="/admin/karyawan/edit/{{ $id_karyawan }}" class="btn btn-sm btn-warning" data-id="{{ $id_karyawan }}" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+                <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_karyawan }}" data-toggle="tooltip" title="Hapus"><i class="fa fa-trash"></i></a>
+            </div>
+        ')
+        ->removeColumn('password')
+        ->rawColumns(['checkbox', 'name', 'username', 'posisi', 'status', 'company', 'options'])
+        ->make(true);
+    }
+    /**
+     * Menampilkan data karyawan
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
     	// View
-        return view('karyawan/index', [
-            'karyawan' => $karyawan,
-        ]);
+        return view('karyawan/index');
     }
 
     /**
@@ -64,7 +96,7 @@ class KaryawanController extends Controller
     public function create()
     {
     	// Get data HRD
-    	$hrd = HRD::orderBy('lowongan.status','desc');
+    	$hrd = HRD::all();
     	
     	// Get data jabatan dan kantor
         if(Auth::user()->role == role_admin()){
@@ -102,7 +134,7 @@ class KaryawanController extends Controller
         }
 
         // Validasi
-        $validator = Validator::make($request->orderBy('lowongan.status','desc'), [
+        $validator = Validator::make($request->all(), [
             'nama_lengkap' => 'required',
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
@@ -151,7 +183,7 @@ class KaryawanController extends Controller
             $user->foto = $file_name != '' ? $file_name : $request->foto;
             $user->role = role_karyawan();
             $user->has_access = 0;
-            $user->status = 1;
+            $user->status = $request->status;
             $user->last_visit = date("Y-m-d H:i:s");
             $user->created_at = date("Y-m-d H:i:s");
             $user->save();
@@ -227,10 +259,10 @@ class KaryawanController extends Controller
     	// Get data HRD dan karyawan
     	if(Auth::user()->role == role_hrd()){
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-            $karyawan = Karyawan::where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->first();
+            $karyawan = Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->first();
         }
         else{
-            $karyawan = Karyawan::find($id);
+            $karyawan = Karyawan::join('users','karyawan.id_user','=','users.id_user')->find($id);
         }
         
     	// Get data jabatan
@@ -271,12 +303,13 @@ class KaryawanController extends Controller
     public function update(Request $request)
     {
         // Validasi
-        $validator = Validator::make($request->orderBy('lowongan.status','desc'), [
+        $validator = Validator::make($request->all(), [
             'nama_lengkap' => 'required',
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
             'email' => 'required|email',
             'nomor_hp' => 'required|numeric',
+            'status' => 'required',
             'jabatan' => 'required',
             'kantor' => 'required',
             // 'file' => Auth::user()->role == role_hrd() ? $request->foto == '' ? 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048' : '' : '',
@@ -309,7 +342,7 @@ class KaryawanController extends Controller
             $karyawan->nik = $request->nik != '' ? $request->nik : '';
             $karyawan->alamat = $request->alamat != '' ? $request->alamat : '';
             $karyawan->pendidikan_terakhir = $request->pendidikan_terakhir != '' ? $request->pendidikan_terakhir : '';
-            $karyawan->awal_bekerja = generate_date_format($request->awal_bekerja, 'y-m-d');
+            $karyawan->awal_bekerja = $request->awal_bekerja != '' ? generate_date_format($request->awal_bekerja, 'y-m-d') : null;
             $karyawan->posisi = $request->jabatan;
             $karyawan->kantor = $request->kantor;
             $karyawan->save();
@@ -321,6 +354,7 @@ class KaryawanController extends Controller
             $user->jenis_kelamin = $request->jenis_kelamin;
             $user->email = $request->email;
             $user->foto = $file_name != '' ? $file_name : $user->foto;
+            $user->status = $request->status;
             $user->save();
         }
 
