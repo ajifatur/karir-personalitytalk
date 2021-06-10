@@ -446,18 +446,18 @@ class KaryawanController extends Controller
 
                     // Konversi format tanggal lahir
                     if($data[3] != ''){
-                        $tanggal_lahir = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($data[3]);
+                        $tanggal_lahir = $this->transformDate($data[3]);
                         $tanggal_lahir = (array)$tanggal_lahir;
                     }
 
                     // Konversi format awal bekerja
                     if($data[9] != ''){
-                        $awal_bekerja = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($data[9]);
+                        $awal_bekerja = $this->transformDate($data[9]);
                         $awal_bekerja = (array)$awal_bekerja;
                     }
 
                     // Generate username
-                    $data_user = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest()->first();
+                    $data_user = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest('username')->first();
                     if(!$data_user){
                         $username = generate_username(null, $hrd->kode);
                     }
@@ -478,28 +478,30 @@ class KaryawanController extends Controller
                     $user->role = role_karyawan();
                     $user->has_access = 0;
                     $user->created_at = date("Y-m-d H:i:s");
-                    $user->save();
-        
-                    // Ambil data akun karyawan
-                    $akun = User::where('username','=',$user->username)->first();
-        
-                    // Menambah data karyawan
-                    $karyawan = new Karyawan;
-                    $karyawan->id_user = $akun->id_user;
-                    $karyawan->id_hrd = $hrd->id_hrd;
-                    $karyawan->nama_lengkap = $akun->nama_user;
-                    $karyawan->tanggal_lahir = $akun->tanggal_lahir;
-                    $karyawan->jenis_kelamin = $akun->jenis_kelamin;
-                    $karyawan->email = $akun->email;
-                    $karyawan->nomor_hp = $data[6];
-                    $karyawan->nik_cis = '';
-                    $karyawan->nik = '';
-                    $karyawan->alamat = $data[7] != '' ? $data[7] : '';
-                    $karyawan->pendidikan_terakhir = $data[8] != '' ? $data[8] : '';
-                    $karyawan->awal_bekerja = $data[9] != '' ? date('Y-m-d', strtotime($awal_bekerja['date'])) : null;
-                    $karyawan->posisi = get_posisi_id($hrd->id_hrd, $data[10]);
-                    $karyawan->kantor = get_kantor_id($hrd->id_hrd, $data[11]);
-                    $karyawan->save();
+					
+					// Simpan data user
+                    if($user->save()){
+						// Ambil data akun karyawan
+						$akun = User::where('username','=',$user->username)->first();
+
+						// Menambah data karyawan
+						$karyawan = new Karyawan;
+						$karyawan->id_user = $akun->id_user;
+						$karyawan->id_hrd = $hrd->id_hrd;
+						$karyawan->nama_lengkap = $akun->nama_user;
+						$karyawan->tanggal_lahir = $akun->tanggal_lahir;
+						$karyawan->jenis_kelamin = $akun->jenis_kelamin;
+						$karyawan->email = $akun->email;
+						$karyawan->nomor_hp = $data[6];
+						$karyawan->nik_cis = '';
+						$karyawan->nik = '';
+						$karyawan->alamat = $data[7] != '' ? $data[7] : '';
+						$karyawan->pendidikan_terakhir = $data[8] != '' ? $data[8] : '';
+						$karyawan->awal_bekerja = $data[9] != '' ? date('Y-m-d', strtotime($awal_bekerja['date'])) : null;
+						$karyawan->posisi = get_posisi_id($hrd->id_hrd, $data[10]);
+						$karyawan->kantor = get_kantor_id($hrd->id_hrd, $data[11]);
+						$karyawan->save();
+					}
                 }
                 // Jika data user ditemukan
                 else{
@@ -535,4 +537,18 @@ class KaryawanController extends Controller
             return redirect('/admin/karyawan')->with(['message' => 'Impor data gagal! Data di Excel kosong.']);
         }
     }
+	
+	/**
+	 * Transform a date value into a Carbon object.
+	 *
+	 * @return \Carbon\Carbon|null
+	 */
+	public function transformDate($value)
+	{
+		try {
+			return \Carbon\Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value));
+		} catch (\ErrorException $e) {
+			return ['date' => generate_date_format($value, 'y-m-d')];
+		}
+	}
 }
