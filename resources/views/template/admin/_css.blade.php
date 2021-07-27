@@ -1,9 +1,12 @@
 <style type="text/css">
     /* Sidebar */
     .sidebar-toggled .sidebar-brand-icon {display: block;}
-    @media(min-width: 768px){ .sidebar-brand-icon {display: none;} }
+    @media(min-width: 768px){
+        .sidebar-brand-icon {display: none;}
+        .sidebar.toggled .nav-item .nav-link span {margin-top: 0; margin-bottom: .25rem;}
+    }
     .sidebar .sidebar-heading {padding: .5rem 1rem;}
-    .sidebar .nav-item.active {background-color: #f8f9fc;}
+    .sidebar .nav-item.active {background-color: #ebecef;}
     .sidebar .nav-item.active .nav-link {color: #333;}
     .sidebar .nav-item.active .nav-link i {color: #333;}
     .sidebar .nav-item.active .nav-link[data-toggle=collapse]::after {color: #333;}

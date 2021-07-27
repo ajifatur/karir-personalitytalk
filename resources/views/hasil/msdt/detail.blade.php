@@ -2,68 +2,85 @@
 
 @section('content')
 
-  <!-- Page Heading -->
-  <div class="page-heading shadow d-flex justify-content-between align-items-center">
-    <h1 class="h3 text-gray-800">Data Hasil Tes</h1>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><i class="fas fa-tachometer-alt"></i></li>
-      <li class="breadcrumb-item"><a href="/admin/hasil">Hasil Tes</a></li>
-      <li class="breadcrumb-item active" aria-current="page">MSDT</li>
-    </ol>
-  </div>
+<!-- Page Heading -->
+<div class="page-heading shadow d-flex justify-content-between align-items-center">
+  <h1 class="h3 text-gray-800">Data Hasil Tes</h1>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fas fa-tachometer-alt"></i></li>
+    <li class="breadcrumb-item"><a href="/admin/hasil">Hasil Tes</a></li>
+    <li class="breadcrumb-item active" aria-current="page">MSDT</li>
+  </ol>
+</div>
 
-  <!-- Card -->
-  <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-      <div></div>
-      <div>
-          <a class="btn btn-sm btn-primary btn-print" href="#">
-            <i class="fas fa-print fa-sm fa-fw text-gray-400"></i> Cetak
-          </a>
-      </div>
-    </div>
-      <div class="card-body">
-        <form id="form" class="d-none" method="post" action="/admin/hasil/print" target="_blank">
-            {{ csrf_field() }}
-            <input type="hidden" name="id_hasil" value="{{ $hasil->id_hasil }}">
-            <input type="hidden" name="nama" value="{{ $user->nama_user }}">
-            <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' }}">
-            <input type="hidden" name="jenis_kelamin" value="{{ $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}">
-            <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}">
-            <input type="hidden" name="tes" value="{{ $hasil->nama_tes }}">
-            <input type="hidden" name="path" value="{{ $hasil->path }}">
-        </form>
-        <div class="row">
-          <div class="col-auto mx-auto">
-            <div class="table-responsive">
-                <table class="table table-borderless table-identity">
-                  <tr>
-                    <td width="200">Nama: {{ $user->nama_user }}</td>
-                    <td width="200">Usia: {{ generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' }}</td>
-                    <td width="200">Jenis Kelamin: {{ $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}</td>
-                    <td width="200">Posisi: {{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}</td>
-                    <td width="200">Tes: {{ $hasil->nama_tes }}</td>
-                  </tr>
-                </table>
-            </div>
+<div class="row mb-4">
+  <div class="col-xl-3 mb-3">
+      <div class="card shadow">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Nama:</b><br>{{ $user->nama_user }} {{ $user->role == 6 ? '('.$user->email.')' : '' }}</p>
+                  </div>
+                  @if($user->role != 6)
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Usia:</b><br>{{ $user->role != 6 ? generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' : '-' }}</p>
+                  </div>
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Jenis Kelamin:</b><br>{{ $user->role != 6 ? $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' : '-' }}</p>
+                  </div>
+                  @endif
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Posisi:</b><br>{{ $user->role != 6 ? !empty($user_desc) ? $user_desc->nama_posisi : $role->nama_role : $posisi_magang }}</p>
+                  </div>
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Role:</b><br>{{ $role->nama_role }}</p>
+                  </div>
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Tes:</b><br>{{ $hasil->nama_tes }}</p>
+                  </div>
+              </div>
           </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col">
-            <div class="row">
-              <div class="col">
-                <p class="h4 text-center font-weight-bold mb-5">Tipe: {{ $hasil->hasil['tipe'] }}</p>
-                @foreach($keterangan->keterangan as $ket)
-                    @if($ket['tipe'] == strtolower($hasil->hasil['tipe']))
-                        {!! html_entity_decode($ket['keterangan']) !!}
-                    @endif
-                @endforeach
-          </div>
-            </div>
-          </div>
-        </div>
       </div>
   </div>
+  <div class="col-xl-9">
+    <!-- Card -->
+    <div class="card shadow">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <div></div>
+        <div>
+            <a class="btn btn-sm btn-primary btn-print" href="#">
+              <i class="fas fa-print fa-sm fa-fw text-gray-400"></i> Cetak
+            </a>
+        </div>
+      </div>
+        <div class="card-body">
+          <form id="form" class="d-none" method="post" action="/admin/hasil/print" target="_blank">
+              {{ csrf_field() }}
+              <input type="hidden" name="id_hasil" value="{{ $hasil->id_hasil }}">
+              <input type="hidden" name="nama" value="{{ $user->nama_user }}">
+              <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' }}">
+              <input type="hidden" name="jenis_kelamin" value="{{ $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}">
+              <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}">
+              <input type="hidden" name="tes" value="{{ $hasil->nama_tes }}">
+              <input type="hidden" name="path" value="{{ $hasil->path }}">
+          </form>
+          <div class="row mt-3">
+            <div class="col">
+              <div class="row">
+                <div class="col">
+                  <p class="h4 text-center font-weight-bold mb-5">Tipe: {{ $hasil->hasil['tipe'] }}</p>
+                  @foreach($keterangan->keterangan as $ket)
+                      @if($ket['tipe'] == strtolower($hasil->hasil['tipe']))
+                          {!! html_entity_decode($ket['keterangan']) !!}
+                      @endif
+                  @endforeach
+            </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
   
 @endsection
 

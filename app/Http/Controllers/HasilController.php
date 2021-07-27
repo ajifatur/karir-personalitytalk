@@ -323,7 +323,7 @@ class HasilController extends Controller
         }
         else{
             $tes = Tes::find($hasil->id_tes);
-            if($hasil->path != 'disc-40-soal' && $hasil->path != 'disc-24-soal' && $hasil->path != 'papikostick' && $hasil->path != 'sdi' && $hasil->path != 'msdt') abort(404);
+            if($hasil->path != 'disc-40-soal' && $hasil->path != 'disc-24-soal' && $hasil->path != 'papikostick' && $hasil->path != 'sdi' && $hasil->path != 'msdt' && $hasil->path != 'ist') abort(404);
             $hasil->hasil = json_decode($hasil->hasil, true);
 
         	// User
@@ -353,6 +353,10 @@ class HasilController extends Controller
         // Jika tes MSDT
         elseif($hasil->path == 'msdt'){
             return $this->detail_msdt($hasil, $tes, $user, $user_desc, $role);
+        }
+        // Jika tes IST
+        elseif($hasil->path == 'ist'){
+            return $this->detail_ist($hasil, $tes, $user, $user_desc, $role);
         }
     }
 
@@ -643,11 +647,7 @@ class HasilController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function detail_sdi($hasil, $tes, $user, $user_desc, $role)
-    {
-        // Keterangan
-        // $keterangan = Keterangan::where('id_paket','=',$hasil->id_paket)->first();
-        // $keterangan->keterangan = json_decode($keterangan->keterangan, true);
-        
+    {        
         // View
         return view('hasil/'.$tes->path.'/detail', [
             'hasil' => $hasil,
@@ -681,6 +681,41 @@ class HasilController extends Controller
             'user_desc' => $user_desc,
             'role' => $role,
             'user' => $user,
+        ]);
+    }
+
+    /**
+     * Menampilkan hasil tes IST
+     *
+     * object $hasil
+     * object $tes
+     * object $user
+     * object $pelamar
+     * object $role
+     * @return \Illuminate\Http\Response
+     */
+    public function detail_ist($hasil, $tes, $user, $user_desc, $role)
+    {
+        // Hasil
+        $result = $hasil->hasil;
+
+        // Kategori IQ
+        $kategoriIQ = '';
+        if($result['IQ'] <= 80) $kategoriIQ = 'Dibawah Rata-Rata';
+        elseif($result['IQ'] >= 81 && $result['IQ'] <= 94) $kategoriIQ = 'Rata-Rata Bawah';
+        elseif($result['IQ'] >= 95 && $result['IQ'] <= 99) $kategoriIQ = 'Rata-Rata';
+        elseif($result['IQ'] >= 100 && $result['IQ'] <= 104) $kategoriIQ = 'Rata-Rata Atas';
+        elseif($result['IQ'] >= 105 && $result['IQ'] <= 118) $kategoriIQ = 'Superior';
+        elseif($result['IQ'] >= 119) $kategoriIQ = 'Sangat Superior';
+
+        // View
+        return view('hasil/'.$tes->path.'/detail', [
+            'hasil' => $hasil,
+            'user_desc' => $user_desc,
+            'role' => $role,
+            'user' => $user,
+            'result' => $result,
+            'kategoriIQ' => $kategoriIQ,
         ]);
     }
 

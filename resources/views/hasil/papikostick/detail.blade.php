@@ -2,97 +2,121 @@
 
 @section('content')
 
-  <!-- Page Heading -->
-  <div class="page-heading shadow d-flex justify-content-between align-items-center">
-    <h1 class="h3 text-gray-800">Data Hasil Tes</h1>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><i class="fas fa-tachometer-alt"></i></li>
-      <li class="breadcrumb-item"><a href="/admin/hasil">Hasil Tes</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Papikostick</li>
-    </ol>
-  </div>
+<!-- Page Heading -->
+<div class="page-heading shadow d-flex justify-content-between align-items-center">
+  <h1 class="h3 text-gray-800">Data Hasil Tes</h1>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fas fa-tachometer-alt"></i></li>
+    <li class="breadcrumb-item"><a href="/admin/hasil">Hasil Tes</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Papikostick</li>
+  </ol>
+</div>
 
-  <!-- Card -->
-  <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-      <div></div>
-      <div>
-          <a class="btn btn-sm btn-primary btn-print" href="#">
-            <i class="fas fa-print fa-sm fa-fw text-gray-400"></i> Cetak
-          </a>
-      </div>
-    </div>
-      <div class="card-body">
-        <form id="form" class="d-none" method="post" action="/admin/hasil/print" target="_blank">
-            {{ csrf_field() }}
-            <input type="hidden" name="id_hasil" value="{{ $hasil->id_hasil }}">
-            <input type="hidden" name="nama" value="{{ $user->nama_user }}">
-            <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' }}">
-            <input type="hidden" name="jenis_kelamin" value="{{ $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}">
-            <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}">
-            <input type="hidden" name="tes" value="{{ $hasil->nama_tes }}">
-            <input type="hidden" name="path" value="{{ $hasil->path }}">
-            <input type="hidden" name="image" id="image">
-        </form>
-        <div class="row">
-          <div class="col-auto mx-auto">
-            <div class="table-responsive">
-                <table class="table table-borderless table-identity">
-                  <tr>
-                    <td width="200">Nama: {{ $user->nama_user }}</td>
-                    <td width="200">Usia: {{ generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' }}</td>
-                    <td width="200">Jenis Kelamin: {{ $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}</td>
-                    <td width="200">Posisi: {{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}</td>
-                    <td width="200">Tes: {{ $hasil->nama_tes }}</td>
-                  </tr>
-                </table>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col">
-            <div class="row">
-              <div class="col-auto mx-auto mb-3">
-                  <div class="table-responsive">
-                    <img id="scream" src="{{ asset('assets/images/tes/papi-kostick.png') }}" style="display: none;">
-                    <canvas id="myCanvas" width="576" height="576" style="border:1px solid #bebebe;"></canvas>
+<div class="row mb-4">
+  <div class="col-xl-3 mb-3">
+      <div class="card shadow">
+          <div class="card-body">
+              <div class="row">
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Nama:</b><br>{{ $user->nama_user }} {{ $user->role == 6 ? '('.$user->email.')' : '' }}</p>
+                  </div>
+                  @if($user->role != 6)
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Usia:</b><br>{{ $user->role != 6 ? generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' : '-' }}</p>
+                  </div>
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Jenis Kelamin:</b><br>{{ $user->role != 6 ? $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' : '-' }}</p>
+                  </div>
+                  @endif
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Posisi:</b><br>{{ $user->role != 6 ? !empty($user_desc) ? $user_desc->nama_posisi : $role->nama_role : $posisi_magang }}</p>
+                  </div>
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Role:</b><br>{{ $role->nama_role }}</p>
+                  </div>
+                  <div class="col-md-6 col-xl-12">
+                      <p><b>Tes:</b><br>{{ $hasil->nama_tes }}</p>
                   </div>
               </div>
-              <div class="col-12">
-                  <div class="table-responsive">
-                      <table class="table table-hover table-bordered">
-                          <thead>
-                              <tr>
-                                  <th width="50">No.</th>
-                                  <th width="80">Huruf</th>
-                                  <th width="80">Skor</th>
-                                  <th>Deskripsi</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                            @php
-                              $data = array();
-                            @endphp
-                            
-                            @foreach($huruf as $key=>$h)
-                              <tr>
-                                  <td>{{ $key+1 }}.</td>
-                                  <td>{{ $h }}</td>
-                                  <td>{{ $hasil->hasil[$h] }}</td>
-                                  <td style="text-align: left">{{ analisisPapikostick($hasil->hasil[$h], $keterangan->keterangan[$h]) }}</td>
-                                  @php array_push($data, array('letter' => $h, 'number' => $hasil->hasil[$h])); @endphp
-                              </tr>
-                            @endforeach
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-              <div id="json" style="display: none;">{{ json_encode($data) }}</div>
-            </div>
           </div>
-        </div>
       </div>
   </div>
+  <div class="col-xl-9">
+    <!-- Card -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <div></div>
+        <div>
+            <a class="btn btn-sm btn-primary btn-print" href="#">
+              <i class="fas fa-print fa-sm fa-fw text-gray-400"></i> Cetak
+            </a>
+        </div>
+      </div>
+        <div class="card-body">
+          <form id="form" class="d-none" method="post" action="/admin/hasil/print" target="_blank">
+              {{ csrf_field() }}
+              <input type="hidden" name="id_hasil" value="{{ $hasil->id_hasil }}">
+              <input type="hidden" name="nama" value="{{ $user->nama_user }}">
+              <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $hasil->created_at).' tahun' }}">
+              <input type="hidden" name="jenis_kelamin" value="{{ $user->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}">
+              <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}">
+              <input type="hidden" name="tes" value="{{ $hasil->nama_tes }}">
+              <input type="hidden" name="path" value="{{ $hasil->path }}">
+              <input type="hidden" name="image" id="image">
+          </form>
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                  <a class="nav-link active" id="grafik-tab" data-toggle="tab" href="#grafik" role="tab" aria-controls="grafik" aria-selected="true">Grafik</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <a class="nav-link" id="deskripsi-tab" data-toggle="tab" href="#deskripsi" role="tab" aria-controls="deskripsi" aria-selected="false">Deskripsi</a>
+              </li>
+          </ul>
+          <div class="tab-content py-4" id="myTabContent">
+              <div class="tab-pane fade show active" id="grafik" role="tabpanel" aria-labelledby="grafik-tab">
+                <div class="row">
+                  <div class="col-auto mx-auto mb-3">
+                      <div class="table-responsive">
+                        <img id="scream" src="{{ asset('assets/images/tes/papi-kostick.png') }}" style="display: none;">
+                        <canvas id="myCanvas" width="576" height="576" style="border:1px solid #bebebe;"></canvas>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="deskripsi" role="tabpanel" aria-labelledby="deskripsi-tab">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th width="50">No.</th>
+                                <th width="80">Huruf</th>
+                                <th width="80">Skor</th>
+                                <th>Deskripsi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          @php
+                            $data = array();
+                          @endphp
+                          
+                          @foreach($huruf as $key=>$h)
+                            <tr>
+                                <td>{{ $key+1 }}.</td>
+                                <td>{{ $h }}</td>
+                                <td>{{ $hasil->hasil[$h] }}</td>
+                                <td style="text-align: left">{{ analisisPapikostick($hasil->hasil[$h], $keterangan->keterangan[$h]) }}</td>
+                                @php array_push($data, array('letter' => $h, 'number' => $hasil->hasil[$h])); @endphp
+                            </tr>
+                          @endforeach
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
   
 @endsection
 
