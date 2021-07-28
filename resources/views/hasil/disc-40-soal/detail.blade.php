@@ -2,6 +2,17 @@
 
 @section('content')
 
+@php
+  $posisi_magang = '';
+  if($user->role == 6){
+    if($user->jenis_kelamin == 1) $posisi_magang = 'Social Media Manager';
+    elseif($user->jenis_kelamin == 2) $posisi_magang = 'Content Writer';
+    elseif($user->jenis_kelamin == 3) $posisi_magang = 'Event Manager';
+    elseif($user->jenis_kelamin == 4) $posisi_magang = 'Creative & Design Manager';
+    elseif($user->jenis_kelamin == 5) $posisi_magang = 'Video Editor';
+  }
+@endphp
+
 <!-- Page Heading -->
 <div class="page-heading shadow d-flex justify-content-between align-items-center">
   <h1 class="h3 text-gray-800">Data Hasil Tes</h1>

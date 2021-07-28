@@ -117,6 +117,7 @@
     </div>
   </div>
 </div>
+<div id="json" class="d-none">{{ json_encode($data) }}</div>
   
 @endsection
 
