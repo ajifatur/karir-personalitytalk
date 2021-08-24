@@ -1,7 +1,45 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [3.1.33] - 2021-08-12
+
+### Fixed
+
+- Make TransactionManager a singleton (#3270)
+- Fix Exportable disk options (#3296)
+- Delete temporary file after exception in import class  (#3312)
+
+## [3.1.32] - 2021-07-08
+
+### Added
+
+- Add assertExportedInRaw assertion (#3255)
+
+### Fixed
+
+- Make commands detect model directory now (#3213)
+
+## [3.1.31] - 2021-06-02
+
+### Added
+
+- Custom heading row formatter can use column index (#3166)
+- Added WithFormatData concern (#3154)
+
+### Fixed
+
+- Create failures of rows than didn't exists but where requested in row validation
+- Fix Bug Formulas are not calculated when import implements WithCalculatedFormulas with SkipsEmptyRows #3127
+- PhpSpreadsheet 1.18 support
+
+## [3.1.30] - 2021-04-06
+
+### Added
+
+- Octane compatibility
 
 ## [3.1.29] - 2021-03-16
 
@@ -66,6 +104,7 @@ All notable changes to this project will be documented in this file.
 ## [3.1.23] - 2020-09-29
 
 ### Added
+
 - Added `ignore_empty` setting to `config/excel.php`
 - Added `strict_null_comparison` setting to `config/excel.php`
 
@@ -77,6 +116,7 @@ All notable changes to this project will be documented in this file.
 ## [3.1.21] - 2020-08-06
 
 ### Added
+
 - Added WithProperties concern
 - Added default spreadsheet properties config
 - Added WithColumnWidths concern
@@ -84,15 +124,18 @@ All notable changes to this project will be documented in this file.
 - Config setting to configure cell caching
 
 ### Changed
+
 - Sheet titles longer than 31 chars get trimmed.
 - Sheet titles with unsupported chars get cleaned.
 
 ### Fixed
+
 - Fixed issue with using ShouldAutosize in combination with FromView column widths.
 
 ## [3.1.20] - 2020-07-22
 
 ### Added
+
 - Re-sycing remote temporary file
 - Remember row number
 - Remember chunk offset
@@ -101,6 +144,7 @@ All notable changes to this project will be documented in this file.
 - Publishing the stubs
 
 ### Changed
+
 - Interacting with queued jobs
 - Retry until and middleware on queued imports
 - Using WithValidation with FromCollection & FromArray
@@ -108,6 +152,7 @@ All notable changes to this project will be documented in this file.
 - Bump of minimum version PhpSpreadsheet
 
 ### Fixed
+
 - Fixed test helper docblocks on the Excel facade.
 - Fix for importing with a start row beyond the highest row.
 - Fixed `BeforeSheet` and `AfterSheet` events receiving exportable instance instead of importable when calling on an Import.
@@ -117,7 +162,11 @@ All notable changes to this project will be documented in this file.
 - Raw() method now also available on Exportable.
 - Fix for breaking changes in PhpSpreadsheet with empty enclosures.
 
-[Unreleased]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.29...HEAD
+[Unreleased]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.33...HEAD
+[3.1.33]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.32...3.1.33
+[3.1.32]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.31...3.1.32
+[3.1.31]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.30...3.1.31
+[3.1.30]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.29...3.1.30
 [3.1.29]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.28...3.1.29
 [3.1.28]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.27...3.1.28
 [3.1.27]: https://github.com/Maatwebsite/Laravel-Excel/compare/3.1.26...3.1.27

@@ -3,6 +3,7 @@
     .sidebar-toggled .sidebar-brand-icon {display: block;}
     @media(min-width: 768px){
         .sidebar-brand-icon {display: none;}
+        .sidebar .nav-item .nav-link {padding: .5rem 1rem;}
         .sidebar.toggled .nav-item .nav-link span {margin-top: 0; margin-bottom: .25rem;}
     }
     .sidebar .sidebar-heading {padding: .5rem 1rem;}

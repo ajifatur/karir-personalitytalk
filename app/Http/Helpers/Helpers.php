@@ -389,11 +389,11 @@ if(!function_exists('generate_date_format')){
     function generate_date_format($date, $format){
         if($format == 'd/m/y'){
             $explode = explode("-", $date);
-            return $explode[2].'/'.$explode[1].'/'.$explode[0];
+            return count($explode) == 3 ? $explode[2].'/'.$explode[1].'/'.$explode[0] : '';
         }
         elseif($format == 'y-m-d'){
             $explode = explode("/", $date);
-            return $explode[2].'-'.$explode[1].'-'.$explode[0];
+            return count($explode) == 3 ? $explode[2].'-'.$explode[1].'-'.$explode[0] : '';
         }
         else
             return '';

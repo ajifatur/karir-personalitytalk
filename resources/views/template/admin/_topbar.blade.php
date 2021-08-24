@@ -6,6 +6,10 @@
             <i class="fa fa-bars"></i>
           </button>
 
+          <div class="navbar-nav mr-auto">
+            <!-- <h1 class="h4 text-gray-800 mb-0">Heading</h1> -->
+          </div>
+
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
 

@@ -141,6 +141,14 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/hasil/json/pelamar', 'HasilController@json_applicant');
 	Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
 
+	// STIFIn Menu
+	Route::get('/admin/stifin', 'StifinController@index');
+	Route::get('/admin/stifin/create', 'StifinController@create');
+	Route::post('/admin/stifin/store', 'StifinController@store');
+	Route::get('/admin/stifin/edit/{id}', 'StifinController@edit');
+	Route::post('/admin/stifin/update', 'StifinController@update');
+	Route::post('/admin/stifin/delete', 'StifinController@delete');
+
 	// Admin Menu
 	Route::get('/admin/list', 'UserController@admin');
 	Route::get('/admin/create', 'UserController@createAdmin');
