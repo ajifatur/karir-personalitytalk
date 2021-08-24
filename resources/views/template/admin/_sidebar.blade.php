@@ -82,12 +82,14 @@
 	</div>
 	</div>
 </li>
+@if(stifin_access())
 <li class="nav-item {{ strpos(Request::url(), '/admin/stifin') ? 'active' : '' }}">
 	<a class="nav-link" href="/admin/stifin">
 	<i class="fas fa-fw fa-clipboard"></i>
 	<span>STIFIn</span>
 	</a>
 </li>
+@endif
 
 <!-- Divider -->
 <hr class="sidebar-divider">
@@ -99,11 +101,11 @@
 
 <!-- Nav Item - Pages Collapse Menu -->
 @if(Auth::user()->role == role_admin())
-<li class="nav-item {{ strpos(Request::url(), '/admin/list') ? 'active' : '' }}">
+<!--<li class="nav-item {{ strpos(Request::url(), '/admin/list') ? 'active' : '' }}">
 	<a class="nav-link" href="/admin/list">
 	<i class="fas fa-fw fa-user-secret"></i>
 	<span>Admin</span></a>
-</li>
+</li>-->
 <li class="nav-item {{ strpos(Request::url(), '/admin/hrd') ? 'active' : '' }}">
 	<a class="nav-link" href="/admin/hrd">
 	<i class="fas fa-fw fa-user-shield"></i>

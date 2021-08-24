@@ -37,21 +37,28 @@
                         <th width="20"><input type="checkbox"></th>
                         <th>Nama</th>
                         <th width="150">Tes</th>
-                        <th width="60">Opsi</th>
+                        <th width="150">Perusahaan</th>
+                        <th width="80">Opsi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($stifin as $data)
                         <tr>
-                        <td><input type="checkbox"></td>
-                        <td>{{ $data->name }}</td>
-                        <td>{{ $data->tests->test_name }}</td>
-                        <td>
-                            <div class="btn-group">
-                            <a href="/admin/stifin/edit/{{ $data->id }}" class="btn btn-sm btn-warning" data-id="{{ $data->id }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
-                            </div>
-                        </td>
+                            <td><input type="checkbox"></td>
+                            <td>{{ $data->name }}</td>
+                            <td>{{ $data->tests->test_name }}</td>
+                            <td>
+                                {{ $data->hrd->perusahaan }}
+                                <br>
+                                <small>{{ $data->hrd->nama_lengkap }}</small>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="/admin/stifin/print/{{ $data->id }}" class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="top" title="Cetak"><i class="fa fa-print"></i></a>
+                                    <a href="/admin/stifin/edit/{{ $data->id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a>
+                                    <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $data->id }}" data-toggle="tooltip" data-placement="top" title="Hapus"><i class="fa fa-trash"></i></a>
+                                </div>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

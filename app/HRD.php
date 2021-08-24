@@ -39,6 +39,7 @@ class HRD extends Model
 		'alamat_perusahaan',
 		'telepon_perusahaan',
 		'akses_tes',
+        'akses_stifin'
 	];
 
     /**

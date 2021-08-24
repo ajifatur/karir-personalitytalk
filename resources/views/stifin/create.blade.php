@@ -28,6 +28,24 @@
                         @endif
                     </div>
                 </div>
+                @if(Auth::user()->role == role_admin())
+                <div class="form-group row">
+                    <label class="col-lg-2 col-md-3 col-form-label">Perusahaan: <span class="text-danger">*</span></label>
+                    <div class="col-lg-10 col-md-9">
+                        <select name="hrd" class="form-control custom-select {{ $errors->has('hrd') ? 'is-invalid' : '' }}">
+                            <option value="" disabled selected>--Pilih--</option>
+                            @foreach($hrd as $data)
+                            <option value="{{ $data->id_hrd }}" {{ $data->id_hrd == old('hrd') ? 'selected' : '' }}>{{ $data->perusahaan }} ({{ $data->nama_lengkap }})</option>
+                            @endforeach
+                        </select>
+                        @if($errors->has('hrd'))
+                        <div class="invalid-feedback">
+                            {{ ucfirst($errors->first('hrd')) }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
                 <div class="form-group row">
                     <label class="col-lg-2 col-md-3 col-form-label">Tes: <span class="text-danger">*</span></label>
                     <div class="col-lg-10 col-md-9">

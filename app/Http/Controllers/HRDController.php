@@ -74,6 +74,7 @@ class HRDController extends Controller
             // 'file' => $request->foto == '' ? 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048' : '',
             'kode' => 'required|alpha|min:3|max:4',
             'perusahaan' => 'required|string',
+            'stifin' => 'required',
         ], validationMessages());
         
         // Mengecek jika ada error
@@ -123,6 +124,7 @@ class HRDController extends Controller
             $hrd->alamat_perusahaan = $request->alamat_perusahaan != '' ? $request->alamat_perusahaan : '';
             $hrd->telepon_perusahaan = $request->telepon_perusahaan != '' ? $request->telepon_perusahaan : '';
             $hrd->akses_tes = !empty($request->get('tes')) ? implode(',', array_filter($request->get('tes'))) : '';
+            $hrd->akses_stifin = $request->stifin;
             $hrd->save();
             
             // Mengambil data HRD
@@ -209,6 +211,7 @@ class HRDController extends Controller
                 Rule::unique('hrd')->ignore($hrd->id_hrd, 'id_hrd'),
             ],
             'perusahaan' => 'required|string',
+            'stifin' => 'required',
         ], validationMessages());
         
         // Mengecek jika ada error
@@ -249,6 +252,7 @@ class HRDController extends Controller
             $hrd->alamat_perusahaan = $request->alamat_perusahaan != '' ? $request->alamat_perusahaan : '';
             $hrd->telepon_perusahaan = $request->telepon_perusahaan != '' ? $request->telepon_perusahaan : '';
             $hrd->akses_tes = !empty($request->get('tes')) ? implode(',', array_filter($request->get('tes'))) : '';
+            $hrd->akses_stifin = $request->stifin;
             $hrd->save();
             
             // Mengupdate data kantor (Head Office)

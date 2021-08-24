@@ -148,6 +148,7 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/stifin/edit/{id}', 'StifinController@edit');
 	Route::post('/admin/stifin/update', 'StifinController@update');
 	Route::post('/admin/stifin/delete', 'StifinController@delete');
+	Route::get('/admin/stifin/print/{id}', 'StifinController@print');
 
 	// Admin Menu
 	Route::get('/admin/list', 'UserController@admin');

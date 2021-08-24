@@ -1,9 +1,28 @@
 <?php
 
+// use Auth;
+use App\HRD;
+
 // Subdomain Tes Psikologanda
 if(!function_exists('subdomain_tes')){
     function subdomain_tes(){
         return "https://tes.psikologanda.com/";
+    }
+}
+
+// STIFIn access
+if(!function_exists('stifin_access')){
+    function stifin_access(){
+        if(Auth::user()->role == role_admin())
+            return true;
+        elseif(Auth::user()->role == role_hrd()){
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            if($hrd){
+                if($hrd->akses_stifin == 1) return true;
+                else return false;
+            }
+            else return false;
+        }
     }
 }
 

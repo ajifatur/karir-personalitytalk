@@ -165,6 +165,19 @@
             </div>
           </div>
           <div class="form-group row">
+            <label class="col-lg-2 col-md-3 col-form-label">Akses STIFIn: <span class="text-danger">*</span></label>
+            <div class="col-lg-10 col-md-9">
+              <select name="stifin" class="form-control {{ $errors->has('stifin') ? 'is-invalid' : '' }} custom-select">
+                  <option value="" disabled selected>--Pilih--</option>
+                  <option value="1" {{ $hrd->akses_stifin == 1 ? 'selected' : '' }}>Ya</option>
+                  <option value="0" {{ $hrd->akses_stifin == 0 ? 'selected' : '' }}>Tidak</option>
+              </select>
+              @if($errors->has('stifin'))
+              <small class="text-danger">{{ ucfirst($errors->first('stifin')) }}</small>
+              @endif
+            </div>
+          </div>
+          <div class="form-group row">
               <div class="col-lg-2 col-md-3"></div>
               <div class="col-lg-10 col-md-9">
                   <button type="submit" class="btn btn-primary">Submit</button>

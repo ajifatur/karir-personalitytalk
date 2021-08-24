@@ -29,4 +29,11 @@ class Stifin extends Model
     public function tests(){
         return $this->hasOne('App\StifinTest', 'id_st', 'test');
     }
+
+    /**
+     * Get the HRD record associated with the stifin.
+     */
+    public function hrd(){
+        return $this->hasOne('App\HRD', 'id_hrd', 'hrd_id');
+    }
 }
