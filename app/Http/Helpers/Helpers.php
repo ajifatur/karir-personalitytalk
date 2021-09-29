@@ -393,6 +393,17 @@ if(!function_exists('generate_age')){
     }
 }
 
+// Diff date
+if(!function_exists('diff_date')){
+    function diff_date($dateFrom, $dateTo){
+        $from = new DateTime($dateFrom);
+        $to = new DateTime($dateTo);
+        $y = $to->diff($from)->y;
+        
+        return $y;
+    }
+}
+
 // Generate tanggal
 if(!function_exists('generate_date')){
     function generate_date($date){
