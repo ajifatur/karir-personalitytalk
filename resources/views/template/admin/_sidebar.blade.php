@@ -151,6 +151,26 @@ Master
 </li>
 @endif  
 
+@if(Auth::user()->role == role_hrd())
+
+	@if(in_array('ist', get_hrd_tes()) > 0)
+		<!-- Divider -->
+		<hr class="sidebar-divider">
+
+		<!-- Heading -->
+		<div class="sidebar-heading">
+			Pengaturan Tes
+		</div>
+
+		<!-- Nav Item - Pages Collapse Menu -->
+		<li class="nav-item {{ strpos(Request::url(), '/admin/tes/settings/ist') ? 'active' : '' }}">
+			<a class="nav-link" href="/admin/tes/settings/ist">
+			<i class="fas fa-fw fa-pencil-alt"></i>
+			<span>IST</span></a>
+		</li>
+	@endif
+@endif
+
 <!-- Divider -->
 <!--<hr class="sidebar-divider">-->
 

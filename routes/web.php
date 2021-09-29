@@ -128,6 +128,9 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/tes/update', 'TesController@update');
 	Route::post('/admin/tes/delete', 'TesController@delete');
 	Route::post('/admin/tes/generate-path', 'TesController@generatePath');
+	Route::get('/admin/tes/settings/{path}', 'TesController@settings');
+	Route::get('/admin/tes/settings/{path}/{paket}', 'TesController@editSettings');
+	Route::post('/admin/tes/settings/{path}/{paket}/update', 'TesController@updateSettings');
 
 	// Hasil Menu
 	// Route::get('/admin/hasil', 'HasilController@index');

@@ -2,6 +2,7 @@
 
 // use Auth;
 use App\HRD;
+use App\TesSettings;
 
 // Subdomain Tes Psikologanda
 if(!function_exists('subdomain_tes')){
@@ -22,6 +23,40 @@ if(!function_exists('stifin_access')){
                 else return false;
             }
             else return false;
+        }
+    }
+}
+
+// Tes settings
+if(!function_exists('tes_settings')){
+    function tes_settings($id_paket, $key){
+        if(Auth::user()->role == role_hrd()){
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            if($hrd){
+                $value = TesSettings::where('id_hrd','=',$hrd->id_hrd)->where('id_paket','=',$id_paket)->pluck($key)->toArray();
+                return array_key_exists(0, $value) ? $value[0] : '';
+            }
+            else return '';
+        }
+    }
+}
+
+// Get HRD tes
+if(!function_exists('get_hrd_tes')){
+    function get_hrd_tes(){
+		$data = DB::table('hrd')->where('id_user','=',Auth::user()->id_user)->first();
+        if(!$data) return null;
+        else{
+            if($data->akses_tes != ''){
+                $akses_tes = explode(',', $data->akses_tes);
+                $array = [];
+                foreach($akses_tes as $id){
+                    $tes = DB::table('tes')->where('id_tes','=',$id)->first();
+                    if($tes) array_push($array, $tes->path);
+                }
+                return $array;
+            }
+            else return null;
         }
     }
 }

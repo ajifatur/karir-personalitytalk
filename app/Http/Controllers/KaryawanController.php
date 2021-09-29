@@ -140,6 +140,7 @@ class KaryawanController extends Controller
             'jenis_kelamin' => 'required',
             'email' => 'required|email',
             'nomor_hp' => 'required|numeric',
+            'status' => 'required',
             'jabatan' => Auth::user()->role == role_hrd() ? 'required' : '',
             'kantor' => Auth::user()->role == role_hrd() ? 'required' : '',
             'hrd' => Auth::user()->role == role_admin() ? 'required' : '',

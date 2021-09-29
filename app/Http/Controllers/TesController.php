@@ -6,7 +6,10 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\HRD;
+use App\PaketSoal;
 use App\Tes;
+use App\TesSettings;
 
 class TesController extends Controller
 {
@@ -197,5 +200,107 @@ class TesController extends Controller
         
         // Tampilkan
         echo $path;
+    }
+
+    /**
+     * Menampilkan pengaturan tes
+     *
+     * string $path
+     * @return \Illuminate\Http\Response
+     */
+    public function settings($path)
+    {
+        if($path === 'ist') {
+            // Get data tes
+            $tes = Tes::where('path','=',$path)->firstOrFail();
+
+            // Get data paket
+            $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->orderBy('status','desc')->orderBy('part','asc')->get();
+
+            // View
+            return view('tes-settings/'.$path.'/index', [
+                'tes' => $tes,
+                'paket' => $paket,
+            ]);
+        }
+        else abort(404);
+    }
+
+    /**
+     * Menampilkan form edit pengaturan tes
+     *
+     * string $path
+     * int $paket
+     * @return \Illuminate\Http\Response
+     */
+    public function editSettings($path, $id)
+    {
+        if($path === 'ist') {
+            // Get data tes
+            $tes = Tes::where('path','=',$path)->firstOrFail();
+
+            // Get data paket
+            $paket = PaketSoal::where('id_tes','=',$tes->id_tes)->where('id_paket','=',$id)->first();
+
+            // View
+            return view('tes-settings/'.$path.'/edit', [
+                'tes' => $tes,
+                'paket' => $paket
+            ]);
+        }
+        else abort(404);
+    }
+
+    /**
+     * Mengupdate pengaturan tes
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateSettings(Request $request)
+    {
+        // Get HRD
+        $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+
+        // Get tes
+        $tes = Tes::find($request->id_tes);
+
+        // Get paket
+        $paket = PaketSoal::where('id_tes','=',$request->id_tes)->where('id_paket','=',$request->id_paket)->first();
+
+        if($paket && $tes) {
+            // Validasi
+            $validator = Validator::make($request->all(), [
+                'waktu_pengerjaan' => 'required',
+                'waktu_hafalan' => $paket->tipe_soal == 'choice-memo' ? 'required' : '',
+                'is_auth' => 'required',
+                'access_token' => $request->is_auth == 1 ? 'required' : '',
+            ], validationMessages());
+            
+            // Mengecek jika ada error
+            if($validator->fails()){
+                // Kembali ke halaman sebelumnya dan menampilkan pesan error
+                return redirect()->back()->withErrors($validator->errors())->withInput();
+            }
+            // Jika tidak ada error
+            else{			
+                // Check tes settings
+                $tes_settings = TesSettings::where('id_hrd','=',$hrd->id_hrd)->where('id_paket','=',$paket->id_paket)->first();
+
+                if(!$tes_settings) $tes_settings = new TesSettings;
+
+                // Update
+                $tes_settings->id_hrd = $hrd->id_hrd;
+                $tes_settings->id_paket = $paket->id_paket;
+                $tes_settings->waktu_pengerjaan = $request->waktu_pengerjaan;
+                $tes_settings->waktu_hafalan = $paket->tipe_soal == 'choice-memo' ? $request->waktu_hafalan : 0;
+                $tes_settings->is_auth = $request->is_auth;
+                $tes_settings->access_token = $request->is_auth == 1 ? $request->access_token : '';
+                $tes_settings->save();
+            }
+
+            // Redirect
+            return redirect('/admin/tes/settings/'.$tes->path)->with(['message' => 'Berhasil mengupdate data.']);
+        }
     }
 }

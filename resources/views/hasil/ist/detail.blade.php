@@ -137,7 +137,7 @@ var ctx1 = document.getElementById('chart').getContext('2d');
 var mostChart = new Chart(ctx1, {
     type: 'line',
     data: {
-        labels: ['SE','WA','AN','GE','ME','RA','ZR','FA','WU'],
+        labels: ['SE','WA','AN','GE','RA','ZR','FA','WU','ME'],
         datasets: [{
             label: 'Score',
             data: [@php echo implode(',', $result['SW']) @endphp],
