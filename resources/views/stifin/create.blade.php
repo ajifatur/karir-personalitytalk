@@ -28,6 +28,21 @@
                         @endif
                     </div>
                 </div>
+				<div class="form-group row">
+				  <label class="col-lg-2 col-md-3 col-form-label">Jenis Kelamin: <span class="text-danger">*</span></label>
+				  <div class="col-lg-10 col-md-9">
+					<select name="jenis_kelamin" class="form-control {{ $errors->has('jenis_kelamin') ? 'is-invalid' : '' }} custom-select">
+						<option value="" disabled selected>--Pilih--</option>
+						<option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-Laki</option>
+						<option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+					</select>
+					@if($errors->has('jenis_kelamin'))
+					<div class="invalid-feedback">
+					  {{ ucfirst($errors->first('jenis_kelamin')) }}
+					</div>
+					@endif
+				  </div>
+				</div>
                 @if(Auth::user()->role == role_admin())
                 <div class="form-group row">
                     <label class="col-lg-2 col-md-3 col-form-label">Perusahaan: <span class="text-danger">*</span></label>
@@ -47,7 +62,7 @@
                 </div>
                 @endif
                 <div class="form-group row">
-                    <label class="col-lg-2 col-md-3 col-form-label">Tes: <span class="text-danger">*</span></label>
+                    <label class="col-lg-2 col-md-3 col-form-label">Tipe: <span class="text-danger">*</span></label>
                     <div class="col-lg-10 col-md-9">
                         <select name="test" class="form-control {{ $errors->has('test') ? 'is-invalid' : '' }} custom-select">
                             <option value="" disabled selected>--Pilih--</option>
@@ -84,6 +99,22 @@
                         @endif
                     </div>
                 </div>
+				<div class="form-group row">
+				  <label class="col-lg-2 col-md-3 col-form-label">Tujuan Tes: <span class="text-danger">*</span></label>
+				  <div class="col-lg-10 col-md-9">
+					<select name="aim" class="form-control {{ $errors->has('aim') ? 'is-invalid' : '' }} custom-select">
+						<option value="" disabled selected>--Pilih--</option>
+						@foreach($aims as $aim)
+						<option value="{{ $aim->id_sa }}" {{ old('aim') == $aim->id_sa ? 'selected' : '' }}>{{ $aim->aim }}</option>
+						@endforeach
+					</select>
+					@if($errors->has('aim'))
+					<div class="invalid-feedback">
+					  {{ ucfirst($errors->first('aim')) }}
+					</div>
+					@endif
+				  </div>
+				</div>
                 <div class="form-group row">
                     <div class="col-lg-2 col-md-3"></div>
                     <div class="col-lg-10 col-md-9">

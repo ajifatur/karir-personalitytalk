@@ -29,6 +29,21 @@
                         @endif
                     </div>
                 </div>
+				<div class="form-group row">
+					<label class="col-lg-2 col-md-3 col-form-label">Jenis Kelamin: <span class="text-danger">*</span></label>
+					<div class="col-lg-10 col-md-9">
+						<select name="jenis_kelamin" class="form-control {{ $errors->has('jenis_kelamin') ? 'is-invalid' : '' }} custom-select">
+							<option value="" disabled selected>--Pilih--</option>
+							<option value="L" {{ $stifin->gender == 'L' ? 'selected' : '' }}>Laki-Laki</option>
+							<option value="P" {{ $stifin->gender == 'P' ? 'selected' : '' }}>Perempuan</option>
+						</select>
+						@if($errors->has('jenis_kelamin'))
+						<div class="invalid-feedback">
+							{{ ucfirst($errors->first('jenis_kelamin')) }}
+						</div>
+						@endif
+					</div>
+				</div>
                 <div class="form-group row">
                     <label class="col-lg-2 col-md-3 col-form-label">Tes: <span class="text-danger">*</span></label>
                     <div class="col-lg-10 col-md-9">
@@ -67,6 +82,22 @@
                         @endif
                     </div>
                 </div>
+				<div class="form-group row">
+					<label class="col-lg-2 col-md-3 col-form-label">Tujuan Tes: <span class="text-danger">*</span></label>
+					<div class="col-lg-10 col-md-9">
+						<select name="aim" class="form-control {{ $errors->has('aim') ? 'is-invalid' : '' }} custom-select">
+							<option value="" disabled selected>--Pilih--</option>
+							@foreach($aims as $aim)
+							<option value="{{ $aim->id_sa }}" {{ $stifin->aim == $aim->id_sa ? 'selected' : '' }}>{{ $aim->aim }}</option>
+							@endforeach
+						</select>
+						@if($errors->has('aim'))
+						<div class="invalid-feedback">
+							{{ ucfirst($errors->first('aim')) }}
+						</div>
+						@endif
+					</div>
+				</div>
                 <div class="form-group row">
                     <div class="col-lg-2 col-md-3"></div>
                     <div class="col-lg-10 col-md-9">

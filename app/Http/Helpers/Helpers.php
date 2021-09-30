@@ -45,7 +45,7 @@ if(!function_exists('tes_settings')){
 if(!function_exists('get_hrd_tes')){
     function get_hrd_tes(){
 		$data = DB::table('hrd')->where('id_user','=',Auth::user()->id_user)->first();
-        if(!$data) return null;
+        if(!$data) return [];
         else{
             if($data->akses_tes != ''){
                 $akses_tes = explode(',', $data->akses_tes);
@@ -56,7 +56,7 @@ if(!function_exists('get_hrd_tes')){
                 }
                 return $array;
             }
-            else return null;
+            else return [];
         }
     }
 }

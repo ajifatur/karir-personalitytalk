@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Stifin;
+use App\StifinAim;
 use App\StifinTest;
 use App\HRD;
 
@@ -51,12 +53,16 @@ class StifinController extends Controller
 
         // STIFIn Tests
         $tests = StifinTest::all();
+		
+        // STIFIn Aims
+        $aims = StifinAim::all();
 
         // View
         if(Auth::user()->role == role_admin()){
             return view('stifin/create', [
                 'hrd' => $hrd,
-                'tests' => $tests
+                'tests' => $tests,
+                'aims' => $aims,
             ]);
         }
         else{
@@ -83,7 +89,9 @@ class StifinController extends Controller
         // Validasi
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'jenis_kelamin' => 'required',
             'test' => 'required',
+            'aim' => 'required',
             'hrd' => Auth::user()->role == role_admin() ? 'required' : '',
         ], validationMessages());
         
@@ -97,7 +105,9 @@ class StifinController extends Controller
             // Menambah data
             $stifin = new Stifin;
             $stifin->name = $request->name;
+            $stifin->gender = $request->jenis_kelamin;
             $stifin->test = $request->test;
+            $stifin->aim = $request->aim;
             $stifin->hrd_id = isset($hrd) ? $hrd->id_hrd : $request->hrd;
             $stifin->birthdate = $request->birthdate != '' ? generate_date_format($request->birthdate, 'y-m-d') : null;
             $stifin->test_at = $request->test_at != '' ? generate_date_format($request->test_at, 'y-m-d') : null;
@@ -127,6 +137,9 @@ class StifinController extends Controller
 
         // STIFIn Tests
         $tests = StifinTest::all();
+		
+        // STIFIn Aims
+        $aims = StifinAim::all();
 
         // View
         if(Auth::user()->role == role_admin()){
@@ -134,6 +147,7 @@ class StifinController extends Controller
                 'stifin' => $stifin,
                 'hrd' => $hrd,
                 'tests' => $tests,
+                'aims' => $aims,
             ]);
         }
         else{
@@ -152,7 +166,9 @@ class StifinController extends Controller
         // Validasi
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'jenis_kelamin' => 'required',
             'test' => 'required',
+            'aim' => 'required',
         ], validationMessages());
         
         // Mengecek jika ada error
@@ -165,7 +181,9 @@ class StifinController extends Controller
             // Mengupdate data
             $stifin = Stifin::find($request->id);
             $stifin->name = $request->name;
+            $stifin->gender = $request->jenis_kelamin;
             $stifin->test = $request->test;
+            $stifin->aim = $request->aim;
             $stifin->birthdate = $request->birthdate != '' ? generate_date_format($request->birthdate, 'y-m-d') : null;
             $stifin->test_at = $request->test_at != '' ? generate_date_format($request->test_at, 'y-m-d') : null;
             $stifin->save();
@@ -203,13 +221,17 @@ class StifinController extends Controller
         if(!stifin_access()) abort(404);
 
         // Get data stifin
-        $stifin = Stifin::findOrFail($id);
+        $stifin = Stifin::join('stifin_tests','stifin.test','=','stifin_tests.id_st')->findOrFail($id);
 
         // View
         if(Auth::user()->role == role_admin()){
-            return view('stifin/print', [
+			// PDF
+			$pdf = PDF::loadview('stifin/print/'.$stifin->test_code, [
                 'stifin' => $stifin,
-            ]);
+			]);
+			$pdf->setPaper('A4', 'portrait');
+
+			return $pdf->stream("STIFIn-".$stifin->name.".pdf");
         }
         else{
             return view('error/404');
