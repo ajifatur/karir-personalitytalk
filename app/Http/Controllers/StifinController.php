@@ -26,13 +26,25 @@ class StifinController extends Controller
 
     	// Get data stifin
         if(Auth::user()->role == role_admin()){
-    	   $stifin = Stifin::all();
+			$stifin = Stifin::all();
 
-    	   // View
-        	return view('stifin/index', [
-        		'stifin' => $stifin,
-        	]);
+			// View
+			return view('stifin/index', [
+				'stifin' => $stifin,
+			]);
         }
+        elseif(Auth::user()->role == role_hrd()){
+			// Get HRD
+			$hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+			
+			// Get stifin
+			$stifin = Stifin::where('hrd_id','=',$hrd->id_hrd)->get();
+
+			// View
+			return view('stifin/index', [
+				'stifin' => $stifin,
+			]);
+		}
         else{
             return view('error/404');
         }
@@ -61,6 +73,12 @@ class StifinController extends Controller
         if(Auth::user()->role == role_admin()){
             return view('stifin/create', [
                 'hrd' => $hrd,
+                'tests' => $tests,
+                'aims' => $aims,
+            ]);
+        }
+        elseif(Auth::user()->role == role_hrd()){
+            return view('stifin/create', [
                 'tests' => $tests,
                 'aims' => $aims,
             ]);
@@ -150,6 +168,13 @@ class StifinController extends Controller
                 'aims' => $aims,
             ]);
         }
+        elseif(Auth::user()->role == role_hrd()){
+            return view('stifin/edit', [
+                'stifin' => $stifin,
+                'tests' => $tests,
+                'aims' => $aims,
+            ]);
+        }
         else{
             return view('error/404');
         }
@@ -225,6 +250,15 @@ class StifinController extends Controller
 
         // View
         if(Auth::user()->role == role_admin()){
+			// PDF
+			$pdf = PDF::loadview('stifin/print/'.$stifin->test_code, [
+                'stifin' => $stifin,
+			]);
+			$pdf->setPaper('A4', 'portrait');
+
+			return $pdf->stream("STIFIn-".$stifin->name.".pdf");
+        }
+        elseif(Auth::user()->role == role_hrd()){
 			// PDF
 			$pdf = PDF::loadview('stifin/print/'.$stifin->test_code, [
                 'stifin' => $stifin,
