@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PelamarExport;
-use App\Agama;
-use App\HRD;
-use App\Karyawan;
-use App\Lowongan;
-use App\Pelamar;
-use App\Seleksi;
-use App\User;
+use App\Models\Agama;
+use App\Models\HRD;
+use App\Models\Karyawan;
+use App\Models\Lowongan;
+use App\Models\Pelamar;
+use App\Models\Seleksi;
+use App\Models\User;
 
 class PelamarController extends Controller
 {

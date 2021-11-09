@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
-use App\Pelamar;
-use App\User;
+use App\Models\Pelamar;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\Exportable;

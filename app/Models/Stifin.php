@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,13 +27,13 @@ class Stifin extends Model
      * Get the test record associated with the stifin.
      */
     public function tests(){
-        return $this->hasOne('App\StifinTest', 'id_st', 'test');
+        return $this->hasOne(StifinTest::class, 'id_st', 'test');
     }
 
     /**
      * Get the HRD record associated with the stifin.
      */
     public function hrd(){
-        return $this->hasOne('App\HRD', 'id_hrd', 'hrd_id');
+        return $this->hasOne(HRD::class, 'id_hrd', 'hrd_id');
     }
 }

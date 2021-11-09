@@ -6,9 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Lowongan;
-use App\Pelamar;
-use App\User;
+use App\Models\Lowongan;
+use App\Models\Pelamar;
+use App\Models\User;
 
 class HRDMail extends Mailable
 {

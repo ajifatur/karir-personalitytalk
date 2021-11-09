@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UpdateSistem extends Model
+class Verification extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'update_sistem';
+    protected $table = 'verification';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_update';
+    protected $primaryKey = 'id_verification';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,9 +29,9 @@ class UpdateSistem extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'judul_update',
-        'deskripsi_update',
-		'update_at'
+        'id_user',
+        'token',
+        'status',
 	];
 
     /**

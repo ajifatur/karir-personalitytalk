@@ -6,10 +6,10 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\HRD;
-use App\Kantor;
-use App\Karyawan;
-use App\User;
+use App\Models\HRD;
+use App\Models\Kantor;
+use App\Models\Karyawan;
+use App\Models\User;
 
 class KantorController extends Controller
 {

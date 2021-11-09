@@ -10,12 +10,12 @@ use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\KaryawanExport;
 use App\Imports\KaryawanImport;
-use App\HRD;
-use App\Karyawan;
-use App\Kantor;
-use App\Pelamar;
-use App\Posisi;
-use App\User;
+use App\Models\HRD;
+use App\Models\Karyawan;
+use App\Models\Kantor;
+use App\Models\Pelamar;
+use App\Models\Posisi;
+use App\Models\User;
 
 class KaryawanController extends Controller
 {

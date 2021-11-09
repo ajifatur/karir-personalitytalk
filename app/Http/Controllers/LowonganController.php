@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\HRD;
-use App\Lowongan;
-use App\Pelamar;
-use App\Posisi;
-use App\Seleksi;
+use App\Models\HRD;
+use App\Models\Lowongan;
+use App\Models\Pelamar;
+use App\Models\Posisi;
+use App\Models\Seleksi;
 
 class LowonganController extends Controller
 {

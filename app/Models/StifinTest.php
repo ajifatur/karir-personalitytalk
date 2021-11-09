@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Temp extends Model
+class StifinTest extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'temp';
+    protected $table = 'stifin_tests';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_temp';
+    protected $primaryKey = 'id_st';
 
     /**
      * Fill the model with an array of attributes.
@@ -28,15 +28,5 @@ class Temp extends Model
      *
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
-    protected $fillable = [
-        'email',
-        'json',
-	];
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
+    protected $fillable = ['test_name', 'test_code'];
 }

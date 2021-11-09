@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Verification extends Model
+class Karyawan extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'verification';
+    protected $table = 'karyawan';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_verification';
+    protected $primaryKey = 'id_karyawan';
 
     /**
      * Fill the model with an array of attributes.
@@ -30,8 +30,19 @@ class Verification extends Model
      */
     protected $fillable = [
         'id_user',
-        'token',
-        'status',
+        'id_hrd',
+        'nama_lengkap',
+		'tanggal_lahir',
+        'jenis_kelamin',
+		'email',
+		'nomor_hp',
+		'nik_cis',
+		'nik',
+		'alamat',
+		'pendidikan_terakhir',
+		'awal_bekerja',
+		'posisi',
+		'kantor',
 	];
 
     /**

@@ -6,9 +6,9 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\HRD;
-use App\Posisi;
-use App\Tes;
+use App\Models\HRD;
+use App\Models\Posisi;
+use App\Models\Tes;
 
 class PosisiController extends Controller
 {

@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TesSettings extends Model
+class Temp extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'tes_settings';
+    protected $table = 'temp';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_ts';
+    protected $primaryKey = 'id_temp';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,7 +29,8 @@ class TesSettings extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'id_hrd', 'id_paket', 'waktu_pengerjaan', 'waktu_hafalan', 'is_auth', 'access_token'
+        'email',
+        'json',
 	];
 
     /**

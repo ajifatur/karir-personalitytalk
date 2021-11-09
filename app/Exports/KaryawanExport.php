@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
-use App\Karyawan;
-use App\User;
+use App\Models\Karyawan;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\Exportable;

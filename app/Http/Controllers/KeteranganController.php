@@ -6,9 +6,9 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Keterangan;
-use App\PaketSoal;
-use App\Tes;
+use App\Models\Keterangan;
+use App\Models\PaketSoal;
+use App\Models\Tes;
 
 class KeteranganController extends Controller
 {

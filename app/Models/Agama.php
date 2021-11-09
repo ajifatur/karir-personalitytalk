@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StifinAim extends Model
+class Agama extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'stifin_aim';
+    protected $table = 'agama';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_sa';
+    protected $primaryKey = 'id_agama';
 
     /**
      * Fill the model with an array of attributes.
@@ -28,5 +28,14 @@ class StifinAim extends Model
      *
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
-    protected $fillable = ['aim'];
+    protected $fillable = [
+        'nama_agama',
+	];
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

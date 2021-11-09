@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Posisi extends Model
+class Keterangan extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'posisi';
+    protected $table = 'keterangan';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_posisi';
+    protected $primaryKey = 'id_keterangan';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,9 +29,9 @@ class Posisi extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'nama_posisi',
-        'tes',
-        'keahlian',
+        'id_tes',
+        'id_paket',
+		'keterangan',
 	];
 
     /**

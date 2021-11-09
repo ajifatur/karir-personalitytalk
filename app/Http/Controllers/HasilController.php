@@ -9,17 +9,17 @@ use Illuminate\Validation\Rule;
 use PDF;
 use DataTables;
 use Dompdf\FontMetrics;
-use App\Hasil;
-use App\HRD;
-use App\Karyawan;
-use App\Keterangan;
-use App\Lowongan;
-use App\Pelamar;
-use App\Posisi;
-use App\Role;
-use App\Seleksi;
-use App\Tes;
-use App\User;
+use App\Models\Hasil;
+use App\Models\HRD;
+use App\Models\Karyawan;
+use App\Models\Keterangan;
+use App\Models\Lowongan;
+use App\Models\Pelamar;
+use App\Models\Posisi;
+use App\Models\Role;
+use App\Models\Seleksi;
+use App\Models\Tes;
+use App\Models\User;
 
 class HasilController extends Controller
 {

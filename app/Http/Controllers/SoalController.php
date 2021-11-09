@@ -9,9 +9,9 @@ use Illuminate\Validation\Rule;
 use App\Exports\SoalExport;
 use App\Imports\SoalImport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\PaketSoal;
-use App\Soal;
-use App\Tes;
+use App\Models\PaketSoal;
+use App\Models\Soal;
+use App\Models\Tes;
 
 
 class SoalController extends Controller

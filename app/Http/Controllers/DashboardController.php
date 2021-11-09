@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
-use App\Hasil;
-use App\HRD;
-use App\Kantor;
-use App\Karyawan;
-use App\Lowongan;
-use App\Pelamar;
-use App\Posisi;
-use App\User;
+use App\Models\Hasil;
+use App\Models\HRD;
+use App\Models\Kantor;
+use App\Models\Karyawan;
+use App\Models\Lowongan;
+use App\Models\Pelamar;
+use App\Models\Posisi;
+use App\Models\User;
 
 class DashboardController extends Controller
 {

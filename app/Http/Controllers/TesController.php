@@ -6,10 +6,10 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\HRD;
-use App\PaketSoal;
-use App\Tes;
-use App\TesSettings;
+use App\Models\HRD;
+use App\Models\PaketSoal;
+use App\Models\Tes;
+use App\Models\TesSettings;
 
 class TesController extends Controller
 {

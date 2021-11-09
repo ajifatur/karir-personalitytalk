@@ -7,10 +7,10 @@ use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Stifin;
-use App\StifinAim;
-use App\StifinTest;
-use App\HRD;
+use App\Models\Stifin;
+use App\Models\StifinAim;
+use App\Models\StifinTest;
+use App\Models\HRD;
 
 class StifinController extends Controller
 {

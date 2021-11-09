@@ -6,12 +6,12 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\HRD;
-use App\Kantor;
-use App\Karyawan;
-use App\Pelamar;
-use App\Seleksi;
-use App\User;
+use App\Models\HRD;
+use App\Models\Kantor;
+use App\Models\Karyawan;
+use App\Models\Pelamar;
+use App\Models\Seleksi;
+use App\Models\User;
 
 class SeleksiController extends Controller
 {

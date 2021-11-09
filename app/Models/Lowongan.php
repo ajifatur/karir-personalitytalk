@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StifinTest extends Model
+class Lowongan extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'stifin_tests';
+    protected $table = 'lowongan';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_st';
+    protected $primaryKey = 'id_lowongan';
 
     /**
      * Fill the model with an array of attributes.
@@ -28,5 +28,19 @@ class StifinTest extends Model
      *
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
-    protected $fillable = ['test_name', 'test_code'];
+    protected $fillable = [
+        'judul_lowongan',
+		'deskripsi_lowongan',
+		'posisi',
+		'url_lowongan',
+		'status',
+		'created_at',
+	];
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

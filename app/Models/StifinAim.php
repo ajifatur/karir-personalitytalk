@@ -1,24 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Soal extends Model
+class StifinAim extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'soal';
+    protected $table = 'stifin_aim';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_soal';
+    protected $primaryKey = 'id_sa';
 
     /**
      * Fill the model with an array of attributes.
@@ -28,16 +28,5 @@ class Soal extends Model
      *
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
-    protected $fillable = [
-        'id_paket',
-		'nomor',
-		'soal'
-	];
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
+    protected $fillable = ['aim'];
 }

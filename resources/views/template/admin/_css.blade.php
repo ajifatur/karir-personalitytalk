@@ -16,9 +16,17 @@
     .page-heading {background-color: #fff; border: 1px solid #e3e6f0; padding: .75rem 1.25rem; margin-bottom: 1.5rem; border-radius: .5rem;}
     .page-heading .h3 {margin-bottom: 0;}
     .page-heading .breadcrumb {background-color: transparent; margin-bottom: 0;}
+    @media(max-width: 576px) {
+        .page-heading .breadcrumb {display: none;}
+    }
 
     /* Card */
     .card {border-radius: .5rem;}
+    @media(max-width: 576px) {
+        .card-header.d-flex {display: block!important;}
+        .card-header.d-flex div {text-align: center;}
+        .card-header.d-flex div:first-child {margin-bottom: .5rem;}
+    }
     .card-header .form-inline .form-control {margin-right: .5rem;}
     .card-header .form-inline .form-control:last-child {margin-right: 0;}
     .list-group .list-group-item.active a {color: #fff;}
