@@ -4,8 +4,39 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "38d38bf980ad51a1b65c8838fa8cc4e2",
+    "content-hash": "1b70d3fcae67704691635a8d3876b91f",
     "packages": [
+        {
+            "name": "ajifatur/faturhelper",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ajifatur/faturhelper.git",
+                "reference": "aec4bf9d0d8ea026979fe7d5dbc4999c9176fe78"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ajifatur/faturhelper/zipball/aec4bf9d0d8ea026979fe7d5dbc4999c9176fe78",
+                "reference": "aec4bf9d0d8ea026979fe7d5dbc4999c9176fe78",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aji Fatur",
+                    "email": "ajifatur32@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ajifatur/faturhelper/issues",
+                "source": "https://github.com/ajifatur/faturhelper/tree/v2.0.0"
+            },
+            "time": "2021-11-10T14:16:37+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.0.3",

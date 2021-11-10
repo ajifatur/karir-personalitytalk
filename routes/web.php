@@ -11,14 +11,13 @@
 |
 */
 
-// Guest Capabilities...
+// Guest Capabilities
 Route::group(['middleware' => ['guest']], function(){
 
 	// Home
 	Route::get('/', function () {
-	   // return view('index');
 	   return redirect('/login');
-	});
+	})->name('home');
 
 	// Login
 	Route::get('/login', 'Auth\LoginController@showLoginForm');
@@ -35,17 +34,6 @@ Route::group(['middleware' => ['guest']], function(){
 	Route::post('/lowongan/{code}/daftar/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
 	Route::get('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
 	Route::post('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
-	// Route::get('/applicant/register/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
-	// Route::post('/applicant/register/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
-	// Route::get('/applicant/register/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
-	// Route::post('/applicant/register/step-2', 'ApplicantRegisterController@submitRegistrationFormStep2');
-	// Route::get('/applicant/register/step-3', 'ApplicantRegisterController@showRegistrationFormStep3');
-	// Route::post('/applicant/register/step-3', 'ApplicantRegisterController@submitRegistrationFormStep3');
-	// Route::get('/applicant/register/step-4', 'ApplicantRegisterController@showRegistrationFormStep4');
-	// Route::post('/applicant/register/step-4', 'ApplicantRegisterController@submitRegistrationFormStep4');
-	// Route::get('/applicant/register/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
-	// Route::post('/applicant/register/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
-	//
 
 	// URL Form
 	Route::get('/lowongan/{url}', 'LowonganController@visitForm');
@@ -55,14 +43,28 @@ Route::group(['middleware' => ['guest']], function(){
 	Route::post('/register', 'Auth\RegisterController@submitRegistrationForm');
 });
     
-// Admin Capabilities....
+// Admin Capabilities
 Route::group(['middleware' => ['admin']], function(){
 
 	// Logout
-	Route::post('/admin/logout', 'AdminLoginController@logout');
+	Route::post('/admin/logout', 'AdminLoginController@logout')->name('auth.logout');
 
 	// Dashboard
-	Route::get('/admin', 'DashboardController@index');
+	Route::get('/admin', function() {
+		return view('layouts/admin/main');
+	})->name('admin.dashboard');
+
+	// Office
+	Route::get('/admin/office', 'Update\OfficeController@index')->name('admin.office.index');
+	Route::get('/admin/office/create', 'Update\OfficeController@create')->name('admin.office.create');
+	Route::post('/admin/office/store', 'Update\OfficeController@store')->name('admin.office.store');
+	Route::get('/admin/office/edit/{id}', 'Update\OfficeController@edit')->name('admin.office.edit');
+	Route::post('/admin/office/update', 'Update\OfficeController@update')->name('admin.office.update');
+	Route::post('/admin/office/delete', 'Update\OfficeController@delete')->name('admin.office.delete');
+
+
+
+	// Route::get('/admin', 'DashboardController@index');
 	// Route::get('/admin/send-email', 'ApplicantRegisterController@sendMailToHRD');
 	
 	// Profil
