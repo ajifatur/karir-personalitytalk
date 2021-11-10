@@ -563,7 +563,7 @@ class ApplicantRegisterController extends Controller
             $pelamar->pendidikan_formal = '';
             $pelamar->pendidikan_non_formal = '';
             $pelamar->riwayat_pekerjaan = $temp_array['step_1']['riwayat_pekerjaan'];
-            $pelamar->keahlian = json_encode($temp_array['step_5']);;
+            $pelamar->keahlian = json_encode($temp_array['step_5']);
             $pelamar->pertanyaan = '';
             $pelamar->pas_foto = array_key_exists('step_2', $temp_array) ? $temp_array['step_2']['pas_foto'] : '';
             $pelamar->foto_ijazah = array_key_exists('step_3', $temp_array) ? $temp_array['step_3']['foto_ijazah'] : '';
