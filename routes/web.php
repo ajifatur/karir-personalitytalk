@@ -62,7 +62,35 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/office/update', 'Update\OfficeController@update')->name('admin.office.update');
 	Route::post('/admin/office/delete', 'Update\OfficeController@delete')->name('admin.office.delete');
 
+	// Position
+	Route::get('/admin/position', 'Update\PositionController@index')->name('admin.position.index');
+	Route::get('/admin/position/create', 'Update\PositionController@create')->name('admin.position.create');
+	Route::post('/admin/position/store', 'Update\PositionController@store')->name('admin.position.store');
+	Route::get('/admin/position/edit/{id}', 'Update\PositionController@edit')->name('admin.position.edit');
+	Route::post('/admin/position/update', 'Update\PositionController@update')->name('admin.position.update');
+	Route::post('/admin/position/delete', 'Update\PositionController@delete')->name('admin.position.delete');
 
+	// Vacancy
+	Route::get('/admin/vacancy', 'Update\VacancyController@index')->name('admin.vacancy.index');
+	Route::get('/admin/vacancy/create', 'Update\VacancyController@create')->name('admin.vacancy.create');
+	Route::post('/admin/vacancy/store', 'Update\VacancyController@store')->name('admin.vacancy.store');
+	Route::get('/admin/vacancy/edit/{id}', 'Update\VacancyController@edit')->name('admin.vacancy.edit');
+	Route::post('/admin/vacancy/update', 'Update\VacancyController@update')->name('admin.vacancy.update');
+	Route::post('/admin/vacancy/delete', 'Update\VacancyController@delete')->name('admin.vacancy.delete');
+	Route::get('/admin/vacancy/applicant/{id}', 'Update\VacancyController@applicant')->name('admin.vacancy.applicant');
+	Route::post('/admin/vacancy/update-status', 'Update\VacancyController@updateStatus')->name('admin.vacancy.update-status');
+
+	// Applicant
+	Route::get('/admin/applicant', 'Update\ApplicantController@index')->name('admin.applicant.index');
+	Route::get('/admin/applicant/detail/{id}', 'Update\ApplicantController@detail')->name('admin.applicant.detail');
+	Route::get('/admin/applicant/edit/{id}', 'Update\ApplicantController@edit')->name('admin.applicant.edit');
+	Route::post('/admin/applicant/update', 'Update\ApplicantController@update')->name('admin.applicant.update');
+	Route::post('/admin/applicant/delete', 'Update\ApplicantController@delete')->name('admin.applicant.delete');
+	Route::get('/admin/applicant/export', 'Update\ApplicantController@export')->name('admin.applicant.export');
+	Route::get('/admin/applicant/json', 'Update\ApplicantController@json')->name('admin.applicant.json');
+
+
+	///////////////////////////////////////////
 
 	// Route::get('/admin', 'DashboardController@index');
 	// Route::get('/admin/send-email', 'ApplicantRegisterController@sendMailToHRD');
@@ -80,31 +108,31 @@ Route::group(['middleware' => ['admin']], function(){
 		return view('update-sistem/index');
 	});
 
-	// Kantor Menu
-	Route::get('/admin/kantor', 'KantorController@index');
-	Route::get('/admin/kantor/create', 'KantorController@create');
-	Route::post('/admin/kantor/store', 'KantorController@store');
-	Route::get('/admin/kantor/edit/{id}', 'KantorController@edit');
-	Route::post('/admin/kantor/update', 'KantorController@update');
-	Route::post('/admin/kantor/delete', 'KantorController@delete');
+	// // Kantor Menu
+	// Route::get('/admin/kantor', 'KantorController@index');
+	// Route::get('/admin/kantor/create', 'KantorController@create');
+	// Route::post('/admin/kantor/store', 'KantorController@store');
+	// Route::get('/admin/kantor/edit/{id}', 'KantorController@edit');
+	// Route::post('/admin/kantor/update', 'KantorController@update');
+	// Route::post('/admin/kantor/delete', 'KantorController@delete');
 
-	// Jabatan Menu
-	Route::get('/admin/posisi', 'PosisiController@index');
-	Route::get('/admin/posisi/create', 'PosisiController@create');
-	Route::post('/admin/posisi/store', 'PosisiController@store');
-	Route::get('/admin/posisi/edit/{id}', 'PosisiController@edit');
-	Route::post('/admin/posisi/update', 'PosisiController@update');
-	Route::post('/admin/posisi/delete', 'PosisiController@delete');
+	// // Jabatan Menu
+	// Route::get('/admin/posisi', 'PosisiController@index');
+	// Route::get('/admin/posisi/create', 'PosisiController@create');
+	// Route::post('/admin/posisi/store', 'PosisiController@store');
+	// Route::get('/admin/posisi/edit/{id}', 'PosisiController@edit');
+	// Route::post('/admin/posisi/update', 'PosisiController@update');
+	// Route::post('/admin/posisi/delete', 'PosisiController@delete');
 
-	// Lowongan Menu
-	Route::get('/admin/lowongan', 'LowonganController@index');
-	Route::get('/admin/lowongan/create', 'LowonganController@create');
-	Route::post('/admin/lowongan/store', 'LowonganController@store');
-	Route::get('/admin/lowongan/pelamar/{id}', 'LowonganController@applicant');
-	Route::post('/admin/lowongan/update-status', 'LowonganController@updateStatus');
-	Route::get('/admin/lowongan/edit/{id}', 'LowonganController@edit');
-	Route::post('/admin/lowongan/update', 'LowonganController@update');
-	Route::post('/admin/lowongan/delete', 'LowonganController@delete');
+	// // Lowongan Menu
+	// Route::get('/admin/lowongan', 'LowonganController@index');
+	// Route::get('/admin/lowongan/create', 'LowonganController@create');
+	// Route::post('/admin/lowongan/store', 'LowonganController@store');
+	// Route::get('/admin/lowongan/pelamar/{id}', 'LowonganController@applicant');
+	// Route::post('/admin/lowongan/update-status', 'LowonganController@updateStatus');
+	// Route::get('/admin/lowongan/edit/{id}', 'LowonganController@edit');
+	// Route::post('/admin/lowongan/update', 'LowonganController@update');
+	// Route::post('/admin/lowongan/delete', 'LowonganController@delete');
 
 	// Seleksi Menu
 	Route::get('/admin/seleksi', 'SeleksiController@index');

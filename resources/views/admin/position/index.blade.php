@@ -1,12 +1,12 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Kelola Kantor')
+@section('title', 'Kelola Jabatan')
 
 @section('content')
 
 <div class="d-sm-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-2 mb-sm-0">Kelola Kantor</h1>
-    <a href="{{ route('admin.office.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Kantor</a>
+    <h1 class="h3 mb-2 mb-sm-0">Kelola Jabatan</h1>
+    <a href="{{ route('admin.position.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Jabatan</a>
 </div>
 <div class="row">
 	<div class="col-12">
@@ -32,18 +32,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($offices as $office)
+                            @foreach($positions as $position)
                             <tr>
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
-                                <td>{{ $office->nama_kantor }}</td>
-                                <td align="right">{{ number_format(count_karyawan_by_kantor($office->id_kantor),0,',',',') }}</td>
+                                <td>{{ $position->nama_posisi }}</td>
+                                <td align="right">{{ number_format(count_karyawan_by_jabatan($position->id_posisi),0,',',',') }}</td>
                                 @if(Auth::user()->role == role('admin'))
-                                <td>{{ $office->perusahaan }}</td>
+                                <td>{{ $position->perusahaan }}</td>
                                 @endif
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{{ route('admin.office.edit', ['id' => $office->id_kantor]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
-                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $office->id_kantor }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                                        <a href="{{ route('admin.position.edit', ['id' => $position->id_posisi]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $position->id_posisi }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -56,7 +56,7 @@
 	</div>
 </div>
 
-<form class="form-delete d-none" method="post" action="{{ route('admin.office.delete') }}">
+<form class="form-delete d-none" method="post" action="{{ route('admin.position.delete') }}">
     @csrf
     <input type="hidden" name="id">
 </form>

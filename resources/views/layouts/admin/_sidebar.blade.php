@@ -10,10 +10,28 @@
                             <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                         </a>
 					</li>
+
 					<li class="sidebar-header">Data</li>
 					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.office.index'))) ? 'active' : '' }}">
 						<a class="sidebar-link" href="{{ route('admin.office.index') }}">
 							<i class="align-middle" data-feather="briefcase"></i> <span class="align-middle">Kantor</span>
+						</a>
+					</li>
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.position.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.position.index') }}">
+							<i class="align-middle" data-feather="paperclip"></i> <span class="align-middle">Jabatan</span>
+						</a>
+					</li>
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.vacancy.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.vacancy.index') }}">
+							<i class="align-middle" data-feather="wind"></i> <span class="align-middle">Lowongan</span>
+						</a>
+					</li>
+
+					<li class="sidebar-header">Pengguna</li>
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.applicant.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.applicant.index') }}">
+							<i class="align-middle" data-feather="user-plus"></i> <span class="align-middle">Pelamar</span>
 						</a>
 					</li>
 				</ul>

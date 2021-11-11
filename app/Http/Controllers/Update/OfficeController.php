@@ -87,7 +87,7 @@ class OfficeController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else{
-            // Save the category
+            // Save the office
             $office = new Kantor;
             $office->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
             $office->nama_kantor = $request->name;
@@ -146,7 +146,7 @@ class OfficeController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else{
-            // Update the category
+            // Update the office
             $office = Kantor::find($request->id);
             $office->nama_kantor = $request->name;
             $office->alamat_kantor = $request->address != '' ? $request->address : '';
