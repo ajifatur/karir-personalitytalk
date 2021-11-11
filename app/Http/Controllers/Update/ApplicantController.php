@@ -131,6 +131,8 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
+        abort(404);
+
         // Get the vacancy
     	if(Auth::user()->role == role('hrd')) {
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
@@ -164,6 +166,8 @@ class ApplicantController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request)
     {
+        abort(404);
+
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -200,13 +204,25 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
         
-        // Get the vacancy
-        $vacancy = Lowongan::find($request->id);
+        // Get the applicant
+        $applicant = Pelamar::find($request->id);
 
-        // Delete the vacancy
-        $vacancy->delete();
+        // Delete the applicant
+        $applicant->delete();
+        
+        // Get the user
+        $user = User::find($applicant->id_user);
+
+        // Delete the user
+        $user->delete();
+        
+        // Get the selection
+        $selection = Seleksi::where('id_pelamar','=',$request->id)->first();
+
+        // Delete the selection
+        if($selection) $selection->delete();
 
         // Redirect
-        return redirect()->route('admin.vacancy.index')->with(['message' => 'Berhasil menghapus data.']);
+        return redirect()->route('admin.applicant.index')->with(['message' => 'Berhasil menghapus data.']);
     }
 }
