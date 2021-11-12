@@ -80,14 +80,24 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/vacancy/applicant/{id}', 'Update\VacancyController@applicant')->name('admin.vacancy.applicant');
 	Route::post('/admin/vacancy/update-status', 'Update\VacancyController@updateStatus')->name('admin.vacancy.update-status');
 
+	// Employee
+	Route::get('/admin/employee', 'Update\EmployeeController@index')->name('admin.employee.index');
+	Route::get('/admin/employee/create', 'Update\EmployeeController@create')->name('admin.employee.create');
+	Route::post('/admin/employee/store', 'Update\EmployeeController@store')->name('admin.employee.store');
+	Route::get('/admin/employee/detail/{id}', 'Update\EmployeeController@detail')->name('admin.employee.detail');
+	Route::get('/admin/employee/edit/{id}', 'Update\EmployeeController@edit')->name('admin.employee.edit');
+	Route::post('/admin/employee/update', 'Update\EmployeeController@update')->name('admin.employee.update');
+	Route::post('/admin/employee/delete', 'Update\EmployeeController@delete')->name('admin.employee.delete');
+	// Route::get('/admin/employee/export', 'Update\EmployeeController@export')->name('admin.employee.export');
+	// Route::post('/admin/employee/import', 'Update\EmployeeController@import')->name('admin.employee.import');
+
 	// Applicant
 	Route::get('/admin/applicant', 'Update\ApplicantController@index')->name('admin.applicant.index');
 	Route::get('/admin/applicant/detail/{id}', 'Update\ApplicantController@detail')->name('admin.applicant.detail');
-	Route::get('/admin/applicant/edit/{id}', 'Update\ApplicantController@edit')->name('admin.applicant.edit');
-	Route::post('/admin/applicant/update', 'Update\ApplicantController@update')->name('admin.applicant.update');
+	// Route::get('/admin/applicant/edit/{id}', 'Update\ApplicantController@edit')->name('admin.applicant.edit');
+	// Route::post('/admin/applicant/update', 'Update\ApplicantController@update')->name('admin.applicant.update');
 	Route::post('/admin/applicant/delete', 'Update\ApplicantController@delete')->name('admin.applicant.delete');
-	Route::get('/admin/applicant/export', 'Update\ApplicantController@export')->name('admin.applicant.export');
-	Route::get('/admin/applicant/json', 'Update\ApplicantController@json')->name('admin.applicant.json');
+	// Route::get('/admin/applicant/export', 'Update\ApplicantController@export')->name('admin.applicant.export');
 
 
 	///////////////////////////////////////////
@@ -143,12 +153,12 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/seleksi/delete', 'SeleksiController@delete');
 
 	// Agama Menu
-	Route::get('/admin/agama', 'AgamaController@index');
-	Route::get('/admin/agama/create', 'AgamaController@create');
-	Route::post('/admin/agama/store', 'AgamaController@store');
-	Route::get('/admin/agama/edit/{id}', 'AgamaController@edit');
-	Route::post('/admin/agama/update', 'AgamaController@update');
-	Route::post('/admin/agama/delete', 'AgamaController@delete');
+	// Route::get('/admin/agama', 'AgamaController@index');
+	// Route::get('/admin/agama/create', 'AgamaController@create');
+	// Route::post('/admin/agama/store', 'AgamaController@store');
+	// Route::get('/admin/agama/edit/{id}', 'AgamaController@edit');
+	// Route::post('/admin/agama/update', 'AgamaController@update');
+	// Route::post('/admin/agama/delete', 'AgamaController@delete');
 
 	// Tes Menu
 	Route::get('/admin/tes', 'TesController@index');
@@ -164,13 +174,13 @@ Route::group(['middleware' => ['admin']], function(){
 
 	// Hasil Menu
 	// Route::get('/admin/hasil', 'HasilController@index');
-	Route::get('/admin/hasil/karyawan', 'HasilController@employeer');
+	Route::get('/admin/hasil/karyawan', 'HasilController@employee');
 	Route::get('/admin/hasil/pelamar', 'HasilController@applicant');
 	Route::get('/admin/hasil/magang', 'HasilController@internship');
 	Route::get('/admin/hasil/detail/{id}', 'HasilController@detail');
 	Route::post('/admin/hasil/print', 'HasilController@pdf');
 	Route::post('/admin/hasil/delete', 'HasilController@delete');
-	Route::get('/admin/hasil/json/karyawan', 'HasilController@json_employeer');
+	Route::get('/admin/hasil/json/karyawan', 'HasilController@json_employee');
 	Route::get('/admin/hasil/json/pelamar', 'HasilController@json_applicant');
 	Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
 
@@ -184,12 +194,12 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/stifin/print/{id}', 'StifinController@print');
 
 	// Admin Menu
-	Route::get('/admin/list', 'UserController@admin');
-	Route::get('/admin/create', 'UserController@createAdmin');
-	Route::post('/admin/store', 'UserController@storeAdmin');
-	Route::get('/admin/edit/{id}', 'UserController@editAdmin');
-	Route::post('/admin/update', 'UserController@updateAdmin');
-	Route::post('/admin/delete', 'UserController@delete');
+	// Route::get('/admin/list', 'UserController@admin');
+	// Route::get('/admin/create', 'UserController@createAdmin');
+	// Route::post('/admin/store', 'UserController@storeAdmin');
+	// Route::get('/admin/edit/{id}', 'UserController@editAdmin');
+	// Route::post('/admin/update', 'UserController@updateAdmin');
+	// Route::post('/admin/delete', 'UserController@delete');
 
 	// HRD Menu
 	Route::get('/admin/hrd', 'HRDController@index');
@@ -200,25 +210,25 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/hrd/delete', 'HRDController@delete');
 
 	// Karyawan Menu
-	Route::get('/admin/karyawan', 'KaryawanController@index');
-	Route::get('/admin/karyawan/create', 'KaryawanController@create');
-	Route::post('/admin/karyawan/store', 'KaryawanController@store');
-	Route::get('/admin/karyawan/detail/{id}', 'KaryawanController@detail');
-	Route::get('/admin/karyawan/edit/{id}', 'KaryawanController@edit');
-	Route::post('/admin/karyawan/update', 'KaryawanController@update');
-	Route::post('/admin/karyawan/delete', 'KaryawanController@delete');
-	Route::get('/admin/karyawan/export', 'KaryawanController@export');
-	Route::post('/admin/karyawan/import', 'KaryawanController@import');
-	Route::get('/admin/karyawan/json', 'KaryawanController@json');
+	// Route::get('/admin/karyawan', 'KaryawanController@index');
+	// Route::get('/admin/karyawan/create', 'KaryawanController@create');
+	// Route::post('/admin/karyawan/store', 'KaryawanController@store');
+	// Route::get('/admin/karyawan/detail/{id}', 'KaryawanController@detail');
+	// Route::get('/admin/karyawan/edit/{id}', 'KaryawanController@edit');
+	// Route::post('/admin/karyawan/update', 'KaryawanController@update');
+	// Route::post('/admin/karyawan/delete', 'KaryawanController@delete');
+	// Route::get('/admin/karyawan/export', 'KaryawanController@export');
+	// Route::post('/admin/karyawan/import', 'KaryawanController@import');
+	// Route::get('/admin/karyawan/json', 'KaryawanController@json');
 
 	// Pelamar Menu
-	Route::get('/admin/pelamar', 'PelamarController@index');
-	Route::get('/admin/pelamar/detail/{id}', 'PelamarController@detail');
-	Route::get('/admin/pelamar/edit/{id}', 'PelamarController@edit');
-	Route::post('/admin/pelamar/update', 'PelamarController@update');
-	Route::post('/admin/pelamar/delete', 'PelamarController@delete');
-	Route::get('/admin/pelamar/export', 'PelamarController@export');
-	Route::get('/admin/pelamar/json', 'PelamarController@json');
+	// Route::get('/admin/pelamar', 'PelamarController@index');
+	// Route::get('/admin/pelamar/detail/{id}', 'PelamarController@detail');
+	// Route::get('/admin/pelamar/edit/{id}', 'PelamarController@edit');
+	// Route::post('/admin/pelamar/update', 'PelamarController@update');
+	// Route::post('/admin/pelamar/delete', 'PelamarController@delete');
+	// Route::get('/admin/pelamar/export', 'PelamarController@export');
+	// Route::get('/admin/pelamar/json', 'PelamarController@json');
 
 	// // General Member Menu
 	// Route::get('/admin/umum', 'UserController@general');

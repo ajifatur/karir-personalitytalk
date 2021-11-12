@@ -44,7 +44,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
                 ->addColumn('checkbox', '<input type="checkbox" class="form-check-input checkbox-one">')
                 ->addColumn('name', '
                     <span class="d-none">{{ $nama_user }}</span>
-                    <a href="/admin/pelamar/detail/{{ $id_pelamar }}">{{ ucwords($nama_user) }}</a>
+                    <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id_pelamar]) }}">{{ ucwords($nama_user) }}</a>
                     <br>
                     <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $email }}</small>
                     <br>
