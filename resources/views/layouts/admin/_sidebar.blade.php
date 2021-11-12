@@ -29,6 +29,11 @@
 					</li>
 
 					<li class="sidebar-header">Pengguna</li>
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.hrd.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.hrd.index') }}">
+							<i class="align-middle" data-feather="user-check"></i> <span class="align-middle">HRD</span>
+						</a>
+					</li>
 					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.employee.index'))) ? 'active' : '' }}">
 						<a class="sidebar-link" href="{{ route('admin.employee.index') }}">
 							<i class="align-middle" data-feather="user-x"></i> <span class="align-middle">Karyawan</span>

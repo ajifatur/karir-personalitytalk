@@ -80,6 +80,14 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/vacancy/applicant/{id}', 'Update\VacancyController@applicant')->name('admin.vacancy.applicant');
 	Route::post('/admin/vacancy/update-status', 'Update\VacancyController@updateStatus')->name('admin.vacancy.update-status');
 
+	// HRD
+	Route::get('/admin/hrd', 'Update\HRDController@index')->name('admin.hrd.index');
+	Route::get('/admin/hrd/create', 'Update\HRDController@create')->name('admin.hrd.create');
+	Route::post('/admin/hrd/store', 'Update\HRDController@store')->name('admin.hrd.store');
+	Route::get('/admin/hrd/edit/{id}', 'Update\HRDController@edit')->name('admin.hrd.edit');
+	Route::post('/admin/hrd/update', 'Update\HRDController@update')->name('admin.hrd.update');
+	Route::post('/admin/hrd/delete', 'Update\HRDController@delete')->name('admin.hrd.delete');
+
 	// Employee
 	Route::get('/admin/employee', 'Update\EmployeeController@index')->name('admin.employee.index');
 	Route::get('/admin/employee/create', 'Update\EmployeeController@create')->name('admin.employee.create');
@@ -202,12 +210,12 @@ Route::group(['middleware' => ['admin']], function(){
 	// Route::post('/admin/delete', 'UserController@delete');
 
 	// HRD Menu
-	Route::get('/admin/hrd', 'HRDController@index');
-	Route::get('/admin/hrd/create', 'HRDController@create');
-	Route::post('/admin/hrd/store', 'HRDController@store');
-	Route::get('/admin/hrd/edit/{id}', 'HRDController@edit');
-	Route::post('/admin/hrd/update', 'HRDController@update');
-	Route::post('/admin/hrd/delete', 'HRDController@delete');
+	// Route::get('/admin/hrd', 'HRDController@index');
+	// Route::get('/admin/hrd/create', 'HRDController@create');
+	// Route::post('/admin/hrd/store', 'HRDController@store');
+	// Route::get('/admin/hrd/edit/{id}', 'HRDController@edit');
+	// Route::post('/admin/hrd/update', 'HRDController@update');
+	// Route::post('/admin/hrd/delete', 'HRDController@delete');
 
 	// Karyawan Menu
 	// Route::get('/admin/karyawan', 'KaryawanController@index');
