@@ -80,6 +80,26 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/vacancy/applicant/{id}', 'Update\VacancyController@applicant')->name('admin.vacancy.applicant');
 	Route::post('/admin/vacancy/update-status', 'Update\VacancyController@updateStatus')->name('admin.vacancy.update-status');
 
+	// Selection
+	Route::get('/admin/selection', 'Update\SelectionController@index')->name('admin.selection.index');
+	Route::post('/admin/selection/store', 'Update\SelectionController@store')->name('admin.selection.store');
+	Route::post('/admin/selection/data', 'Update\SelectionController@data')->name('admin.selection.data');
+	Route::post('/admin/selection/update', 'Update\SelectionController@update')->name('admin.selection.update');
+	Route::post('/admin/selection/convert', 'Update\SelectionController@convert')->name('admin.selection.convert');
+	Route::post('/admin/selection/delete', 'Update\SelectionController@delete')->name('admin.selection.delete');
+
+	// Test
+	Route::get('/admin/test', 'Update\TestController@index')->name('admin.test.index');
+	Route::get('/admin/test/create', 'Update\TestController@create')->name('admin.test.create');
+	Route::post('/admin/test/store', 'Update\TestController@store')->name('admin.test.store');
+	Route::get('/admin/test/edit/{id}', 'Update\TestController@edit')->name('admin.test.edit');
+	Route::post('/admin/test/update', 'Update\TestController@update')->name('admin.test.update');
+	Route::post('/admin/test/delete', 'Update\TestController@delete')->name('admin.test.delete');
+	// Route::post('/admin/test/generate-path', 'TesController@generatePath');
+	// Route::get('/admin/test/settings/{path}', 'TesController@settings');
+	// Route::get('/admin/test/settings/{path}/{paket}', 'TesController@editSettings');
+	// Route::post('/admin/test/settings/{path}/{paket}/update', 'TesController@updateSettings');
+
 	// STIFIn
 	Route::get('/admin/stifin', 'Update\StifinController@index')->name('admin.stifin.index');
 	Route::get('/admin/stifin/create', 'Update\StifinController@create')->name('admin.stifin.create');
@@ -162,13 +182,13 @@ Route::group(['middleware' => ['admin']], function(){
 	// Route::post('/admin/lowongan/update', 'LowonganController@update');
 	// Route::post('/admin/lowongan/delete', 'LowonganController@delete');
 
-	// Seleksi Menu
-	Route::get('/admin/seleksi', 'SeleksiController@index');
-	Route::post('/admin/seleksi/store', 'SeleksiController@store');
-	Route::post('/admin/seleksi/data', 'SeleksiController@data');
-	Route::post('/admin/seleksi/update', 'SeleksiController@update');
-	Route::post('/admin/seleksi/convert', 'SeleksiController@convert');
-	Route::post('/admin/seleksi/delete', 'SeleksiController@delete');
+	// // Seleksi Menu
+	// Route::get('/admin/seleksi', 'SeleksiController@index');
+	// Route::post('/admin/seleksi/store', 'SeleksiController@store');
+	// Route::post('/admin/seleksi/data', 'SeleksiController@data');
+	// Route::post('/admin/seleksi/update', 'SeleksiController@update');
+	// Route::post('/admin/seleksi/convert', 'SeleksiController@convert');
+	// Route::post('/admin/seleksi/delete', 'SeleksiController@delete');
 
 	// Agama Menu
 	// Route::get('/admin/agama', 'AgamaController@index');
@@ -178,17 +198,17 @@ Route::group(['middleware' => ['admin']], function(){
 	// Route::post('/admin/agama/update', 'AgamaController@update');
 	// Route::post('/admin/agama/delete', 'AgamaController@delete');
 
-	// Tes Menu
-	Route::get('/admin/tes', 'TesController@index');
-	Route::get('/admin/tes/create', 'TesController@create');
-	Route::post('/admin/tes/store', 'TesController@store');
-	Route::get('/admin/tes/edit/{id}', 'TesController@edit');
-	Route::post('/admin/tes/update', 'TesController@update');
-	Route::post('/admin/tes/delete', 'TesController@delete');
-	Route::post('/admin/tes/generate-path', 'TesController@generatePath');
-	Route::get('/admin/tes/settings/{path}', 'TesController@settings');
-	Route::get('/admin/tes/settings/{path}/{paket}', 'TesController@editSettings');
-	Route::post('/admin/tes/settings/{path}/{paket}/update', 'TesController@updateSettings');
+	// // Tes Menu
+	// Route::get('/admin/tes', 'TesController@index');
+	// Route::get('/admin/tes/create', 'TesController@create');
+	// Route::post('/admin/tes/store', 'TesController@store');
+	// Route::get('/admin/tes/edit/{id}', 'TesController@edit');
+	// Route::post('/admin/tes/update', 'TesController@update');
+	// Route::post('/admin/tes/delete', 'TesController@delete');
+	// Route::post('/admin/tes/generate-path', 'TesController@generatePath');
+	// Route::get('/admin/tes/settings/{path}', 'TesController@settings');
+	// Route::get('/admin/tes/settings/{path}/{paket}', 'TesController@editSettings');
+	// Route::post('/admin/tes/settings/{path}/{paket}/update', 'TesController@updateSettings');
 
 	// Hasil Menu
 	// Route::get('/admin/hasil', 'HasilController@index');

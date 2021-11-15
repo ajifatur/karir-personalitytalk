@@ -27,10 +27,22 @@
 							<i class="align-middle" data-feather="wind"></i> <span class="align-middle">Lowongan</span>
 						</a>
 					</li>
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.selection.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.selection.index') }}">
+							<i class="align-middle" data-feather="filter"></i> <span class="align-middle">Seleksi</span>
+						</a>
+					</li>
+					@if(Auth::user()->role == role('admin'))
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.test.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.test.index') }}">
+							<i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Tes</span>
+						</a>
+					</li>
+					@endif
 					@if(stifin_access())
 					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.stifin.index'))) ? 'active' : '' }}">
 						<a class="sidebar-link" href="{{ route('admin.stifin.index') }}">
-							<i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">STIFIn</span>
+							<i class="align-middle" data-feather="target"></i> <span class="align-middle">STIFIn</span>
 						</a>
 					</li>
 					@endif
