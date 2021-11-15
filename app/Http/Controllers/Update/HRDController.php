@@ -64,79 +64,66 @@ class HRDController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get the HRD
-    	if(Auth::user()->role == role('admin')) {
-            $hrd = HRD::find($request->hrd);
-        }
-    	elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-        }
-
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'birthdate' => 'required',
             'gender' => 'required',
             'email' => 'required|email',
-            'phone_number' => 'required|numeric',
-            'status' => 'required',
-            'hrd' => Auth::user()->role == role('admin') ? 'required' : '',
-            'office' => Auth::user()->role == role('hrd') ? 'required' : '',
-            'position' => Auth::user()->role == role('hrd') ? 'required' : '',
+            'username' => 'required|string|min:4|unique:users',
+            'password' => 'required|min:4',
+            'code' => 'required|alpha|min:3|max:4',
+            'company_name' => 'required',
+            'stifin' => 'required',
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
-            // Generate username
-            $userdata = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest()->first();
-            if(!$userdata){
-                $username = generate_username(null, $hrd->kode);
-            }
-            else{
-                $username = generate_username($userdata->username, $hrd->kode);
-            }
-
+        else {
             // Save the user
             $user = new User;
             $user->nama_user = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
-            $user->username = $username;
-            $user->password_str = $username;
-            $user->password = bcrypt($username);
+            $user->username = $request->username;
+            $user->password = bcrypt($request->password);
             $user->foto = '';
-            $user->role = role('employee');
-            $user->has_access = 0;
-            $user->status = $request->status;
-            $user->last_visit = date("Y-m-d H:i:s");
+            $user->role = role('hrd');
+            $user->has_access = 1;
+            $user->status = 1;
+            $user->last_visit = null;
             $user->created_at = date("Y-m-d H:i:s");
             $user->save();
 
-            // Save the employee
-            $employee = new Karyawan;
-            $employee->id_user = $user->id_user;
-            $employee->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
-            $employee->nama_lengkap = $request->name;
-            $employee->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $employee->jenis_kelamin = $request->gender;
-            $employee->email = $request->email;
-            $employee->nomor_hp = $request->phone_number;
-            $employee->posisi = Auth::user()->role == role('hrd') ? $request->position : 0;
-            $employee->kantor = Auth::user()->role == role('hrd') ? $request->office : 0;
-            $employee->nik_cis = '';
-            $employee->nik = $request->identity_number != '' ? $request->identity_number : '';
-            $employee->alamat = $request->address != '' ? $request->address : '';
-            $employee->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
-            $employee->awal_bekerja = $request->start_date != '' ? generate_date_format($request->start_date, 'y-m-d') : null;
-            $employee->save();
+            // Save the HRD
+            $hrd = new HRD;
+            $hrd->id_user = $user->id_user;
+            $hrd->nama_lengkap = $request->name;
+            $hrd->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $hrd->jenis_kelamin = $request->gender;
+            $hrd->email = $request->email;
+            $hrd->kode = $request->code;
+            $hrd->perusahaan = $request->company_name;
+            $hrd->alamat_perusahaan = $request->company_address != '' ? $request->company_address : '';
+            $hrd->telepon_perusahaan = $request->company_phone != '' ? $request->company_phone : '';
+            $hrd->akses_tes = !empty($request->get('tests')) ? implode(',', array_filter($request->get('tests'))) : '';
+            $hrd->akses_stifin = $request->stifin;
+            $hrd->save();
+
+            // Save the Head Office
+            $kantor = new Kantor;
+			$kantor->id_hrd = $hrd->id_hrd;
+			$kantor->nama_kantor = 'Head Office';
+			$kantor->alamat_kantor = $request->company_address != '' ? $request->company_address : '';
+			$kantor->telepon_kantor = $request->company_phone != '' ? $request->company_phone : '';
+			$kantor->save();
 
             // Redirect
-            return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil menambah data.']);
+            return redirect()->route('admin.hrd.index')->with(['message' => 'Berhasil menambah data.']);
         }
     }
 
@@ -150,25 +137,18 @@ class HRDController extends \App\Http\Controllers\Controller
     {
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
-        
-        // Get the applicant
-        if(Auth::user()->role == role('admin'))
-            $employee = Karyawan::findOrFail($id);
-        else {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
-            $employee = Karyawan::where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
-        }
 
-        if($employee) {
-            $employee->user = User::find($employee->id_user);
-            $employee->kantor = Kantor::find($employee->kantor);
-            $employee->posisi = Posisi::find($employee->posisi);
-        }
+        if(Auth::user()->role == role('admin')) {
+            // Get the HRD
+            $hrd = HRD::findOrFail($id);
+            $hrd->user = User::find($hrd->id_user);
 
-        // View
-        return view('admin/employee/detail', [
-            'employee' => $employee
-        ]);
+            // View
+            return view('admin/hrd/detail', [
+                'hrd' => $hrd
+            ]);
+        }
+        else abort(403);
     }
 
     /**
@@ -182,33 +162,25 @@ class HRDController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get the employee
-    	if(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
-            $employee = Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
-        }
-        else {
-            $employee = Karyawan::join('users','karyawan.id_user','=','users.id_user')->findOrFail($id);
-        }
+        if(Auth::user()->role == role('admin')) {
+            // Get the HRD
+            $hrd = HRD::findOrFail($id);
+            $hrd->akses_tes = $hrd->akses_tes != '' ? explode(',', $hrd->akses_tes) : [];
 
-        // Get positions and offices
-        if(Auth::user()->role == role('admin')){
-            $hrd = HRD::find($employee->id_hrd);
-            $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
-        }
-        elseif(Auth::user()->role == role('hrd')){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-            $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
-        }
+            // Get the user
+            $user = User::findOrFail($hrd->id_user);
 
-        // View
-        return view('admin/employee/edit', [
-            'employee' => $employee,
-            'offices' => $offices,
-            'positions' => $positions
-        ]);
+            // Get tests
+    	    $tests = Tes::all();
+
+            // View
+            return view('admin/hrd/edit', [
+                'hrd' => $hrd,
+                'user' => $user,
+                'tests' => $tests
+            ]);
+        }
+        else abort(403);
     }
 
     /**
@@ -219,50 +191,68 @@ class HRDController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request)
     {
+        // Get the HRD
+        $hrd = HRD::find($request->id);
+
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'birthdate' => 'required',
             'gender' => 'required',
-            'email' => 'required|email',
-            'phone_number' => 'required|numeric',
-            'status' => 'required',
-            'office' => Auth::user()->role == role('hrd') ? 'required' : '',
-            'position' => Auth::user()->role == role('hrd') ? 'required' : '',
+            'email' => [
+                'required',
+                Rule::unique('users')->ignore($hrd->id_user, 'id_user'),
+            ],
+            'username' => [
+                'required', 'string', 'min:4',
+                Rule::unique('users')->ignore($hrd->id_user, 'id_user'),
+            ],
+            'password' => $request->password != '' ? 'required|min:4' : '',
+            'code' => [
+                'required', 'alpha', 'min:3', 'max:4',
+                // Rule::unique('hrd')->ignore($hrd->id_hrd, 'id_hrd'),
+            ],
+            'company_name' => 'required',
+            'stifin' => 'required',
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
-            // Update the employee
-            $employee = Karyawan::find($request->id);
-            $employee->nama_lengkap = $request->name;
-            $employee->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $employee->jenis_kelamin = $request->gender;
-            $employee->email = $request->email;
-            $employee->nomor_hp = $request->phone_number;
-            $employee->posisi = Auth::user()->role == role('hrd') ? $request->position : 0;
-            $employee->kantor = Auth::user()->role == role('hrd') ? $request->office : 0;
-            $employee->nik = $request->identity_number != '' ? $request->identity_number : '';
-            $employee->alamat = $request->address != '' ? $request->address : '';
-            $employee->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
-            $employee->awal_bekerja = $request->start_date != '' ? generate_date_format($request->start_date, 'y-m-d') : null;
-            $employee->save();
-
+        else {
             // Update the user
-            $user = User::find($employee->id_karyawan);
+            $user = User::find($hrd->id_user);
             $user->nama_user = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
-            $user->status = $request->status;
+            $user->username = $request->username;
+            $user->password = $request->password != '' ? bcrypt($request->password) : $user->password;
             $user->save();
 
+            // Update the HRD
+            $hrd->nama_lengkap = $request->name;
+            $hrd->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $hrd->jenis_kelamin = $request->gender;
+            $hrd->email = $request->email;
+            $hrd->kode = $request->code;
+            $hrd->perusahaan = $request->company_name;
+            $hrd->alamat_perusahaan = $request->company_address != '' ? $request->company_address : '';
+            $hrd->telepon_perusahaan = $request->company_phone != '' ? $request->company_phone : '';
+            $hrd->akses_tes = !empty($request->get('tests')) ? implode(',', array_filter($request->get('tests'))) : '';
+            $hrd->akses_stifin = $request->stifin;
+            $hrd->save();
+
+            // Update the Head Office
+            $kantor = Kantor::where('id_hrd','=',$hrd->id_hrd)->where('nama_kantor','=','Head Office')->first();
+			$kantor->alamat_kantor = $request->company_address != '' ? $request->company_address : '';
+			$kantor->telepon_kantor = $request->company_phone != '' ? $request->company_phone : '';
+			$kantor->save();
+
             // Redirect
-            return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil mengupdate data.']);
+            return redirect()->route('admin.hrd.index')->with(['message' => 'Berhasil mengupdate data.']);
         }
     }
 
@@ -277,25 +267,19 @@ class HRDController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
         
-        // Get the employee
-        $employee = Karyawan::find($request->id);
+        // Get the HRD
+        $hrd = HRD::find($request->id);
 
-        // Delete the employee
-        $employee->delete();
+        // Delete the HRD
+        $hrd->delete();
         
         // Get the user
-        $user = User::find($employee->id_user);
+        $user = User::find($hrd->id_user);
 
         // Delete the user
         $user->delete();
 
-        // Get the applicant
-        $applicant = Pelamar::where('id_user','=',$employee->id_user)->first();
-
-        // Delete the applicant
-        if($applicant) $applicant->delete();
-
         // Redirect
-        return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil menghapus data.']);
+        return redirect()->route('admin.hrd.index')->with(['message' => 'Berhasil menghapus data.']);
     }
 }

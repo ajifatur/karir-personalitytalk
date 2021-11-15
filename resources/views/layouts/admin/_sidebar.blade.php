@@ -27,6 +27,13 @@
 							<i class="align-middle" data-feather="wind"></i> <span class="align-middle">Lowongan</span>
 						</a>
 					</li>
+					@if(stifin_access())
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.stifin.index'))) ? 'active' : '' }}">
+						<a class="sidebar-link" href="{{ route('admin.stifin.index') }}">
+							<i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">STIFIn</span>
+						</a>
+					</li>
+					@endif
 
 					<li class="sidebar-header">Pengguna</li>
 					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.hrd.index'))) ? 'active' : '' }}">

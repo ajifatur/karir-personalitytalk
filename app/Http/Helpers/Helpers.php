@@ -1,8 +1,8 @@
 <?php
 
 // use Auth;
-use App\HRD;
-use App\TesSettings;
+use App\Models\HRD;
+use App\Models\TesSettings;
 
 // Subdomain Tes Psikologanda
 if(!function_exists('subdomain_tes')){

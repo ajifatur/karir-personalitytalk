@@ -80,10 +80,20 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/vacancy/applicant/{id}', 'Update\VacancyController@applicant')->name('admin.vacancy.applicant');
 	Route::post('/admin/vacancy/update-status', 'Update\VacancyController@updateStatus')->name('admin.vacancy.update-status');
 
+	// STIFIn
+	Route::get('/admin/stifin', 'Update\StifinController@index')->name('admin.stifin.index');
+	Route::get('/admin/stifin/create', 'Update\StifinController@create')->name('admin.stifin.create');
+	Route::post('/admin/stifin/store', 'Update\StifinController@store')->name('admin.stifin.store');
+	Route::get('/admin/stifin/edit/{id}', 'Update\StifinController@edit')->name('admin.stifin.edit');
+	Route::post('/admin/stifin/update', 'Update\StifinController@update')->name('admin.stifin.update');
+	Route::post('/admin/stifin/delete', 'Update\StifinController@delete')->name('admin.stifin.delete');
+	Route::get('/admin/stifin/print/{id}', 'Update\StifinController@print')->name('admin.stifin.print');
+
 	// HRD
 	Route::get('/admin/hrd', 'Update\HRDController@index')->name('admin.hrd.index');
 	Route::get('/admin/hrd/create', 'Update\HRDController@create')->name('admin.hrd.create');
 	Route::post('/admin/hrd/store', 'Update\HRDController@store')->name('admin.hrd.store');
+	Route::get('/admin/hrd/detail/{id}', 'Update\HRDController@detail')->name('admin.hrd.detail');
 	Route::get('/admin/hrd/edit/{id}', 'Update\HRDController@edit')->name('admin.hrd.edit');
 	Route::post('/admin/hrd/update', 'Update\HRDController@update')->name('admin.hrd.update');
 	Route::post('/admin/hrd/delete', 'Update\HRDController@delete')->name('admin.hrd.delete');
@@ -193,13 +203,13 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
 
 	// STIFIn Menu
-	Route::get('/admin/stifin', 'StifinController@index');
-	Route::get('/admin/stifin/create', 'StifinController@create');
-	Route::post('/admin/stifin/store', 'StifinController@store');
-	Route::get('/admin/stifin/edit/{id}', 'StifinController@edit');
-	Route::post('/admin/stifin/update', 'StifinController@update');
-	Route::post('/admin/stifin/delete', 'StifinController@delete');
-	Route::get('/admin/stifin/print/{id}', 'StifinController@print');
+	// Route::get('/admin/stifin', 'StifinController@index');
+	// Route::get('/admin/stifin/create', 'StifinController@create');
+	// Route::post('/admin/stifin/store', 'StifinController@store');
+	// Route::get('/admin/stifin/edit/{id}', 'StifinController@edit');
+	// Route::post('/admin/stifin/update', 'StifinController@update');
+	// Route::post('/admin/stifin/delete', 'StifinController@delete');
+	// Route::get('/admin/stifin/print/{id}', 'StifinController@print');
 
 	// Admin Menu
 	// Route::get('/admin/list', 'UserController@admin');

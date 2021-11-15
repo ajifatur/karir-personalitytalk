@@ -52,7 +52,7 @@ class OfficeController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get HRD
+        // Get HRDs
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // View
