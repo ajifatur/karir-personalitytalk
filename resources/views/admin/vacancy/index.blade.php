@@ -85,11 +85,6 @@
     <input type="hidden" name="id">
 </form>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-</button>
-
 <!-- Modal -->
 <div class="modal fade" id="modal-url" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

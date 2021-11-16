@@ -28,6 +28,7 @@
                                 @if(Auth::user()->role == role('admin'))
                                 <th width="200">Perusahaan</th>
                                 @endif
+                                <th width="100">Kunjungan Terakhir</th>
                                 <th width="60">Opsi</th>
                             </tr>
                         </thead>
@@ -40,6 +41,12 @@
                                 @if(Auth::user()->role == role('admin'))
                                 <td>{{ $hrd->perusahaan }}</td>
                                 @endif
+                                <td>
+                                    <span class="d-none">{{ $hrd->last_visit != null ? $hrd->last_visit : "" }}</span>
+                                    {{ $hrd->last_visit != null ? date("d/m/Y", strtotime($hrd->last_visit)) : "-" }}
+                                    <br>
+                                    <small class="text-muted">{{ date("H:i", strtotime($hrd->last_visit))." WIB" }}</small>
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="{{ route('admin.hrd.edit', ['id' => $hrd->id_hrd]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>

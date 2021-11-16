@@ -23,13 +23,14 @@
                     <div class="ms-sm-2 ms-0">
                         <select name="hrd" class="form-select form-select-sm">
                             <option value="0">Semua Perusahaan</option>
-                            @foreach(get_hrd() as $hrd)
+                            @foreach($hrds as $hrd)
                             <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
                             @endforeach
                         </select>
                     </div>
                 @endif
             </div>
+            <hr class="my-0">
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -69,7 +70,7 @@
                                     @elseif($selection->hasil == 0)
                                     <span class="badge bg-danger">Tidak Lolos</span>
                                     @elseif($selection->hasil == 99)
-                                            <span class="badge bg-warning">Belum Dites</span>
+                                    <span class="badge bg-warning">Belum Dites</span>
                                     @endif
                                 </td>
                                 <td>
@@ -83,7 +84,9 @@
                                         @if($selection->hasil == 1 && $selection->isEmployee == false)
                                         <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check"></i></a>
                                         @endif
-                                        <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                                        @if($selection->isEmployee == false)
+                                        <a href="#" class="btn btn-sm btn-warning btn-set-test" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                                        @endif
                                         <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                                     </div>
                                 </td>
@@ -102,6 +105,35 @@
     <input type="hidden" name="id">
 </form>
 
+<!-- Modal -->
+<div class="modal fade" id="modal-set-test" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Atur Tes</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <label class="col-lg-2 col-md-3 col-form-label">Tanggal <span class="text-danger">*</span></label>
+                    <div class="col-lg-10 col-md-9">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="date" class="form-control form-control-sm {{ $errors->has('date') ? 'border-danger' : '' }}" value="{{ old('date') }}" autocomplete="off">
+                            <span class="input-group-text {{ $errors->has('date') ? 'border-danger' : '' }}"><i class="bi-calendar2"></i></span>
+                        </div>
+                        @if($errors->has('date'))
+                        <div class="small text-danger">{{ $errors->first('date') }}</div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('js')
@@ -116,6 +148,40 @@
     // Checkbox
     Spandiv.CheckboxOne();
     Spandiv.CheckboxAll();
+  
+    // Change the result and/or the HRD
+    $(document).on("change", "select[name=result], select[name=hrd]", function() {
+        var result = $("select[name=result]").val();
+        var hrd = $("select[name=hrd]").length === 1 ? $("select[name=hrd]").val() : null;
+
+        if(hrd !== null) {
+            if(result == -1 && hrd == 0) window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}");
+            else window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}", {result: result, hrd: hrd});
+        }
+        else {
+            if(result == -1) window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}");
+            else window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}", {result: result});
+        }
+    });
+
+    // Button Set Test
+    $(document).on("click", ".btn-set-test", function(e) {
+        e.preventDefault();
+        var id = $(this).data("id");
+        $.ajax({
+            type: "get",
+            url: "{{ route('api.selection.detail') }}",
+            data: {_token: "{{ csrf_token() }}", id: id},
+            success: function(response) {
+                var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
+                modal.show();
+                console.log(response);
+            }
+        });
+    });
+
+    // DatePicker
+    Spandiv.DatePicker("input[name=date]");
 </script>
 
 @endsection

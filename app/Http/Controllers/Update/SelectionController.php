@@ -26,27 +26,27 @@ class SelectionController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         if(Auth::user()->role == role('admin')) {
-            if($request->query('hrd') != null && $request->query('hasil') != null) {
+            if($request->query('hrd') != null && $request->query('result') != null) {
                 $hrd = HRD::find($request->query('hrd'));
 
-                if($hrd && ($request->query('hasil') == 1 || $request->query('hasil') == 0 || $request->query('hasil') == 99)) {
+                if($hrd && ($request->query('result') == 1 || $request->query('result') == 0 || $request->query('result') == 99)) {
                     // Get selections
-                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$request->query('hrd'))->where('seleksi.hasil','=',$request->query('hasil'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$request->query('hrd'))->where('seleksi.hasil','=',$request->query('result'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
                 }
-                elseif($hrd && ($request->query('hasil') != 1 && $request->query('hasil') != 0 && $request->query('hasil') != 99)) {
+                elseif($hrd && ($request->query('result') != 1 && $request->query('result') != 0 && $request->query('result') != 99)) {
                     // Get selections
                     $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$request->query('hrd'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
                 }
-                elseif(!$hrd && ($request->query('hasil') == 1 || $request->query('hasil') == 0 || $request->query('hasil') == 99)) {
+                elseif(!$hrd && ($request->query('result') == 1 || $request->query('result') == 0 || $request->query('result') == 99)) {
                     // Get selections
-                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.hasil','=',$request->query('hasil'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.hasil','=',$request->query('result'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
                 }
                 else {
                     // Get selections
                     $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
                 }
             }
-            else{
+            else {
                 // Get selections
                 $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
             }
@@ -58,13 +58,13 @@ class SelectionController extends \App\Http\Controllers\Controller
 			// Get the HRD
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
 			
-            if($request->query('hasil') != null && ($request->query('hasil') == 1 || $request->query('hasil') == 0 || $request->query('hasil') == 99)){
+            if($request->query('result') != null && ($request->query('result') == 1 || $request->query('result') == 0 || $request->query('result') == 99)) {
                 // Get selections
-                $seleksi = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$hrd->id_hrd)->where('seleksi.hasil','=',$request->query('hasil'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$hrd->id_hrd)->where('seleksi.hasil','=',$request->query('result'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
             }
-            else{
+            else {
     			// Get selections
-                $seleksi = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$hrd->id_hrd)->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id_user')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$hrd->id_hrd)->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
             }
             
             // Get offices
@@ -72,16 +72,20 @@ class SelectionController extends \App\Http\Controllers\Controller
         }
 
         // Set selections
-        if(count($selections)>0){
-            foreach($selections as $key=>$selection){
+        if(count($selections)>0) {
+            foreach($selections as $key=>$selection) {
                 $employee = Karyawan::where('id_user','=',$selection->id_user)->first();
                 $selections[$key]->isEmployee = !$employee ? false : true;
             }
         }
 
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
     	// View
         return view('admin/selection/index', [
             'selections' => $selections,
+            'hrds' => $hrds,
             'offices' => $offices,
         ]);
     }
@@ -140,6 +144,26 @@ class SelectionController extends \App\Http\Controllers\Controller
 
             // Redirect
             return redirect()->route('admin.test.index')->with(['message' => 'Berhasil menambah data.']);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function detail(Request $request)
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+        
+        if($request->ajax()) {
+            // Get the selection
+            $selection = Seleksi::find($request->id);
+            $selection->tanggal_wawancara = date('d/m/Y', strtotime($selection->waktu_wawancara));
+
+            return response()->json($selection, 200);
         }
     }
 
