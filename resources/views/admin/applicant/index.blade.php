@@ -10,6 +10,20 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
+            @if(Auth::user()->role == role('admin'))
+            <div class="card-header d-sm-flex justify-content-end align-items-center">
+                <div></div>
+                    <div class="ms-sm-2 ms-0">
+                        <select name="hrd" class="form-select form-select-sm">
+                            <option value="0">Semua Perusahaan</option>
+                            @foreach($hrds as $hrd)
+                            <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+            </div>
+            <hr class="my-0">
+            @endif
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -50,14 +64,14 @@
 <script type="text/javascript">
     // DataTable
     Spandiv.DataTableServerSide("#datatable", {
-        url: "{{ route('admin.applicant.index') }}",
+        url: Spandiv.URL("{{ route('admin.applicant.index') }}", {hrd: "{{ Request::query('hrd') }}"}),
         columns: [
             {data: 'checkbox', name: 'checkbox', className: 'text-center'},
             {data: 'name', name: 'name'},
             {data: 'username', name: 'username'},
             {data: 'posisi', name: 'posisi'},
             {data: 'datetime', name: 'datetime'},
-            {data: 'company', name: 'company', visible: {{ Auth::user()->role == role('admin') ? 'true' : 'false' }}},
+            {data: 'company', name: 'company', visible: {{ Auth::user()->role == role('admin') && Request::query('hrd') == null ? 'true' : 'false' }}},
             {data: 'options', name: 'options', className: 'text-center', orderable: false},
         ],
         order: [4, 'desc']
@@ -69,6 +83,13 @@
     // Checkbox
     Spandiv.CheckboxOne();
     Spandiv.CheckboxAll();
+  
+    // Change the HRD
+    $(document).on("change", ".card-header select[name=hrd]", function() {
+        var hrd = $(this).val();
+        if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.applicant.index') }}");
+        else window.location.href = Spandiv.URL("{{ route('admin.applicant.index') }}", {hrd: hrd});
+    });
 </script>
 
 @endsection

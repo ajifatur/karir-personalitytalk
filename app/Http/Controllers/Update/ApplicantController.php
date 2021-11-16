@@ -25,14 +25,10 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         if($request->ajax()) {
+            // Get applicants
             if(Auth::user()->role == role('admin')) {
-                if($request->query('hrd') != null) {
-                    $hrd = HRD::find($request->query('hrd'));
-                    $applicants = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$request->query('hrd'))->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
-                }
-                else{
-                    $applicants = Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
-                }
+                $hrd = HRD::find($request->query('hrd'));
+                $applicants = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
             }
             elseif(Auth::user()->role == role('hrd')) {
                 $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
@@ -74,8 +70,13 @@ class ApplicantController extends \App\Http\Controllers\Controller
                 ->make(true);
         }
 
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
         // View
-        return view('admin/applicant/index');
+        return view('admin/applicant/index', [
+            'hrds' => $hrds
+        ]);
     }
 
     /**

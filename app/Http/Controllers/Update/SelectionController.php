@@ -115,10 +115,16 @@ class SelectionController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
+    	// Get the HRD
+    	if(Auth::user()->role == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        }
 
         // Validation
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'date' => 'required',
+            'time' => 'required',
+            'place' => 'required',
         ], validationMessages());
         
         // Check errors
@@ -127,23 +133,26 @@ class SelectionController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Generate the permalink
-            $permalink = generate_permalink($request->name);
-            $i = 1;
-            while(count_existing_data('tes', 'path', $permalink, 'id_tes', null) > 0){
-                $permalink = rename_permalink(generate_permalink($request->name), $i);
-                $i++;
+            // Check selection
+            $check = Seleksi::where('id_pelamar','=',$request->applicant_id)->where('id_lowongan','=',$request->vacancy_id)->first();
+
+            // If check is exist
+            if($check) {
+                return redirect()->route('admin.applicant.detail', ['id' => $request->applicant_id])->with(['message' => 'Sudah masuk ke data seleksi.']);
             }
 
-            // Save the test
-            $test = new Tes;
-            $test->nama_tes = $request->name;
-            $test->path = $permalink;
-            $test->waktu_tes = null;
-            $test->save();
+            // Save the selection
+            $selection = new Seleksi;
+            $selection->id_hrd = isset($hrd) ? $hrd->id_hrd : 0;
+            $selection->id_pelamar = $request->applicant_id;
+            $selection->id_lowongan = $request->vacancy_id;
+            $selection->hasil = 99;
+            $selection->waktu_wawancara = generate_date_format($request->date, 'y-m-d')." ".$request->time.":00";
+            $selection->tempat_wawancara = $request->place;
+            $selection->save();
 
             // Redirect
-            return redirect()->route('admin.test.index')->with(['message' => 'Berhasil menambah data.']);
+            return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil menambah data.']);
         }
     }
 
@@ -168,30 +177,6 @@ class SelectionController extends \App\Http\Controllers\Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
-
-
-        if(Auth::user()->role == role('admin')) {
-            // Get the test
-            $test = Tes::findOrFail($id);
-
-            // View
-        	return view('admin/test/edit', [
-                'test' => $test
-            ]);
-        }
-        else abort(403);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -201,7 +186,10 @@ class SelectionController extends \App\Http\Controllers\Controller
     {
         // Validation
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'result' => 'required',
+            'date' => $request->result == 99 ? 'required' : '',
+            'time' => $request->result == 99 ? 'required' : '',
+            'place' => $request->result == 99 ? 'required' : '',
         ], validationMessages());
         
         // Check errors
@@ -210,22 +198,15 @@ class SelectionController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Generate the permalink
-            $permalink = generate_permalink($request->name);
-            $i = 1;
-            while(count_existing_data('tes', 'path', $permalink, 'id_tes', $request->id) > 0){
-                $permalink = rename_permalink(generate_permalink($request->name), $i);
-                $i++;
-            }
-
-            // Update the test
-            $test = Tes::find($request->id);
-            $test->nama_tes = $request->name;
-            $test->path = $permalink;
-            $test->save();
+            // Update the selection
+            $selection = Seleksi::find($request->id);
+            $selection->waktu_wawancara = $request->result == 99 ? generate_date_format($request->date, 'y-m-d')." ".$request->time.":00" : $selection->waktu_wawancara;
+            $selection->tempat_wawancara = $request->result == 99 ? $request->place : $selection->tempat_wawancara;
+            $selection->hasil = $request->result;
+            $selection->save();
 
             // Redirect
-            return redirect()->route('admin.test.index')->with(['message' => 'Berhasil mengupdate data.']);
+            return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil mengupdate data.']);
         }
     }
 
@@ -240,13 +221,13 @@ class SelectionController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
         
-        // Get the test
-        $test = Tes::find($request->id);
+        // Get the selection
+        $selection = Seleksi::find($request->id);
 
-        // Delete the test
-        $test->delete();
+        // Delete the selection
+        $selection->delete();
 
         // Redirect
-        return redirect()->route('admin.test.index')->with(['message' => 'Berhasil menghapus data.']);
+        return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil menghapus data.']);
     }
 }

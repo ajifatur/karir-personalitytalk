@@ -83,7 +83,6 @@ Route::group(['middleware' => ['admin']], function(){
 	// Selection
 	Route::get('/admin/selection', 'Update\SelectionController@index')->name('admin.selection.index');
 	Route::post('/admin/selection/store', 'Update\SelectionController@store')->name('admin.selection.store');
-	Route::post('/admin/selection/data', 'Update\SelectionController@data')->name('admin.selection.data');
 	Route::post('/admin/selection/update', 'Update\SelectionController@update')->name('admin.selection.update');
 	Route::post('/admin/selection/convert', 'Update\SelectionController@convert')->name('admin.selection.convert');
 	Route::post('/admin/selection/delete', 'Update\SelectionController@delete')->name('admin.selection.delete');

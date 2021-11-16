@@ -82,7 +82,7 @@
                                 <td align="center">
                                     <div class="btn-group">
                                         @if($selection->hasil == 1 && $selection->isEmployee == false)
-                                        <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check"></i></a>
+                                        <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a>
                                         @endif
                                         @if($selection->isEmployee == false)
                                         <a href="#" class="btn btn-sm btn-warning btn-set-test" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
@@ -113,23 +113,63 @@
                 <h4 class="modal-title">Atur Tes</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <label class="col-lg-2 col-md-3 col-form-label">Tanggal <span class="text-danger">*</span></label>
-                    <div class="col-lg-10 col-md-9">
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="date" class="form-control form-control-sm {{ $errors->has('date') ? 'border-danger' : '' }}" value="{{ old('date') }}" autocomplete="off">
-                            <span class="input-group-text {{ $errors->has('date') ? 'border-danger' : '' }}"><i class="bi-calendar2"></i></span>
+            <form method="post" action="{{ route('admin.selection.update') }}">
+                @csrf
+                <input type="hidden" name="id" value="{{ old('id') }}">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Hasil <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <select name="result" class="form-select form-select-sm {{ $errors->has('result') ? 'border-danger' : '' }}">
+                                <option value="" disabled selected>--Pilih--</option>
+                                <option value="1" {{ old('result') == '1' ? 'selected' : '' }}>Lolos</option>
+                                <option value="0" {{ old('result') == '0' ? 'selected' : '' }}>Tidak Lolos</option>
+                                <option value="99" {{ old('result') == '99' ? 'selected' : '' }}>Belum Dites</option>
+                            </select>
+                            @if($errors->has('result'))
+                            <div class="small text-danger">{{ $errors->first('result') }}</div>
+                            @endif
                         </div>
-                        @if($errors->has('date'))
-                        <div class="small text-danger">{{ $errors->first('date') }}</div>
-                        @endif
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Tanggal <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="date" class="form-control form-control-sm {{ $errors->has('date') ? 'border-danger' : '' }}" value="{{ old('date') }}" autocomplete="off">
+                                <span class="input-group-text {{ $errors->has('date') ? 'border-danger' : '' }}"><i class="bi-calendar2"></i></span>
+                            </div>
+                            @if($errors->has('date'))
+                            <div class="small text-danger">{{ $errors->first('date') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Jam <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="time" class="form-control form-control-sm {{ $errors->has('time') ? 'border-danger' : '' }}" value="{{ old('time') }}" autocomplete="off">
+                                <span class="input-group-text {{ $errors->has('time') ? 'border-danger' : '' }}"><i class="bi-clock"></i></span>
+                            </div>
+                            @if($errors->has('time'))
+                            <div class="small text-danger">{{ $errors->first('time') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-lg-2 col-md-3 col-form-label">Tempat <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <input type="text" name="place" class="form-control form-control-sm {{ $errors->has('place') ? 'border-danger' : '' }}" value="{{ old('place') }}">
+                            @if($errors->has('place'))
+                            <div class="small text-danger">{{ $errors->first('place') }}</div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="bi-save me-1"></i> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="bi-x-circle me-1"></i> Tutup</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -142,6 +182,12 @@
     // DataTable
     Spandiv.DataTable("#datatable");
 
+    // DatePicker
+    Spandiv.DatePicker("input[name=date]");
+
+    // ClockPicker
+    Spandiv.ClockPicker("input[name=time]");
+
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
     
@@ -149,11 +195,12 @@
     Spandiv.CheckboxOne();
     Spandiv.CheckboxAll();
   
-    // Change the result and/or the HRD
-    $(document).on("change", "select[name=result], select[name=hrd]", function() {
-        var result = $("select[name=result]").val();
-        var hrd = $("select[name=hrd]").length === 1 ? $("select[name=hrd]").val() : null;
+    // Change the Result and/or the HRD
+    $(document).on("change", ".card-header select[name=result], .card-header select[name=hrd]", function() {
+        var result = $(".card-header select[name=result]").val();
+        var hrd = $(".card-header select[name=hrd]").length === 1 ? $(".card-header select[name=hrd]").val() : null;
 
+        // Redirect
         if(hrd !== null) {
             if(result == -1 && hrd == 0) window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}");
             else window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}", {result: result, hrd: hrd});
@@ -173,15 +220,55 @@
             url: "{{ route('api.selection.detail') }}",
             data: {_token: "{{ csrf_token() }}", id: id},
             success: function(response) {
+                // Set Test Form
+                $("#modal-set-test").find("input[name=id]").val(response.id_seleksi);
+                $("#modal-set-test").find("select[name=result]").val(response.hasil);
+                $("#modal-set-test").find("input[name=date]").val(response.tanggal_wawancara);
+                $("#modal-set-test").find("input[name=time]").val(response.waktu_wawancara.split(" ")[1].substr(0,5));
+                $("#modal-set-test").find("input[name=place]").val(response.tempat_wawancara);
+
+                // Add/Remove Disabled Attribute (Optional)
+                if(response.hasil === 1 || response.hasil === 0) {
+                    $("#modal-set-test").find("input[name=date]").attr("disabled","disabled");
+                    $("#modal-set-test").find("input[name=time]").attr("disabled","disabled");
+                    $("#modal-set-test").find("input[name=place]").attr("disabled","disabled");
+                }
+                else {
+                    $("#modal-set-test").find("input[name=date]").removeAttr("disabled");
+                    $("#modal-set-test").find("input[name=time]").removeAttr("disabled");
+                    $("#modal-set-test").find("input[name=place]").removeAttr("disabled");
+                }
+
+                // Show Modal
                 var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
                 modal.show();
-                console.log(response);
             }
         });
     });
 
-    // DatePicker
-    Spandiv.DatePicker("input[name=date]");
+    // Change Result on Set Test
+    $(document).on("change", "#modal-set-test select[name=result]", function(e) {
+        e.preventDefault();
+        var result = $(this).val();
+        if(result === "1" || result === "0") {
+            $("#modal-set-test").find("input[name=date]").attr("disabled","disabled");
+            $("#modal-set-test").find("input[name=time]").attr("disabled","disabled");
+            $("#modal-set-test").find("input[name=place]").attr("disabled","disabled");
+        }
+        else if(result === "99") {
+            $("#modal-set-test").find("input[name=date]").removeAttr("disabled");
+            $("#modal-set-test").find("input[name=time]").removeAttr("disabled");
+            $("#modal-set-test").find("input[name=place]").removeAttr("disabled");
+        }
+    });
 </script>
+
+@if(count($errors) > 0)
+<script type="text/javascript">
+    // Show Modal
+    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
+    modal.show();
+</script>
+@endif
 
 @endsection

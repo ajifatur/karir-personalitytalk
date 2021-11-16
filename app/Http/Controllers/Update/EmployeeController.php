@@ -22,16 +22,12 @@ class EmployeeController extends \App\Http\Controllers\Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {        
         if($request->ajax()) {
+            // Get employees
             if(Auth::user()->role == role('admin')) {
-                if($request->query('hrd') != null) {
-                    $hrd = HRD::find($request->query('hrd'));
-                    $employees = $hrd ? Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_hrd','=',$request->query('hrd'))->get() : Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
-                }
-                else{
-                    $employees = Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
-                }
+                $hrd = HRD::find($request->query('hrd'));
+                $employees = $hrd ? Karyawan::join('users','karyawan.id_user','=','users.id_user')->where('id_hrd','=',$hrd->id_hrd)->get() : Karyawan::join('users','karyawan.id_user','=','users.id_user')->get();
             }
             elseif(Auth::user()->role == role('hrd')) {
                 $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
@@ -70,8 +66,13 @@ class EmployeeController extends \App\Http\Controllers\Controller
                 ->make(true);
         }
 
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
         // View
-        return view('admin/employee/index');
+        return view('admin/employee/index', [
+            'hrds' => $hrds
+        ]);
     }
 
     /**
