@@ -23,22 +23,21 @@ class OfficeController extends \App\Http\Controllers\Controller
 
         // Get offices
         if(Auth::user()->role == role('admin')){
-            if($request->query('hrd') != null){
-                $hrd = HRD::find($request->query('hrd'));
-                $offices = $hrd ? Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$request->query('hrd'))->get() : Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
-            }
-            else{
-                $offices = Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
-            }
+            $hrd = HRD::find($request->query('hrd'));
+            $offices = $hrd ? Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get() : Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
         }
         elseif(Auth::user()->role == role('hrd')){
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
             $offices = Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get();
         }
 
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
         // View
         return view('admin/office/index', [
-            'offices' => $offices
+            'offices' => $offices,
+            'hrds' => $hrds
         ]);
     }
 

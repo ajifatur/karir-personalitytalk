@@ -11,6 +11,20 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
+            @if(Auth::user()->role == role('admin'))
+            <div class="card-header d-sm-flex justify-content-end align-items-center">
+                <div></div>
+                <div class="ms-sm-2 ms-0">
+                    <select name="hrd" class="form-select form-select-sm">
+                        <option value="0">Semua Perusahaan</option>
+                        @foreach($hrds as $hrd)
+                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <hr class="my-0">
+            @endif
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -25,7 +39,7 @@
                                 <th width="30"><input type="checkbox" class="form-check-input checkbox-all"></th>
                                 <th>Nama</th>
                                 <th width="80">Karyawan</th>
-                                @if(Auth::user()->role == role('admin'))
+                                @if(Auth::user()->role == role('admin') && Request::query('hrd') == null)
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="60">Opsi</th>
@@ -37,7 +51,7 @@
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td>{{ $office->nama_kantor }}</td>
                                 <td align="right">{{ number_format(count_karyawan_by_kantor($office->id_kantor),0,',',',') }}</td>
-                                @if(Auth::user()->role == role('admin'))
+                                @if(Auth::user()->role == role('admin') && Request::query('hrd') == null)
                                 <td>{{ $office->perusahaan }}</td>
                                 @endif
                                 <td>
@@ -75,6 +89,13 @@
     // Checkbox
     Spandiv.CheckboxOne();
     Spandiv.CheckboxAll();
+  
+    // Change the HRD
+    $(document).on("change", ".card-header select[name=hrd]", function() {
+        var hrd = $(this).val();
+        if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.office.index') }}");
+        else window.location.href = Spandiv.URL("{{ route('admin.office.index') }}", {hrd: hrd});
+    });
 </script>
 
 @endsection

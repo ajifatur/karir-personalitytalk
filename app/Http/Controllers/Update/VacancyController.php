@@ -26,13 +26,8 @@ class VacancyController extends \App\Http\Controllers\Controller
 
         // Get offices
         if(Auth::user()->role == role('admin')) {
-            if($request->query('hrd') != null) {
-            	$hrd = HRD::find($request->query('hrd'));
-    	    	$vacancies = $hrd ? Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('hrd.id_hrd','=',$request->query('hrd'))->orderBy('status','desc')->orderBy('created_at','desc')->get() : Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
-            }
-            else{
-				$vacancies = Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
-            }
+            $hrd = HRD::find($request->query('hrd'));
+            $vacancies = $hrd ? Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('hrd.id_hrd','=',$hrd->id_hrd)->orderBy('status','desc')->orderBy('created_at','desc')->get() : Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
         }
         elseif(Auth::user()->role == role('hrd')) {
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
@@ -45,9 +40,13 @@ class VacancyController extends \App\Http\Controllers\Controller
             $vacancies[$key]->pelamar = $pelamar;
         }
 
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
         // View
         return view('admin/vacancy/index', [
-            'vacancies' => $vacancies
+            'vacancies' => $vacancies,
+            'hrds' => $hrds
         ]);
     }
 

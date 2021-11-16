@@ -13,14 +13,14 @@
             @if(Auth::user()->role == role('admin'))
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
-                    <div class="ms-sm-2 ms-0">
-                        <select name="hrd" class="form-select form-select-sm">
-                            <option value="0">Semua Perusahaan</option>
-                            @foreach($hrds as $hrd)
-                            <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div class="ms-sm-2 ms-0">
+                    <select name="hrd" class="form-select form-select-sm">
+                        <option value="0">Semua Perusahaan</option>
+                        @foreach($hrds as $hrd)
+                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             <hr class="my-0">
             @endif

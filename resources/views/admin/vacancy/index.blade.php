@@ -11,6 +11,20 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
+            @if(Auth::user()->role == role('admin'))
+            <div class="card-header d-sm-flex justify-content-end align-items-center">
+                <div></div>
+                <div class="ms-sm-2 ms-0">
+                    <select name="hrd" class="form-select form-select-sm">
+                        <option value="0">Semua Perusahaan</option>
+                        @foreach($hrds as $hrd)
+                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <hr class="my-0">
+            @endif
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -28,7 +42,7 @@
                                 <th width="100">Pelamar</th>
                                 <th width="100">Status</th>
                                 <th width="100">Waktu</th>
-                                @if(Auth::user()->role == role('admin'))
+                                @if(Auth::user()->role == role('admin') && Request::query('hrd') == null)
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="60">Opsi</th>
@@ -60,7 +74,7 @@
                                     <br>
                                     <small class="text-muted">{{ date('H:i', strtotime($vacancy->created_at)) }} WIB</span>
                                 </td>
-                                @if(Auth::user()->role == role('admin'))
+                                @if(Auth::user()->role == role('admin') && Request::query('hrd') == null)
                                 <td>{{ $vacancy->perusahaan }}</td>
                                 @endif
                                 <td>
@@ -123,6 +137,13 @@
     // Checkbox
     Spandiv.CheckboxOne();
     Spandiv.CheckboxAll();
+  
+    // Change the HRD
+    $(document).on("change", ".card-header select[name=hrd]", function() {
+        var hrd = $(this).val();
+        if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.vacancy.index') }}");
+        else window.location.href = Spandiv.URL("{{ route('admin.vacancy.index') }}", {hrd: hrd});
+    });
 
     // Button URL
     $(document).on("click", ".btn-url", function(e) {

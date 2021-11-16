@@ -24,22 +24,21 @@ class PositionController extends \App\Http\Controllers\Controller
 
         // Get offices
         if(Auth::user()->role == role('admin')) {
-            if($request->query('hrd') != null) {
-            	$hrd = HRD::find($request->query('hrd'));
-    	    	$positions = $hrd ? Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->where('hrd.id_hrd','=',$request->query('hrd'))->get() : Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
-            }
-            else{
-    	    	$positions = Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
-            }
+            $hrd = HRD::find($request->query('hrd'));
+            $positions = $hrd ? Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->where('hrd.id_hrd','=',$hrd->id_hrd)->get() : Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
         }
         elseif(Auth::user()->role == role('hrd')) {
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->get();
         }
 
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
         // View
         return view('admin/position/index', [
-            'positions' => $positions
+            'positions' => $positions,
+            'hrds' => $hrds
         ]);
     }
 
