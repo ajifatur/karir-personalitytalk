@@ -12,7 +12,7 @@
 */
 
 // Guest Capabilities
-Route::group(['middleware' => ['guest']], function(){
+Route::group(['middleware' => ['guest']], function() {
 
 	// Home
 	Route::get('/', function () {
@@ -44,7 +44,7 @@ Route::group(['middleware' => ['guest']], function(){
 });
     
 // Admin Capabilities
-Route::group(['middleware' => ['admin']], function(){
+Route::group(['middleware' => ['admin']], function() {
 
 	// Logout
 	Route::post('/admin/logout', 'AdminLoginController@logout')->name('auth.logout');
@@ -53,6 +53,13 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin', function() {
 		return view('layouts/admin/main');
 	})->name('admin.dashboard');
+
+	// Profile
+	Route::get('/admin/profile', 'Update\ProfileController@detail')->name('admin.profile');
+	Route::get('/admin/profile/edit', 'Update\ProfileController@edit')->name('admin.profile.edit');
+	Route::post('/admin/profile/update', 'Update\ProfileController@update')->name('admin.profile.update');
+	Route::get('/admin/profile/edit-password', 'Update\ProfileController@editPassword')->name('admin.profile.edit-password');
+	Route::post('/admin/profile/update-password', 'Update\ProfileController@updatePassword')->name('admin.profile.update-password');
 
 	// Office
 	Route::get('/admin/office', 'Update\OfficeController@index')->name('admin.office.index');
@@ -145,14 +152,13 @@ Route::group(['middleware' => ['admin']], function(){
 	///////////////////////////////////////////
 
 	// Route::get('/admin', 'DashboardController@index');
-	// Route::get('/admin/send-email', 'ApplicantRegisterController@sendMailToHRD');
 	
-	// Profil
-	Route::get('/admin/profil', 'HRDController@profile');
-	Route::get('/admin/profil/edit', 'HRDController@editProfil');
-	Route::post('/admin/profil/update', 'HRDController@updateProfil');
-	Route::get('/admin/profil/edit-password', 'HRDController@editPassword');
-	Route::post('/admin/profil/update-password', 'HRDController@updatePassword');
+	// // Profil
+	// Route::get('/admin/profil', 'HRDController@profile');
+	// Route::get('/admin/profil/edit', 'HRDController@editProfil');
+	// Route::post('/admin/profil/update', 'HRDController@updateProfil');
+	// Route::get('/admin/profil/edit-password', 'HRDController@editPassword');
+	// Route::post('/admin/profil/update-password', 'HRDController@updatePassword');
 
 	// Update Sistem
 	// Route::get('/admin/update-sistem', function(){
