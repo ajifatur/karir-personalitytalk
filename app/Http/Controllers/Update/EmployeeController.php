@@ -6,6 +6,9 @@ use Auth;
 use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\KaryawanExport;
+use App\Imports\KaryawanImport;
 use App\Models\Karyawan;
 use App\Models\HRD;
 use App\Models\Kantor;
@@ -348,5 +351,44 @@ class EmployeeController extends \App\Http\Controllers\Controller
 
         // Redirect
         return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil menghapus data.']);
+    }
+
+    /**
+     * Export to Excel.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function export(Request $request)
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+
+        ini_set("memory_limit", "-1");
+
+        if(Auth::user()->role == role('admin')) {
+            // Get the HRD
+            $hrd = HRD::find($request->query('hrd'));
+
+            // Get employees
+            $employees = $hrd ? Karyawan::where('id_hrd','=',$hrd->id_hrd)->get() : Karyawan::get();
+
+            // File name
+            $filename = $hrd ? 'Data Karyawan '.$hrd->perusahaan.' ('.date('Y-m-d-H-i-s').')' : 'Data Semua Karyawan ('.date('d-m-Y-H-i-s').')';
+
+            return Excel::download(new KaryawanExport($employees), $filename.'.xlsx');
+        }
+        elseif(Auth::user()->role == role('hrd')) {
+            // Get the HRD
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+
+            // Get employees
+            $employees = Karyawan::where('id_hrd','=',$hrd->id_hrd)->get();
+
+            // File name
+            $filename = 'Data Karyawan '.$hrd->perusahaan.' ('.date('Y-m-d-H-i-s').')';
+
+            return Excel::download(new KaryawanExport($employees), $filename.'.xlsx');
+        }
     }
 }

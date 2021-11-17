@@ -46,6 +46,16 @@
 						</a>
 					</li>
 					@endif
+					<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.result.index'))) ? 'active' : '' }}">
+						<a data-bs-target="#result" data-bs-toggle="collapse" class="sidebar-link {{ is_int(strpos(Request::url(), route('admin.result.index'))) ? '' : 'collapsed' }}">
+							<i class="align-middle" data-feather="layers"></i> <span class="align-middle">Hasil Tes</span>
+						</a>
+						<ul id="result" class="sidebar-dropdown list-unstyled collapse {{ is_int(strpos(Request::url(), route('admin.result.index'))) ? 'show' : '' }}" data-bs-parent="#sidebar">
+							<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.result.index'))) && Request::query('role') == role('employee') ? 'active' : '' }}"><a class="sidebar-link" href="{{ route('admin.result.index', ['role' => role('employee')]) }}">Karyawan</a></li>
+							<li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.result.index'))) && Request::query('role') == role('applicant') ? 'active' : '' }}"><a class="sidebar-link" href="{{ route('admin.result.index', ['role' => role('applicant')]) }}">Pelamar</a></li>
+							<!-- <li class="sidebar-item {{ is_int(strpos(Request::url(), route('admin.result.index'))) && Request::query('role') == role('internship') ? 'active' : '' }}"><a class="sidebar-link" href="{{ route('admin.result.index', ['role' => role('internship')]) }}">Magang</a></li> -->
+						</ul>
+					</li>
 
 					<li class="sidebar-header">Pengguna</li>
 					@if(Auth::user()->role == role('admin'))

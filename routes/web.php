@@ -108,6 +108,11 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/stifin/delete', 'Update\StifinController@delete')->name('admin.stifin.delete');
 	Route::get('/admin/stifin/print/{id}', 'Update\StifinController@print')->name('admin.stifin.print');
 
+	// Result
+	Route::get('/admin/result', 'Update\ResultController@index')->name('admin.result.index');
+	Route::get('/admin/result/detail/{id}', 'Update\ResultController@detail')->name('admin.result.detail');
+	Route::post('/admin/result/delete', 'Update\ResultController@delete')->name('admin.result.delete');
+
 	// HRD
 	Route::get('/admin/hrd', 'Update\HRDController@index')->name('admin.hrd.index');
 	Route::get('/admin/hrd/create', 'Update\HRDController@create')->name('admin.hrd.create');
@@ -125,16 +130,16 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::get('/admin/employee/edit/{id}', 'Update\EmployeeController@edit')->name('admin.employee.edit');
 	Route::post('/admin/employee/update', 'Update\EmployeeController@update')->name('admin.employee.update');
 	Route::post('/admin/employee/delete', 'Update\EmployeeController@delete')->name('admin.employee.delete');
-	// Route::get('/admin/employee/export', 'Update\EmployeeController@export')->name('admin.employee.export');
+	Route::get('/admin/employee/export', 'Update\EmployeeController@export')->name('admin.employee.export');
 	// Route::post('/admin/employee/import', 'Update\EmployeeController@import')->name('admin.employee.import');
 
 	// Applicant
 	Route::get('/admin/applicant', 'Update\ApplicantController@index')->name('admin.applicant.index');
 	Route::get('/admin/applicant/detail/{id}', 'Update\ApplicantController@detail')->name('admin.applicant.detail');
-	// Route::get('/admin/applicant/edit/{id}', 'Update\ApplicantController@edit')->name('admin.applicant.edit');
-	// Route::post('/admin/applicant/update', 'Update\ApplicantController@update')->name('admin.applicant.update');
+	Route::get('/admin/applicant/edit/{id}', 'Update\ApplicantController@edit')->name('admin.applicant.edit');
+	Route::post('/admin/applicant/update', 'Update\ApplicantController@update')->name('admin.applicant.update');
 	Route::post('/admin/applicant/delete', 'Update\ApplicantController@delete')->name('admin.applicant.delete');
-	// Route::get('/admin/applicant/export', 'Update\ApplicantController@export')->name('admin.applicant.export');
+	Route::get('/admin/applicant/export', 'Update\ApplicantController@export')->name('admin.applicant.export');
 
 
 	///////////////////////////////////////////
@@ -150,10 +155,10 @@ Route::group(['middleware' => ['admin']], function(){
 	Route::post('/admin/profil/update-password', 'HRDController@updatePassword');
 
 	// Update Sistem
-	Route::get('/admin/update-sistem', function(){
-		// View
-		return view('update-sistem/index');
-	});
+	// Route::get('/admin/update-sistem', function(){
+	// 	// View
+	// 	return view('update-sistem/index');
+	// });
 
 	// // Kantor Menu
 	// Route::get('/admin/kantor', 'KantorController@index');
@@ -211,15 +216,15 @@ Route::group(['middleware' => ['admin']], function(){
 
 	// Hasil Menu
 	// Route::get('/admin/hasil', 'HasilController@index');
-	Route::get('/admin/hasil/karyawan', 'HasilController@employee');
-	Route::get('/admin/hasil/pelamar', 'HasilController@applicant');
-	Route::get('/admin/hasil/magang', 'HasilController@internship');
-	Route::get('/admin/hasil/detail/{id}', 'HasilController@detail');
-	Route::post('/admin/hasil/print', 'HasilController@pdf');
-	Route::post('/admin/hasil/delete', 'HasilController@delete');
-	Route::get('/admin/hasil/json/karyawan', 'HasilController@json_employee');
-	Route::get('/admin/hasil/json/pelamar', 'HasilController@json_applicant');
-	Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
+	// Route::get('/admin/hasil/karyawan', 'HasilController@employee');
+	// Route::get('/admin/hasil/pelamar', 'HasilController@applicant');
+	// Route::get('/admin/hasil/magang', 'HasilController@internship');
+	// Route::get('/admin/hasil/detail/{id}', 'HasilController@detail');
+	// Route::post('/admin/hasil/print', 'HasilController@pdf');
+	// Route::post('/admin/hasil/delete', 'HasilController@delete');
+	// Route::get('/admin/hasil/json/karyawan', 'HasilController@json_employee');
+	// Route::get('/admin/hasil/json/pelamar', 'HasilController@json_applicant');
+	// Route::get('/admin/hasil/json/magang', 'HasilController@json_internship');
 
 	// STIFIn Menu
 	// Route::get('/admin/stifin', 'StifinController@index');

@@ -6,7 +6,10 @@
 
 <div class="d-sm-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-2 mb-sm-0">Kelola Karyawan</h1>
-    <a href="{{ route('admin.employee.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Karyawan</a>
+    <div class="btn-group">
+        <a href="{{ route('admin.employee.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Karyawan</a>
+        <a href="{{ route('admin.employee.export') }}" class="btn btn-sm btn-success"><i class="bi-file-excel me-1"></i> Ekspor Data</a>
+    </div>
 </div>
 <div class="row">
 	<div class="col-12">

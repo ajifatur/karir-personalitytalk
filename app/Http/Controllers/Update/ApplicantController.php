@@ -6,6 +6,8 @@ use Auth;
 use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PelamarExport;
 use App\Models\Agama;
 use App\Models\HRD;
 use App\Models\Karyawan;
@@ -61,7 +63,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
                 ->addColumn('options', '
                     <div class="btn-group">
                         <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id_pelamar]) }}" class="btn btn-sm btn-info" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
-                        <a href="/admin/pelamar/edit/{{ $id_pelamar }}" class="btn btn-sm btn-warning" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                        <a href="{{ route(\'admin.applicant.edit\', [\'id\' => $id_pelamar]) }}" class="btn btn-sm btn-warning" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
                         <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                     </div>
                 ')
@@ -132,30 +134,26 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        abort(404);
-
-        // Get the vacancy
-    	if(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-            $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$id)->where('lowongan.id_hrd','=',$hrd->id_hrd)->firstOrFail();
+        // Get the applicant
+        if(Auth::user()->role == role('admin')) {
+    	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
         }
-        else {
-            $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->findOrFail($id);
+        elseif(Auth::user()->role == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
+    	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
 
-        // Get positions
-        if(Auth::user()->role == role_admin()){
-            $positions = Posisi::where('id_hrd','=',$vacancy->id_hrd)->orderBy('nama_posisi','asc')->get();
-        }
-        elseif(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
+        // Set
+        if($applicant) {
+            $applicant->posisi = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$applicant->posisi)->first();
+            $applicant->akun_sosmed = json_decode($applicant->akun_sosmed, true);
+            $applicant->data_darurat = json_decode($applicant->data_darurat, true);
+            $applicant->keahlian = json_decode($applicant->keahlian, true);
         }
 
         // View
-        return view('admin/vacancy/edit', [
-            'vacancy' => $vacancy,
-            'positions' => $positions
+        return view('admin/applicant/edit', [
+            'applicant' => $applicant
         ]);
     }
 
@@ -167,30 +165,66 @@ class ApplicantController extends \App\Http\Controllers\Controller
      */
     public function update(Request $request)
     {
-        abort(404);
-
         // Validation
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'position' => 'required',
-            'status' => 'required',
+            'name' => 'required|min:3|max:255',
+            'birthplace' => 'required',
+            'birthdate' => 'required',
+            'gender' => 'required',
+            'religion' => 'required',
+            'email' => 'required|email',
+            'phone_number' => 'required|numeric',
+            'address' => 'required',
+            'socmed' => 'required',
+            'guardian_name' => 'required',
+            'guardian_address' => 'required',
+            'guardian_phone_number' => 'required|numeric',
+            'guardian_occupation' => 'required',
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
-            // Update the vacancy
-            $vacancy = Lowongan::find($request->id);
-            $vacancy->judul_lowongan = $request->name;
-            $vacancy->posisi = $request->position;
-            $vacancy->status = $request->status;
-            $vacancy->save();
+        else {
+            // Set the applicant's socmed
+            $socmed = [$request->platform => $request->socmed];
+
+            // Set the applicant's guardian
+        	$guardians = [];
+        	$guardians['nama_orang_tua'] = $request->guardian_name;
+        	$guardians['alamat_orang_tua'] = $request->guardian_address;
+        	$guardians['nomor_hp_orang_tua'] = $request->guardian_phone_number;
+        	$guardians['pekerjaan_orang_tua'] = $request->guardian_occupation;
+
+            // Update the applicant
+            $applicant = Pelamar::find($request->id);
+            $applicant->nama_lengkap = $request->name;
+            $applicant->tempat_lahir = $request->birthplace;
+            $applicant->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $applicant->jenis_kelamin = $request->gender;
+            $applicant->agama = $request->religion;
+            $applicant->email = $request->email;
+            $applicant->nomor_hp = $request->phone_number;
+            $applicant->nomor_ktp = $request->identity_number != '' ? $request->identity_number : '';
+            $applicant->alamat = $request->address;
+            $applicant->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
+            $applicant->riwayat_pekerjaan = $request->job_experience != '' ? $request->job_experience : '';
+        	$applicant->akun_sosmed = json_encode($socmed);
+        	$applicant->data_darurat = json_encode($guardians);
+            $applicant->save();
+
+            // Update the user
+            $user = User::find($applicant->id_user);
+            $user->nama_user = $request->name;
+            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $user->jenis_kelamin = $request->gender;
+            $user->email = $request->email;
+            $user->save();
 
             // Redirect
-            return redirect()->route('admin.vacancy.index')->with(['message' => 'Berhasil mengupdate data.']);
+            return redirect()->route('admin.applicant.index')->with(['message' => 'Berhasil mengupdate data.']);
         }
     }
 
@@ -225,5 +259,44 @@ class ApplicantController extends \App\Http\Controllers\Controller
 
         // Redirect
         return redirect()->route('admin.applicant.index')->with(['message' => 'Berhasil menghapus data.']);
+    }
+
+    /**
+     * Export to Excel.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function export(Request $request)
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+
+        ini_set("memory_limit", "-1");
+
+        if(Auth::user()->role == role('admin')) {
+            // Get the HRD
+            $hrd = HRD::find($request->query('hrd'));
+
+            // Get applicants
+            $applicants = $hrd ? Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_hrd','=',$hrd->id_hrd)->get() : Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->get();
+
+            // File name
+            $filename = $hrd ? 'Data Pelamar '.$hrd->perusahaan.' ('.date('Y-m-d-H-i-s').')' : 'Data Semua Pelamar ('.date('d-m-Y-H-i-s').')';
+
+            return Excel::download(new PelamarExport($applicants), $filename.'.xlsx');
+        }
+        elseif(Auth::user()->role == role('hrd')) {
+            // Get the HRD
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+
+            // Get applicants
+            $applicants = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_hrd','=',$hrd->id_hrd)->get();
+
+            // File name
+            $filename = 'Data Pelamar '.$hrd->perusahaan.' ('.date('Y-m-d-H-i-s').')';
+
+            return Excel::download(new PelamarExport($applicants), $filename.'.xlsx');
+        }
     }
 }
