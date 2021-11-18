@@ -51,7 +51,7 @@ Route::group(['middleware' => ['admin']], function() {
 
 	// Dashboard
 	Route::get('/admin', function() {
-		return view('layouts/admin/main');
+		return view('admin/dashboard/index');
 	})->name('admin.dashboard');
 
 	// Profile
