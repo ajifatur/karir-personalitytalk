@@ -119,6 +119,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/result', 'Update\ResultController@index')->name('admin.result.index');
 	Route::get('/admin/result/detail/{id}', 'Update\ResultController@detail')->name('admin.result.detail');
 	Route::post('/admin/result/delete', 'Update\ResultController@delete')->name('admin.result.delete');
+	Route::post('/admin/result/print', 'Update\ResultController@print')->name('admin.result.print');
 
 	// HRD
 	Route::get('/admin/hrd', 'Update\HRDController@index')->name('admin.hrd.index');

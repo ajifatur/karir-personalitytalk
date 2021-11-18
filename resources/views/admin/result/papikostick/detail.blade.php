@@ -100,7 +100,7 @@
     </div>
 </div>
 
-<form id="form-print" class="d-none" method="post" action="/admin/hasil/print" target="_blank">
+<form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf
     <input type="hidden" name="mostChartImage" id="mostChartImage">
     <input type="hidden" name="leastChartImage" id="leastChartImage">

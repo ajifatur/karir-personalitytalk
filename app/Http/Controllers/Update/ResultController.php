@@ -207,4 +207,38 @@ class ResultController extends \App\Http\Controllers\Controller
         // Redirect
         return redirect()->route('admin.result.index', ['role' => $result->role])->with(['message' => 'Berhasil menghapus data.']);
     }
+
+    /**
+     * Print to PDF.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Request $request)
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+		
+        ini_set('max_execution_time', '300');
+		
+        // DISC 1.0
+        if($request->path == 'disc-40-soal')
+            return DISC1Controller::print($request);
+        // DISC 2.0
+        elseif($request->path == 'disc-24-soal')
+            return DISC2Controller::print($request);
+        // IST
+        elseif($request->path == 'ist')
+            abort(404);
+            // return ISTController::print($request);
+        // MSDT
+        elseif($request->path == 'msdt')
+            return MSDtController::print($request);
+        // Papikostick
+        elseif($request->path == 'papikostick')
+            return PapikostickController::print($request);
+        // SDI
+        elseif($request->path == 'sdi')
+            return SDIController::print($request);
+    }
 }

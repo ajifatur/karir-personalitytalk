@@ -95,7 +95,7 @@
     </div>
 </div>
 
-<form id="form-print" class="d-none" method="post" action="/admin/hasil/print" target="_blank">
+<form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf
     <input type="hidden" name="nama" value="{{ $user->nama_user }}">
     <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">

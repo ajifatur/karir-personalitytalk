@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Test;
 
 use Auth;
+use PDF;
+use Dompdf\FontMetrics;
 use Illuminate\Http\Request;
 use App\Models\Keterangan;
 
@@ -194,5 +196,51 @@ class DISC2Controller extends \App\Http\Controllers\Controller
             'index' => $index,
             'keterangan' => $keterangan,
         ]);
+    }
+
+    /**
+     * Print to PDF.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Request $request)
+    {
+        // Set the DISC
+        $disc = array('D', 'I', 'S','C');
+		
+		// Set the index
+		$index = json_decode($request->index, true);
+
+        // Set the note
+        $keterangan = Keterangan::where('id_paket','=',$request->id_paket)->first();
+        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+		
+		// Set the MOST, LEAST, CHANGE
+		$most = $keterangan->keterangan[$index['most'][0]];
+		$least = $keterangan->keterangan[$index['least'][0]];
+		$change = $keterangan->keterangan[$index['change'][0]];
+        
+        // PDF
+        $pdf = PDF::loadview('admin/result/disc-2/pdf', [
+            'mostChartImage' => $request->mostChartImage,
+            'leastChartImage' => $request->leastChartImage,
+            'changeChartImage' => $request->changeChartImage,
+            'nama' => $request->nama,
+            'usia' => $request->usia,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'posisi' => $request->posisi,
+            'tes' => $request->tes,
+            'hasil' => $request->hasil,
+            'array_selisih' => $request->array_selisih,
+            'index' => $request->index,
+            'disc' => $disc,
+            'most' => $most,
+            'least' => $least,
+            'change' => $change,
+        ]);
+        $pdf->setPaper('A4', 'portrait');
+        
+        return $pdf->stream("Result.pdf");
     }
 }

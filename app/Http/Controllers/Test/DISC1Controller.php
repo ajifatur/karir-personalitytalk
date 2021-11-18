@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Test;
 
 use Auth;
+use PDF;
+use Dompdf\FontMetrics;
 use Illuminate\Http\Request;
 use App\Models\Keterangan;
 
@@ -68,5 +70,56 @@ class DISC1Controller extends \App\Http\Controllers\Controller
             'kode_keterangan' => $kode_keterangan,
             'hasil_keterangan' => $hasil_keterangan,
         ]);
+    }
+
+    /**
+     * Print to PDF.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Request $request)
+    {
+        // DISC
+        $disc = array('D', 'I', 'S','C');
+
+        // Set the note
+        $keterangan = Keterangan::where('id_paket','=',$request->id_paket)->first();
+        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+        $kode_keterangan = $request->kode_keterangan;
+        switch($kode_keterangan){
+            case 'D':
+                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "D")]["keterangan"];
+            break;
+            case 'I':
+                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "I")]["keterangan"];
+            break;
+            case 'S':
+                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "S")]["keterangan"];
+            break;
+            case 'C':
+                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "C")]["keterangan"];
+            break;
+        }
+        
+        // PDF
+        $pdf = PDF::loadview('admin/result/disc-1/pdf', [
+            'mostChartImage' => $request->mostChartImage,
+            'leastChartImage' => $request->leastChartImage,
+            'deskripsi' => $deskripsi,
+            'nama' => $request->nama,
+            'usia' => $request->usia,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'posisi' => $request->posisi,
+            'tes' => $request->tes,
+            'disc_score_m' => json_decode($request->disc_score_m, true),
+            'disc_score_l' => json_decode($request->disc_score_l, true),
+            'most' => $request->most,
+            'least' => $request->least,
+            'disc' => $disc,
+        ]);
+        $pdf->setPaper('A4', 'portrait');
+        
+        return $pdf->stream("Result.pdf");
     }
 }
