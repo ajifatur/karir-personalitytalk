@@ -1,4 +1,4 @@
-@extends('stifin/print/layout')
+@extends('admin/stifin/print/layout')
 
 @section('description')
 		<div class="description">

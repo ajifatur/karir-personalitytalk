@@ -88,32 +88,74 @@
       </div>
     </div>
     <div id="footer-main"></div>
-  @include('template/admin/_js')
-  <script src="https://psikologanda.com/templates/matrix-admin/assets/libs/jquery/dist/jquery.min.js"></script>
-  <script src="https://psikologanda.com/assets/partials/template.js"></script>
-  <script type="text/javascript">
-    $(document).on('click','#sidebarCollapse',function(e){
-      e.preventDefault();
-      $('#sidebar').hasClass('active') 
-        ? $('#sidebar').removeClass('active') 
-        : $('#sidebar').addClass('active');
-      $(this).find('i').hasClass('ti-menu') 
-        ? $(this).find('i').removeClass('ti-menu').addClass('ti-close') 
-        : $(this).find('i').addClass('ti-menu').removeClass('ti-close');
-    })
+		<!-- Bootstrap core JavaScript-->
+	<script src="{{ asset('templates/sb-admin-2/vendor/jquery/jquery.min.js') }}"></script>
+	<script src="{{ asset('templates/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-    $(document).on("click", "#sidebar > .sidebar-menu > .menu-label.sidebar-dropdown > a", function(e){
-      e.preventDefault();
-      $(this).parent(".menu-label").hasClass("active") 
-        ? $(this).parent(".menu-label").removeClass("active") 
-        : $(this).parent(".menu-label").addClass("active");
-    })
-  </script>
-  <style type="text/css">
-    .btn.btn-primary.btn-lg{background-color: var(--c-karir)!important; border-color: var(--c-karir)!important}
-    .btn.btn-primary.btn-lg:hover {background-color: #1c3c9b!important; border-color: #1c3c9b!important;}
-    form .alert.alert-danger {margin: 0 0 1em 0}
-  </style>
+	<!-- Core plugin JavaScript-->
+	<script src="{{ asset('templates/sb-admin-2/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script src="{{ asset('templates/sb-admin-2/js/sb-admin-2.min.js') }}"></script>
+	<script src="{{ asset('templates/sb-admin-2/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+	<script src="{{ asset('templates/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+	<!-- JavaScripts -->
+	<script type="text/javascript">
+        $(function(){
+            // Tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        // Button Delete
+        $(document).on("click", ".btn-delete", function(e){
+            e.preventDefault();
+            var id = $(this).data("id");
+            var ask = confirm("Anda yakin ingin menghapus data ini?");
+            if(ask){
+                $("#form-delete input[name=id]").val(id);
+                $("#form-delete").submit();
+            }
+        });
+        // Button toggle password
+        $(document).on("click", ".btn-toggle-password", function(e){
+            e.preventDefault();
+            if(!$(this).hasClass("show")){
+                $(this).parents(".input-group").find("input").attr("type","text");
+                $(this).find(".fa").removeClass("fa-eye").addClass("fa-eye-slash");
+                $(this).addClass("show");
+            }
+            else{
+                $(this).parents(".input-group").find("input").attr("type","password");
+                $(this).find(".fa").removeClass("fa-eye-slash").addClass("fa-eye");
+                $(this).removeClass("show");
+            }
+        });
+	</script>
+    <script src="https://psikologanda.com/templates/matrix-admin/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="https://psikologanda.com/assets/partials/template.js"></script>
+    <script type="text/javascript">
+        $(document).on('click','#sidebarCollapse',function(e){
+        e.preventDefault();
+        $('#sidebar').hasClass('active') 
+            ? $('#sidebar').removeClass('active') 
+            : $('#sidebar').addClass('active');
+        $(this).find('i').hasClass('ti-menu') 
+            ? $(this).find('i').removeClass('ti-menu').addClass('ti-close') 
+            : $(this).find('i').addClass('ti-menu').removeClass('ti-close');
+        })
+
+        $(document).on("click", "#sidebar > .sidebar-menu > .menu-label.sidebar-dropdown > a", function(e){
+        e.preventDefault();
+        $(this).parent(".menu-label").hasClass("active") 
+            ? $(this).parent(".menu-label").removeClass("active") 
+            : $(this).parent(".menu-label").addClass("active");
+        })
+    </script>
+    <style type="text/css">
+        .btn.btn-primary.btn-lg{background-color: var(--c-karir)!important; border-color: var(--c-karir)!important}
+        .btn.btn-primary.btn-lg:hover {background-color: #1c3c9b!important; border-color: #1c3c9b!important;}
+        form .alert.alert-danger {margin: 0 0 1em 0}
+    </style>
 </body>
 
 </html>

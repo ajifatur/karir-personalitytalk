@@ -6,7 +6,7 @@
     <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="shortcut icon" href="img/icons/icon-48x48.png">
+  	<link rel="shortcut icon" href="{{ asset('assets/images/1599633828-icon.png') }}">
     <link rel="canonical" href="https://campusnet.id/">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap">
     <link rel="stylesheet" href="{{ asset('templates/adminkit/css/app.css') }}">
