@@ -101,9 +101,8 @@
 </div>
 
 <form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
-    @csrf
-    <input type="hidden" name="mostChartImage" id="mostChartImage">
-    <input type="hidden" name="leastChartImage" id="leastChartImage">
+    @csrf    
+    <input type="hidden" name="id_hasil" value="{{ $result->id_hasil }}">
     <input type="hidden" name="nama" value="{{ $user->nama_user }}">
     <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
     <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">

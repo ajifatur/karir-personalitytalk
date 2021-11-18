@@ -59,12 +59,11 @@
 
 <form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf
-    <input type="hidden" name="mostChartImage" id="mostChartImage">
-    <input type="hidden" name="leastChartImage" id="leastChartImage">
+    <input type="hidden" name="id_hasil" value="{{ $result->id_hasil }}">
     <input type="hidden" name="nama" value="{{ $user->nama_user }}">
     <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
     <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">
-    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.role($user->role).')' : role($user->role) }}">
+    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}">
     <input type="hidden" name="tes" value="{{ $result->nama_tes }}">
     <input type="hidden" name="path" value="{{ $result->path }}">
 </form>

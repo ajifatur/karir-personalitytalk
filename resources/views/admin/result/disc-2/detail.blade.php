@@ -199,6 +199,7 @@
     @csrf
     <input type="hidden" name="mostChartImage" id="mostChartImage">
     <input type="hidden" name="leastChartImage" id="leastChartImage">
+    <input type="hidden" name="changeChartImage" id="changeChartImage">
     <input type="hidden" name="nama" value="{{ $user->nama_user }}">
     <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
     <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">

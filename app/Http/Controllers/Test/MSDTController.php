@@ -6,6 +6,7 @@ use Auth;
 use PDF;
 use Dompdf\FontMetrics;
 use Illuminate\Http\Request;
+use App\Models\Hasil;
 use App\Models\Keterangan;
 
 class MSDTController extends \App\Http\Controllers\Controller
