@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Update;
 
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use App\Models\User;
 use App\Models\HRD;
 
@@ -37,10 +39,9 @@ class ProfileController extends \App\Http\Controllers\Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit()
     {
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
@@ -59,46 +60,98 @@ class ProfileController extends \App\Http\Controllers\Controller
     {
         // Validation
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'phone_number' => $request->phone_number != '' ? 'numeric' : ''
+            'name' => 'required|min:3|max:255',
+            'birthdate' => 'required',
+            'gender' => 'required',
+            'email' => [
+                'required', 'email',
+                Rule::unique('users')->ignore($request->id, 'id_user'),
+            ],
+            'username' => [
+                'required', 'string', 'min:4',
+                Rule::unique('users')->ignore($request->id, 'id_user'),
+            ],
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
-            // Update the office
-            $office = Kantor::find($request->id);
-            $office->nama_kantor = $request->name;
-            $office->alamat_kantor = $request->address != '' ? $request->address : '';
-            $office->telepon_kantor = $request->phone_number != '' ? $request->phone_number : '';
-            $office->save();
+        else {
+            // Update the user
+            $user = User::find($request->id);
+            $user->nama_user = $request->name;
+            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $user->jenis_kelamin = $request->gender;
+            $user->email = $request->email;
+            $user->username = $request->username;
+            $user->save();
+
+            // Update the HRD
+            if(Auth::user()->role == role('hrd')) {
+                $hrd = HRD::where('id_user','=',$user->id_user)->first();
+                $hrd->nama_lengkap = $request->name;
+                $hrd->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+                $hrd->jenis_kelamin = $request->gender;
+                $hrd->email = $request->email;
+                $hrd->save();
+            }
 
             // Redirect
-            return redirect()->route('admin.office.index')->with(['message' => 'Berhasil mengupdate data.']);
+            return redirect()->route('admin.profile.edit')->with(['message' => 'Berhasil mengupdate data.']);
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Show the form for editing the specified resource's password.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function editPassword()
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+
+        // View
+        return view('admin/profile/edit-password');
+    }
+
+    /**
+     * Update the specified resource's password in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function delete(Request $request)
+    public function updatePassword(Request $request)
     {
-        // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|min:6',
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|min:6|same:new_password',
+        ], validationMessages());
         
-        // Get the office
-        $office = Kantor::find($request->id);
+        // Check errors
+        if($validator->fails()) {
+            // Back to form page with validation error messages
+            return redirect()->back()->withErrors($validator->errors())->withInput();
+        }
+        else {
+            // Check password hashing, for security
+            if(Hash::check($request->old_password, Auth::user()->password)) {
+                // Update the user password
+                $user = User::find($request->id);
+                $user->password = bcrypt($request->new_password);
+                $user->save();
 
-        // Delete the office
-        $office->delete();
-
-        // Redirect
-        return redirect()->route('admin.office.index')->with(['message' => 'Berhasil menghapus data.']);
+                // Redirect
+                return redirect()->route('admin.profile.edit-password')->with(['message' => 'Berhasil mengupdate data.', 'status' => 1]);
+            }
+            else {
+                // Redirect
+                return redirect()->route('admin.profile.edit-password')->with(['message' => 'Kata sandi lama yang dimasukkan tidak cocok dengan kata sandi yang dimiliki saat ini.', 'status' => 0]);
+            }
+        }
     }
 }

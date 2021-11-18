@@ -11,7 +11,15 @@
     <div class="col-md-4 col-xl-3">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ $user->foto != '' ? asset('assets/images/foto-user/'.Auth::user()->foto) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
+                <img src="{{ Auth::user()->foto != '' ? asset('assets/images/foto-user/'.Auth::user()->foto) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
+            </div>
+            <hr class="my-0">
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{{ route('admin.profile') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile'))) ? 'active' : '' }}">Profil</a>
+                    <a href="{{ route('admin.profile.edit') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.edit'))) && !is_int(strpos(Request::url(), route('admin.profile.edit-password'))) ? 'active' : '' }}">Edit Profil</a>
+                    <a href="{{ route('admin.profile.edit-password') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.edit-password'))) ? 'active' : '' }}">Edit Password</a>
+                </div>
             </div>
         </div>
     </div>
@@ -27,6 +35,10 @@
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Tanggal Lahir:</span>
                         <span>{{ date('d/m/Y', strtotime($user->tanggal_lahir)) }}</span>
+                    </li>
+                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                        <span>Jenis Kelamin:</span>
+                        <span>{{ gender($user->jenis_kelamin) }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Email:</span>

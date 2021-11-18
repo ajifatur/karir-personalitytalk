@@ -82,7 +82,7 @@
                                 <td align="center">
                                     <div class="btn-group">
                                         @if($selection->hasil == 1 && $selection->isEmployee == false)
-                                        <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a>
+                                        <!-- <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a> -->
                                         @endif
                                         @if($selection->isEmployee == false)
                                         <a href="#" class="btn btn-sm btn-warning btn-set-test" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
