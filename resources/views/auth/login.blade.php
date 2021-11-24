@@ -51,7 +51,7 @@
                                                       <div class="input-group-prepend">
                                                           <span class="input-group-text" id="basic-addon1"><i class="ti-email"></i></span>
                                                       </div>
-                                                      <input class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}" name="username" type="text" placeholder="Username" autofocus>
+                                                      <input class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}" name="username" type="text" placeholder="Username" value="{{ old('username') }}" autofocus>
                                                   </div>
                                                   @if($errors->has('username'))
                                                   <div class="form-control-feedback text-danger">{{ ucfirst($errors->first('username')) }}</div>

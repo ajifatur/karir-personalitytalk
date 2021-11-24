@@ -16,12 +16,12 @@ Route::group(['middleware' => ['guest']], function() {
 
 	// Home
 	Route::get('/', function () {
-	   return redirect('/login');
+	   return redirect()->route('auth.login');
 	})->name('home');
 
 	// Login
-	Route::get('/login', 'Auth\LoginController@showLoginForm');
-	Route::post('/login', 'Auth\LoginController@login');
+	Route::get('/login', 'Auth\LoginController@show')->name('auth.login');
+	Route::post('/login', 'Auth\LoginController@authenticate')->name('auth.post-login');
 
 	// Applicant Register
 	Route::get('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
@@ -47,7 +47,7 @@ Route::group(['middleware' => ['guest']], function() {
 Route::group(['middleware' => ['admin']], function() {
 
 	// Logout
-	Route::post('/admin/logout', 'AdminLoginController@logout')->name('auth.logout');
+	Route::post('/admin/logout', 'Auth\LoginController@logout')->name('admin.logout');
 
 	// Dashboard
 	Route::get('/admin', function() {

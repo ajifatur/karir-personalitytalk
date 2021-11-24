@@ -81,7 +81,7 @@
 								<a class="dropdown-item" href="{{ route('admin.profile.edit') }}"><i class="align-middle me-1" data-feather="settings"></i> Pengaturan</a>
 								<div class="dropdown-divider"></div>
 								<a class="dropdown-item btn-logout" href="#"><i class="align-middle me-1" data-feather="power"></i> Keluar</a>
-                        		<form id="form-logout" class="d-none" method="post" action="{{ route('auth.logout') }}">@csrf</form>
+                        		<form id="form-logout" class="d-none" method="post" action="{{ route('admin.logout') }}">@csrf</form>
 							</div>
 						</li>
 					</ul>

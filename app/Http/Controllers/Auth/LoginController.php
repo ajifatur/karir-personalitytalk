@@ -2,141 +2,85 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
-class LoginController extends Controller
+class LoginController extends \App\Http\Controllers\Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-    use AuthenticatesUsers;
-
     /**
-     * Show the application's login form.
+     * Show login form.
      *
      * @return \Illuminate\Http\Response
      */
-    public function showLoginForm()
+    public function show()
     {
-        // Get URLs
-        $urlPrevious = url()->previous();
-        $urlBase = url()->to('/');
-
-        // If admin came from login, remove session url.intended
-        if((session()->get('url.intended') == '/admin/logout') || (session()->get('url.intended') == '/hrd/logout')){
-            session()->forget('url.intended');
-        }
-        // Set the previous url that we came from to redirect to after successful login but only if is internal
-        elseif(($urlPrevious != $urlBase . '/login') && (substr($urlPrevious, 0, strlen($urlBase)) === $urlBase) && ((substr($urlPrevious, strlen($urlBase), 6) == '/admin') || (substr($urlPrevious, strlen($urlBase), 4) == '/hrd'))) {
-            session()->put('url.intended', $urlPrevious);
-
-            // View
-            return view('auth/login', ['message' => 'Anda harus login terlebih dahulu!']);
-        }
-
         // View
         return view('auth/login');
     }
 
     /**
-     * Get the login username to be used by the controller.
-     *
-     * @return string
-     */
-    public function username()
-    {
-        return 'username';
-    }
-
-    /**
-     * Validate the user login request.
+     * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * @return \Illuminate\Http\Response
      */
-    protected function validateLogin(Request $request)
+    public function authenticate(Request $request)
     {
-        $request->validate([
-            $this->username() => 'required|string|min:4',
-            'password' => 'required|string|min:4',
+        // Validator
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string|min:6',
+            'password' => 'required|string|min:6',
         ]);
-    }
 
-    /**
-     * Attempt to log the user into the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
-     */
-    protected function attemptLogin(Request $request)
-    {
-        $request->merge(['has_access' => 1]);
-
-        return $this->guard()->attempt(
-            $this->credentials($request), $request->filled('remember')
-        );
-    }
-
-    /**
-     * Get the needed authorization credentials from the request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    protected function credentials(Request $request)
-    {
-        return $request->only($this->username(), 'password', 'has_access');
-    }
-
-    /**
-     * The user has been authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
-     */
-    protected function authenticated(Request $request, $user)
-    {
-        // Update last visit
-        $account = User::find($user->id_user);
-        $account->last_visit = date('Y-m-d H:i:s');
-        $account->save();
-
-        if(session()->get('url.intended') != null){
-            return redirect()->intended();
+        // Return if has errors
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors())->withInput();
         }
+        else {
+            // Check login type
+            $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+    
+            // Set credentials
+            $credentials = [
+                $loginType => $request->username,
+                'password' => $request->password,
+                'has_access' => 1
+            ];
 
-        return redirect('/admin');
+            // Auth attempt
+            if(Auth::attempt($credentials)) {
+                // Regenerate session
+                $request->session()->regenerate();
+
+                // Update user's last visit
+                $user = User::find($request->user()->id_user);
+                if($user) {
+                    $user->last_visit = date('Y-m-d H:i:s');
+                    $user->save();
+                }
+
+                // Redirect
+                return redirect()->route('admin.dashboard');
+            }
+        }
     }
-
+    
     /**
-     * Where to redirect users after login.
+     * Log the user out of the application.
      *
-     * @var string
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    protected $redirectTo = '/';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function logout(Request $request)
     {
-        $this->middleware('guest')->except('logout');
+        Auth::logout();
+    
+        $request->session()->invalidate();
+    
+        $request->session()->regenerateToken();
+    
+        return redirect()->route('auth.login');
     }
 }
