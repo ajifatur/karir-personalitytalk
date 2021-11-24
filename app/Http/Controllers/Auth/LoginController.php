@@ -64,6 +64,11 @@ class LoginController extends \App\Http\Controllers\Controller
                 // Redirect
                 return redirect()->route('admin.dashboard');
             }
+            else {
+                return redirect()->back()->withErrors([
+                    'message' => 'Tidak ada akun yang cocok dengan username / password yang Anda masukkan!'
+                ])->withInput();
+            }
         }
     }
     

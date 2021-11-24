@@ -40,9 +40,9 @@
                                       <div class="card-body">
                                           <form class="login-form" action="/login" method="post">
                                               {{ csrf_field() }}
-                                              @if(isset($message))
+                                              @if($errors->has('message'))
                                               <div class="alert alert-danger">
-                                                  {{ $message }}
+                                                  {{ $errors->first('message') }}
                                               </div>
                                               @endif
                                               <div class="form-group ">
