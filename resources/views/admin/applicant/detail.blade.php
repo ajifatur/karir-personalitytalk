@@ -43,83 +43,83 @@
                 </div>
                 @endif
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nama:</span>
-                        <span>{{ $applicant->nama_lengkap }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nama:</div>
+                        <div>{{ $applicant->nama_lengkap }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Tempat Lahir:</span>
-                        <span>{{ $applicant->tempat_lahir }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Tempat Lahir:</div>
+                        <div>{{ $applicant->tempat_lahir }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Tanggal Lahir:</span>
-                        <span>{{ date('d/m/Y', strtotime($applicant->tanggal_lahir)) }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Tanggal Lahir:</div>
+                        <div>{{ date('d/m/Y', strtotime($applicant->tanggal_lahir)) }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Agama:</span>
-                        <span>{{ $applicant->nama_agama }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Agama:</div>
+                        <div>{{ $applicant->nama_agama }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Email:</span>
-                        <span>{{ $applicant->email }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Email:</div>
+                        <div>{{ $applicant->email }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nomor HP:</span>
-                        <span>{{ $applicant->nomor_hp }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nomor HP:</div>
+                        <div>{{ $applicant->nomor_hp }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nomor Telepon:</span>
-                        <span>{{ $applicant->nomor_telepon != '' ? $applicant->nomor_telepon : '-' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nomor Telepon:</div>
+                        <div>{{ $applicant->nomor_telepon != '' ? $applicant->nomor_telepon : '-' }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>NIK:</span>
-                        <span>{{ $applicant->nomor_ktp != '' ? $applicant->nomor_ktp : '-' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>NIK:</div>
+                        <div>{{ $applicant->nomor_ktp != '' ? $applicant->nomor_ktp : '-' }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Alamat:</span>
-                        <span>{{ $applicant->alamat }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Alamat:</div>
+                        <div>{{ $applicant->alamat }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Pendidikan Terakhir:</span>
-                        <span>{{ $applicant->pendidikan_terakhir }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Pendidikan Terakhir:</div>
+                        <div>{{ $applicant->pendidikan_terakhir }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Status Hubungan:</span>
-                        <span>@if($applicant->status_hubungan == 1) Lajang @elseif($applicant->status_hubungan == 2) Menikah @elseif($applicant->status_hubungan == 3) Janda / Duda @endif</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Status Hubungan:</div>
+                        <div>@if($applicant->status_hubungan == 1) Lajang @elseif($applicant->status_hubungan == 2) Menikah @elseif($applicant->status_hubungan == 3) Janda / Duda @endif</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Sosmed:</span>
-                        <span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Sosmed:</div>
+                        <div>
                             @foreach($applicant->akun_sosmed as $sosmed=>$akun)
                                 {{ $akun }} ({{ $sosmed }})
                             @endforeach
-                        </span>
+                        </div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Pas Foto:</span>
-                        <span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Pas Foto:</div>
+                        <div>
                             @if($applicant->pas_foto != '')
                                 <a href="{{ asset('assets/images/pas-foto/'.$applicant->pas_foto) }}" class="btn btn-sm btn-primary" target="_blank"><i class="bi-camera me-1"></i> Lihat Foto</a>
                             @else
                                 -
                             @endif
-                        </span>
+                        </div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Ijazah:</span>
-                        <span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Ijazah:</div>
+                        <div>
                             @if($applicant->foto_ijazah != '')
                                 <a href="{{ asset('assets/images/foto-ijazah/'.$applicant->foto_ijazah) }}" class="btn btn-sm btn-primary" target="_blank"><i class="bi-camera me-1"></i> Lihat Foto</a>
                             @else
                                 -
                             @endif
-                        </span>
+                        </div>
                     </li>
 
                     @foreach($applicant->data_darurat as $key=>$value)
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>{{ replaceJsonKey($key) }}:</span>
-                        <span>{{ $value }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>{{ replaceJsonKey($key) }}:</div>
+                        <div>{{ $value }}</div>
                     </li>
                     @endforeach
                 </ul>

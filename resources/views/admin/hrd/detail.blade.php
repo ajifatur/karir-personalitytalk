@@ -20,37 +20,37 @@
             <div class="card-header"><h5 class="card-title mb-0">Profil HRD</h5></div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nama:</span>
-                        <span>{{ $hrd->nama_lengkap }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nama:</div>
+                        <div>{{ $hrd->nama_lengkap }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Tanggal Lahir:</span>
-                        <span>{{ date('d/m/Y', strtotime($hrd->tanggal_lahir)) }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Tanggal Lahir:</div>
+                        <div>{{ date('d/m/Y', strtotime($hrd->tanggal_lahir)) }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Email:</span>
-                        <span>{{ $hrd->email }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Email:</div>
+                        <div>{{ $hrd->email }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Kode:</span>
-                        <span>{{ $hrd->kode }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Kode:</div>
+                        <div>{{ $hrd->kode }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nama Perusahaan:</span>
-                        <span>{{ $hrd->perusahaan }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nama Perusahaan:</div>
+                        <div>{{ $hrd->perusahaan }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Alamat Perusahaan:</span>
-                        <span>{{ $hrd->alamat_perusahaan != '' ? $hrd->alamat_perusahaan : '-' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Alamat Perusahaan:</div>
+                        <div>{{ $hrd->alamat_perusahaan != '' ? $hrd->alamat_perusahaan : '-' }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>No. Telepon Perusahaan:</span>
-                        <span>{{ $hrd->telepon_perusahaan != '' ? $hrd->telepon_perusahaan : '-' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>No. Telepon Perusahaan:</div>
+                        <div>{{ $hrd->telepon_perusahaan != '' ? $hrd->telepon_perusahaan : '-' }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Akses STIFIn:</span>
-                        <span>{{ $hrd->akses_stifin == 1 ? 'Ya' : 'Tidak' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Akses STIFIn:</div>
+                        <div>{{ $hrd->akses_stifin == 1 ? 'Ya' : 'Tidak' }}</div>
                     </li>
                 </ul>
             </div>

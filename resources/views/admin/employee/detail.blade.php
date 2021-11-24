@@ -20,45 +20,45 @@
             <div class="card-header"><h5 class="card-title mb-0">Profil Karyawan</h5></div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nama:</span>
-                        <span>{{ $employee->nama_lengkap }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nama:</div>
+                        <div>{{ $employee->nama_lengkap }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Tempat Lahir:</span>
-                        <span>{{ $employee->tempat_lahir }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Tempat Lahir:</div>
+                        <div>{{ $employee->tempat_lahir }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Tanggal Lahir:</span>
-                        <span>{{ date('d/m/Y', strtotime($employee->tanggal_lahir)) }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Tanggal Lahir:</div>
+                        <div>{{ date('d/m/Y', strtotime($employee->tanggal_lahir)) }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Agama:</span>
-                        <span>{{ $employee->nama_agama }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Agama:</div>
+                        <div>{{ $employee->nama_agama }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Email:</span>
-                        <span>{{ $employee->email }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Email:</div>
+                        <div>{{ $employee->email }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nomor HP:</span>
-                        <span>{{ $employee->nomor_hp }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nomor HP:</div>
+                        <div>{{ $employee->nomor_hp }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Nomor Telepon:</span>
-                        <span>{{ $employee->nomor_telepon != '' ? $employee->nomor_telepon : '-' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Nomor Telepon:</div>
+                        <div>{{ $employee->nomor_telepon != '' ? $employee->nomor_telepon : '-' }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>NIK:</span>
-                        <span>{{ $employee->nik != '' ? $employee->nik : '-' }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>NIK:</div>
+                        <div>{{ $employee->nik != '' ? $employee->nik : '-' }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Alamat:</span>
-                        <span>{{ $employee->alamat }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Alamat:</div>
+                        <div>{{ $employee->alamat }}</div>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
-                        <span>Pendidikan Terakhir:</span>
-                        <span>{{ $employee->pendidikan_terakhir }}</span>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Pendidikan Terakhir:</div>
+                        <div>{{ $employee->pendidikan_terakhir }}</div>
                     </li>
                 </ul>
             </div>
