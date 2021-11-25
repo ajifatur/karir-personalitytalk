@@ -14,27 +14,27 @@
             <div class="card-header"><h5 class="card-title mb-0">Profil</h5></div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Nama:</span>
                         <span>{{ $user->nama_user }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Usia:</span>
                         <span>{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Jenis Kelamin:</span>
                         <span>{{ gender($user->jenis_kelamin) }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Jabatan:</span>
                         <span>{{ !empty($user_desc) ? $user_desc->nama_posisi : $role->nama_role }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Role:</span>
                         <span>{{ role($user->role) }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Tes:</span>
                         <span>{{ $result->nama_tes }}</span>
                     </li>
@@ -53,6 +53,11 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Deskripsi</button>
                     </li>
+                    @if(array_key_exists('answers', $result->hasil))
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="answer-tab" data-bs-toggle="tab" data-bs-target="#answer" type="button" role="tab" aria-controls="answer" aria-selected="false">Jawaban</button>
+                    </li>
+                    @endif
                 </ul>
                 <div class="tab-content p-2" id="myTabContent">
                     <div class="tab-pane fade show active" id="graph" role="tabpanel" aria-labelledby="graph-tab">
@@ -189,6 +194,34 @@
                             </div>
                         </div>
                     </div>
+                    @if(array_key_exists('answers', $result->hasil))
+                    <div class="tab-pane fade" id="answer" role="tabpanel" aria-labelledby="answer-tab">
+                        <div class="row">
+                            @for($i=1; $i<=3; $i++)
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <table class="table-bordered">
+                                    <thead bgcolor="#bebebe">
+                                        <tr>
+                                            <th width="40">#</th>
+                                            <th width="40">Most</th>
+                                            <th width="40">Least</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for($j=(($i-1)*8)+1; $j<=$i*8; $j++)
+                                        <tr>
+                                            <td align="center" bgcolor="#bebebe"><strong>{{ $j }}</strong></td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers']['m'][$j] }}</td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers']['l'][$j] }}</td>
+                                        </tr>
+                                        @endfor
+                                    </tbody>
+                                </table>
+                            </div>
+                            @endfor
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

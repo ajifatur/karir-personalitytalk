@@ -14,27 +14,27 @@
             <div class="card-header"><h5 class="card-title mb-0">Profil</h5></div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Nama:</span>
                         <span>{{ $user->nama_user }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Usia:</span>
                         <span>{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Jenis Kelamin:</span>
                         <span>{{ gender($user->jenis_kelamin) }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Jabatan:</span>
                         <span>{{ !empty($user_desc) ? $user_desc->nama_posisi : $role->nama_role }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Role:</span>
                         <span>{{ role($user->role) }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-flex justify-content-between">
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Tes:</span>
                         <span>{{ $result->nama_tes }}</span>
                     </li>
@@ -46,47 +46,92 @@
         <div class="card">
             <div class="card-header"><h5 class="card-title mb-0">Hasil Tes</h5></div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-auto mx-auto">
-                        <table class="table table-bordered mb-4">
-                            <thead>
-                                <tr>
-                                    <th width="100" class="bg-info text-light">Biru</th>
-                                    <th width="100" class="bg-danger text-light">Merah</th>
-                                    <th width="100" class="bg-success text-light">Hijau</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{{ $result->hasil["A"] }}</td>
-                                    <td>{{ $result->hasil["B"] }}</td>
-                                    <td>{{ $result->hasil["C"] }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ $result->hasil["D"] }}</td>
-                                    <td>{{ $result->hasil["E"] }}</td>
-                                    <td>{{ $result->hasil["F"] }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-auto mx-auto">
-                        <div class="table-responsive">
-                        <div id="json" style="display:none;">
-                        <?php
-                            $coords = array(
-                                "biru" => array($result->hasil["A"], $result->hasil["D"]),
-                                "merah" => array($result->hasil["B"], $result->hasil["E"]),
-                                "hijau" => array($result->hasil["C"], $result->hasil["F"]),
-                            );
-                        
-                            echo json_encode($coords);
-                        ?>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="graph-tab" data-bs-toggle="tab" data-bs-target="#graph" type="button" role="tab" aria-controls="graph" aria-selected="true">Grafik</button>
+                    </li>
+                    @if(array_key_exists('answers', $result->hasil))
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="answer-tab" data-bs-toggle="tab" data-bs-target="#answer" type="button" role="tab" aria-controls="answer" aria-selected="false">Jawaban</button>
+                    </li>
+                    @endif
+                </ul>
+                <div class="tab-content p-2" id="myTabContent">
+                    <div class="tab-pane fade show active" id="graph" role="tabpanel" aria-labelledby="graph-tab">
+                        <div class="row">
+                            <div class="col-auto mx-auto">
+                                <table class="table table-bordered mb-4">
+                                    <thead>
+                                        <tr>
+                                            <th width="100" class="bg-info text-light">Biru</th>
+                                            <th width="100" class="bg-danger text-light">Merah</th>
+                                            <th width="100" class="bg-success text-light">Hijau</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ $result->hasil["A"] }}</td>
+                                            <td>{{ $result->hasil["B"] }}</td>
+                                            <td>{{ $result->hasil["C"] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ $result->hasil["D"] }}</td>
+                                            <td>{{ $result->hasil["E"] }}</td>
+                                            <td>{{ $result->hasil["F"] }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-auto mx-auto">
+                                <div class="table-responsive">
+                                <div id="json" style="display:none;">
+                                <?php
+                                    $coords = array(
+                                        "biru" => array($result->hasil["A"], $result->hasil["D"]),
+                                        "merah" => array($result->hasil["B"], $result->hasil["E"]),
+                                        "hijau" => array($result->hasil["C"], $result->hasil["F"]),
+                                    );
+                                
+                                    echo json_encode($coords);
+                                ?>
+                                </div>
+                                <img id="scream" src="{{ asset('assets/images/tes/sdi.png') }}" style="display: none;">
+                                <canvas id="myCanvas" width="608" height="545" style="border:1px solid #bebebe;"></canvas>
+                                </div>
+                            </div>
                         </div>
-                        <img id="scream" src="{{ asset('assets/images/tes/sdi.png') }}" style="display: none;">
-                        <canvas id="myCanvas" width="608" height="545" style="border:1px solid #bebebe;"></canvas>
+                    </div>
+                    @if(array_key_exists('answers', $result->hasil))
+                    <div class="tab-pane fade" id="answer" role="tabpanel" aria-labelledby="answer-tab">
+                        <div class="row">
+                            @for($i=1; $i<=2; $i++)
+                            <div class="col-md-6 mb-2 mb-md-0">
+                                <table class="table-bordered">
+                                    <thead bgcolor="#bebebe">
+                                        <tr>
+                                            <th width="40">#</th>
+                                            <th width="80">Kolom 1</th>
+                                            <th width="80">Kolom 2</th>
+                                            <th width="80">Kolom 3</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for($j=(($i-1)*10)+1; $j<=$i*10; $j++)
+                                        @php $l = ['a','b']; @endphp
+                                        <tr>
+                                            <td align="center" bgcolor="#bebebe"><strong>{{ $j }}</strong></td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers'][$j-1]['Col1'.$l[$i-1]] }}</td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers'][$j-1]['Col2'.$l[$i-1]] }}</td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers'][$j-1]['Col3'.$l[$i-1]] }}</td>
+                                        </tr>
+                                        @endfor
+                                    </tbody>
+                                </table>
+                            </div>
+                            @endfor
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
