@@ -11,14 +11,7 @@ class Role extends Model
      *
      * @var string
      */
-    protected $table = 'role';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id_role';
+    protected $table = 'roles';
 
     /**
      * Fill the model with an array of attributes.
@@ -29,7 +22,7 @@ class Role extends Model
      * @throws \Illuminate\Database\Eloquent\MassAssignmentException
      */
     protected $fillable = [
-        'nama_role',
+        'name', 'code'
 	];
 
     /**

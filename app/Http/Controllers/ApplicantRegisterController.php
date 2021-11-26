@@ -591,18 +591,6 @@ class ApplicantRegisterController extends Controller
     }
 
     /**
-     * Mengirim email bahwa ada pelamar ke HRD
-     *
-     * @return void
-     */
-    public function sendMailToHRD()
-    {
-        Mail::to("ajifatur14@students.unnes.ac.id")->send(new ApplicantMail(33));
- 
-        return "Email telah dikirim";
-    }
-
-    /**
      * Where to redirect users after registration.
      *
      * @var string
