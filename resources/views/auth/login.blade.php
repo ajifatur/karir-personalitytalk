@@ -6,7 +6,7 @@
   <title>Sistem Rekruitmen | Promosi | Penjajakan Karyawan</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" type="text/css" href="https://www.psikologanda.com/assets/css/style.css">
+  <link rel="stylesheet" type="text/css" href="https://psikologanda.com/assets/css/style.css">
 </head>
 
 <body id="spandiv">
@@ -72,7 +72,7 @@
   <div id="footer-main"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-  <script src="http://localhost:8080/assets/partials/template.js"></script>
+  <script src="https://psikologanda.com/assets/partials/template.js"></script>
   <style>
     .login-wrapper{min-height: calc(100vh - 19rem)}
   </style>
