@@ -51,7 +51,7 @@
                           <div class="input-group">
                               <span class="input-group-text {{ $errors->has('password') ? 'border-danger' : '' }}"><i class="bi bi-key-fill"></i></span>
                               <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'border-danger' : '' }}" placeholder="Password">
-                              <button class="input-group-text btn btn-light btn-toggle-password border {{ $errors->has('password') ? 'border-danger' : '' }}"><i class="bi bi-eye-fill"></i></button>
+                              <a href="#" class="input-group-text btn btn-light btn-toggle-password border {{ $errors->has('password') ? 'border-danger' : '' }}"><i class="bi bi-eye-fill"></i></a>
                           </div>
                           @if($errors->has('password'))
                           <div class="form-control-feedback text-danger">{{ ucfirst($errors->first('password')) }}</div>
