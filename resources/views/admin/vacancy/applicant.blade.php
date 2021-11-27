@@ -34,7 +34,7 @@
                             <tr>
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td>
-                                    <a href="#">{{ ucwords($applicant->nama_lengkap) }}</a>
+                                    <a href="{{ route('admin.applicant.detail', ['id' => $applicant->id_pelamar]) }}">{{ ucwords($applicant->nama_lengkap) }}</a>
                                     <br>
                                     <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $applicant->email }}</small>
                                     <br>
