@@ -307,7 +307,7 @@ class EmployeeController extends \App\Http\Controllers\Controller
             $employee->save();
 
             // Update the user
-            $user = User::find($employee->id_karyawan);
+            $user = User::find($employee->id_user);
             $user->nama_user = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
