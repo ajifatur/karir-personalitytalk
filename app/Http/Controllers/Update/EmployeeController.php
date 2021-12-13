@@ -52,7 +52,7 @@ class EmployeeController extends \App\Http\Controllers\Controller
                     {{ get_posisi_name($posisi) }}
                 ')
                 ->editColumn('status', '
-                    <span class="badge {{ $status == 1 ? "bg-success" : "bg-danger" }}">{{ $status == 1 ? "Aktif" : "Tidak Aktif" }}</span>
+                    <span class="badge {{ $status == 1 ? "bg-success" : "bg-danger" }}">{{ status($status) }}</span>
                 ')
                 ->addColumn('company', '
                     {{ get_perusahaan_name($id_hrd) }}
