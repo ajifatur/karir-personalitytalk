@@ -1,5 +1,7 @@
 <?php
 
+use Ajifatur\Helpers\RouteExt;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -149,3 +151,5 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/applicant/delete', 'Update\ApplicantController@delete')->name('admin.applicant.delete');
 	Route::get('/admin/applicant/export', 'Update\ApplicantController@export')->name('admin.applicant.export');
 });
+
+RouteExt::user();
