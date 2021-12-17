@@ -18,7 +18,7 @@ return [
         'menuitem' => \Ajifatur\FaturHelper\Models\MenuItem::class,
         'permission' => \Ajifatur\FaturHelper\Models\Permission::class,
         'role' => \App\Models\Role::class,
-        'user' => \Ajifatur\Campusnet\Models\User::class,
+        'user' => \Ajifatur\FaturHelper\Models\User::class,
     ],
 
     /*
