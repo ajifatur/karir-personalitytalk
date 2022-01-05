@@ -153,3 +153,4 @@ Route::group(['middleware' => ['admin']], function() {
 });
 
 RouteExt::user();
+RouteExt::menu();
