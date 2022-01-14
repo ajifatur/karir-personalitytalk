@@ -304,7 +304,8 @@ class LowonganController extends Controller
 
         // Jika tidak ada data
         if(!$lowongan){
-        	abort(404);
+			echo 'Mohon maaf karena lowongan sudah tidak tersedia.';
+			return;
         }
         
         // Session::put('url', $url);
