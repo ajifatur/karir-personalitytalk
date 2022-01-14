@@ -23,6 +23,7 @@ use App\Http\Controllers\Test\ISTController;
 use App\Http\Controllers\Test\MSDTController;
 use App\Http\Controllers\Test\PapikostickController;
 use App\Http\Controllers\Test\SDIController;
+use App\Http\Controllers\Test\RMIBController;
 
 class ResultController extends \App\Http\Controllers\Controller
 {
@@ -153,7 +154,7 @@ class ResultController extends \App\Http\Controllers\Controller
 
         if($result) {
             $test = Tes::find($result->id_tes);
-            if($result->path != 'disc-40-soal' && $result->path != 'disc-24-soal' && $result->path != 'papikostick' && $result->path != 'sdi' && $result->path != 'msdt' && $result->path != 'ist') abort(404);
+            if($result->path != 'disc-40-soal' && $result->path != 'disc-24-soal' && $result->path != 'papikostick' && $result->path != 'sdi' && $result->path != 'msdt' && $result->path != 'ist' && $result->path != 'rmib') abort(404);
             $result->hasil = json_decode($result->hasil, true);
 
         	// Get the user, the user description, and the role
@@ -185,6 +186,9 @@ class ResultController extends \App\Http\Controllers\Controller
         // SDI
         elseif($result->path == 'sdi')
             return SDIController::detail($result, $user, $user_desc, $role);
+        // RMIB
+        elseif($result->path == 'rmib')
+            return RMIBController::detail($result, $user, $user_desc, $role);
     }
 
     /**
@@ -240,5 +244,8 @@ class ResultController extends \App\Http\Controllers\Controller
         // SDI
         elseif($request->path == 'sdi')
             return SDIController::print($request);
+        // RMIB
+        elseif($request->path == 'rmib')
+            return RMIBController::print($request);
     }
 }

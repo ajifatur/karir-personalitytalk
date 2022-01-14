@@ -8,20 +8,21 @@
     "packages": [
         {
             "name": "ajifatur/faturhelper",
-            "version": "v3.0.5",
+            "version": "v3.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ajifatur/faturhelper.git",
-                "reference": "396075afed52ef53524d49d1385404572bd78148"
+                "reference": "e55a8eb4a09aba7b496645ae1fc91619f73580ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ajifatur/faturhelper/zipball/396075afed52ef53524d49d1385404572bd78148",
-                "reference": "396075afed52ef53524d49d1385404572bd78148",
+                "url": "https://api.github.com/repos/ajifatur/faturhelper/zipball/e55a8eb4a09aba7b496645ae1fc91619f73580ed",
+                "reference": "e55a8eb4a09aba7b496645ae1fc91619f73580ed",
                 "shasum": ""
             },
             "require": {
-                "laravel/socialite": "^5.2"
+                "laravel/socialite": "^5.2",
+                "rap2hpoutre/laravel-log-viewer": "^2.0"
             },
             "type": "library",
             "autoload": {
@@ -39,11 +40,12 @@
                     "email": "ajifatur2@gmail.com"
                 }
             ],
+            "description": "Project that contains some helpers/functions/methods to help my work easier",
             "support": {
                 "issues": "https://github.com/ajifatur/faturhelper/issues",
-                "source": "https://github.com/ajifatur/faturhelper/tree/v3.0.5"
+                "source": "https://github.com/ajifatur/faturhelper/tree/v3.0.17"
             },
-            "time": "2022-01-05T07:28:26+00:00"
+            "time": "2022-01-11T08:11:18+00:00"
         },
         {
             "name": "asm89/stack-cors",
@@ -3835,6 +3837,69 @@
                 }
             ],
             "time": "2021-09-25T23:10:38+00:00"
+        },
+        {
+            "name": "rap2hpoutre/laravel-log-viewer",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rap2hpoutre/laravel-log-viewer.git",
+                "reference": "4fa9b45738095fc5febeed6e44f1516e93a8de8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rap2hpoutre/laravel-log-viewer/zipball/4fa9b45738095fc5febeed6e44f1516e93a8de8c",
+                "reference": "4fa9b45738095fc5febeed6e44f1516e93a8de8c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "4.2.*|5.*|^6.0|^7.0|^8.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "3.7.*",
+                "phpunit/phpunit": "^7"
+            },
+            "type": "laravel-package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/controllers"
+                ],
+                "psr-0": {
+                    "Rap2hpoutre\\LaravelLogViewer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "rap2hpoutre",
+                    "email": "raphaelht@gmail.com"
+                }
+            ],
+            "description": "A Laravel log reader",
+            "keywords": [
+                "laravel",
+                "log",
+                "log-reader",
+                "log-viewer",
+                "logging",
+                "lumen"
+            ],
+            "support": {
+                "issues": "https://github.com/rap2hpoutre/laravel-log-viewer/issues",
+                "source": "https://github.com/rap2hpoutre/laravel-log-viewer/tree/v2.0.0"
+            },
+            "time": "2021-11-04T12:40:05+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",
