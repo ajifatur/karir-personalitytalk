@@ -100,6 +100,9 @@ class ResultController extends \App\Http\Controllers\Controller
                     <br>
                     <small class="text-muted">{{ date("H:i", strtotime($test_at))." WIB" }}</small>
                 ')
+                ->addColumn('tes', '
+                    {{ $nama_tes }}
+                ')
                 ->addColumn('company', '
                     {{ get_perusahaan_name($id_hrd) }}
                 ')
@@ -110,7 +113,7 @@ class ResultController extends \App\Http\Controllers\Controller
                     </div>
                 ')
                 ->removeColumn('password')
-                ->rawColumns(['checkbox', 'name', 'posisi', 'datetime', 'company', 'options'])
+                ->rawColumns(['checkbox', 'name', 'posisi', 'datetime', 'tes', 'company', 'options'])
                 ->make(true);
         }
 

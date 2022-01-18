@@ -46,6 +46,7 @@
                                 <th>Identitas</th>
                                 <th width="100">Jabatan</th>
                                 <th width="80">Waktu</th>
+                                <th width="100">Tes</th>
                                 <th width="200">Perusahaan</th>
                                 <th width="60">Opsi</th>
                             </tr>
@@ -76,6 +77,7 @@
             {data: 'name', name: 'name'},
             {data: 'posisi', name: 'posisi'},
             {data: 'datetime', name: 'datetime'},
+            {data: 'tes', name: 'tes', visible: {{ Request::query('test') == null ? 'true' : 'false' }}},
             {data: 'company', name: 'company', visible: {{ Auth::user()->role == role('admin') && Request::query('hrd') == null ? 'true' : 'false' }}},
             {data: 'options', name: 'options', className: 'text-center', orderable: false},
         ],
