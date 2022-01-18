@@ -48,7 +48,10 @@
             <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Deskripsi</button>
+                        <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table" type="button" role="tab" aria-controls="table" aria-selected="false">Tabel</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Deskripsi</button>
                     </li>
                     @if(array_key_exists('answers', $result->hasil))
                     <li class="nav-item" role="presentation">
@@ -57,8 +60,54 @@
                     @endif
                 </ul>
                 <div class="tab-content p-2" id="myTabContent">
-                    <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-                        Belum tersedia.
+                    <div class="tab-pane fade show active" id="table" role="tabpanel" aria-labelledby="table-tab">
+                        <table class="table table-sm table-bordered">
+                            <thead bgcolor="#bebebe">
+                                <tr>
+                                    <th width="20">No.</th>
+                                    <th width="100">Kategori</th>
+                                    @foreach($letters as $letter)
+                                    <th width="40">{{ $letter }}</th>
+                                    @endforeach
+                                    <th width="40">Jumlah</th>
+                                    <th width="40">Rank</th>
+                                    <th width="40">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($categories as $keyc=>$category)
+                                <tr bgcolor="{{ $category_ranks[$keyc] <= 3 ? '#e5e5e5' : '' }}">
+                                    <td>{{ ($keyc+1) }}</td>
+                                    <td>{{ $category }}</td>
+                                    @for($i=0; $i<=8; $i++)
+                                        <td class="{{ $keyc == $i ? 'text-primary fw-bold' : '' }}">{{ $sheets[$keyc][$i] }}</td>
+                                    @endfor
+                                    <td>{{ $sums[$keyc] }}</td>
+                                    <td>{{ $category_ranks[$keyc] }}</td>
+                                    <td></td>
+                                </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="11"></td>
+                                    <td class="fw-bold">{{ array_sum($sums) }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                        <h4>Arah Minat:</h4>
+                        <ol>
+                            @foreach($interests as $key=>$interest)
+                            <li>
+                                <span class="fw-bold">{{ $interest['name'] }}</span>
+                                <br>
+                                {{ $interest['description'] }}
+                                <br>
+                                Contoh: {{ $interest['example'] }}
+                            </li>
+                            @endforeach
+                        </ol>
                     </div>
                     @if(array_key_exists('answers', $result->hasil))
                     <div class="tab-pane fade" id="answer" role="tabpanel" aria-labelledby="answer-tab">

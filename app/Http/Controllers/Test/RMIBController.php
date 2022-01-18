@@ -28,15 +28,55 @@ class RMIBController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Set the note
-        // $keterangan = Keterangan::where('id_paket','=',$result->id_paket)->first();
-        // $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+        $keterangan = Keterangan::where('id_paket','=',$result->id_paket)->first();
+        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
 
         // Get the questions        
         $paket = PaketSoal::where('id_tes','=',$result->id_tes)->where('status','=',1)->first();
         $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
 
+        // Set categories
+        $categories = ['Out','Me','Comp','Sci','Prs','Aesth','Lit','Mus','So. Se','Cler','Prac','Med'];
+
         // Set letters
         $letters = ['A','B','C','D','E','F','G','H','I'];
+
+        // Set the sheet and sum
+        $sheets = [];
+        $sums = [];
+        foreach($categories as $keyc=>$category) {
+            $sums[$keyc] = 0;
+            $i = $keyc;
+            foreach($letters as $keyl=>$letter) {
+                $sheets[$keyc][] = $result->hasil['answers'][($keyl+1)][$i];
+                $sums[$keyc] += $result->hasil['answers'][($keyl+1)][$i];
+                $i--;
+                $i = $i < 0 ? 11 : $i;
+            }
+        }
+
+        // Set the category ranks by ordered sums
+        $ordered_sums = $sums;
+        sort($ordered_sums);
+        $category_ranks = [];
+        foreach($sums as $keys=>$sum) {
+            foreach($ordered_sums as $keyo=>$ordered_sum) {
+                if($sum === $ordered_sum)
+                    $category_ranks[$keys] = $keyo + 1;
+            }
+        }
+
+        // Get interests
+        $interests = [];
+        foreach($category_ranks as $keyc=>$category_rank) {
+            if($category_rank <= 3) {
+                foreach($keterangan->keterangan as $note) {
+                    if($note['code'] == $categories[$keyc])
+                        $interests[$category_rank] = $note;
+                }
+            }
+        }
+        ksort($interests);
 
         // View
         return view('admin/result/rmib/detail', [
@@ -44,9 +84,14 @@ class RMIBController extends \App\Http\Controllers\Controller
             'role' => $role,
             'user' => $user,
             'user_desc' => $user_desc,
-            'questions' => $questions,
-            'letters' => $letters,
             // 'keterangan' => $keterangan,
+            'questions' => $questions,
+            'categories' => $categories,
+            'letters' => $letters,
+            'sheets' => $sheets,
+            'sums' => $sums,
+            'category_ranks' => $category_ranks,
+            'interests' => $interests,
         ]);
     }
 
