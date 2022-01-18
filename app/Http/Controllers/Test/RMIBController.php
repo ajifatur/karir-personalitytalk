@@ -58,11 +58,16 @@ class RMIBController extends \App\Http\Controllers\Controller
         // Set the category ranks by ordered sums
         $ordered_sums = $sums;
         sort($ordered_sums);
+		$occurences = array_count_values($sums);
         $category_ranks = [];
         foreach($sums as $keys=>$sum) {
             foreach($ordered_sums as $keyo=>$ordered_sum) {
-                if($sum === $ordered_sum)
-                    $category_ranks[$keys] = $keyo + 1;
+                if($sum === $ordered_sum) {
+					if($occurences[$sum] <= 1)
+                    	$category_ranks[$keys] = $keyo + 1;
+					else
+                    	$category_ranks[$keys] = $keyo;
+				}
             }
         }
 
@@ -71,8 +76,12 @@ class RMIBController extends \App\Http\Controllers\Controller
         foreach($category_ranks as $keyc=>$category_rank) {
             if($category_rank <= 3) {
                 foreach($keterangan->keterangan as $note) {
-                    if($note['code'] == $categories[$keyc])
-                        $interests[$category_rank] = $note;
+                    if($note['code'] == $categories[$keyc]) {
+						if(!array_key_exists($category_rank, $interests))
+                        	$interests[$category_rank] = $note;
+						else
+                        	$interests[$category_rank + 1] = $note;
+					}
                 }
             }
         }
