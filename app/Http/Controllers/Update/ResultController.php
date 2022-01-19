@@ -157,7 +157,7 @@ class ResultController extends \App\Http\Controllers\Controller
 
         if($result) {
             $test = Tes::find($result->id_tes);
-            if($result->path != 'disc-40-soal' && $result->path != 'disc-24-soal' && $result->path != 'papikostick' && $result->path != 'sdi' && $result->path != 'msdt' && $result->path != 'ist' && $result->path != 'rmib') abort(404);
+            if($result->path != 'disc-40-soal' && $result->path != 'disc-24-soal' && $result->path != 'papikostick' && $result->path != 'sdi' && $result->path != 'msdt' && $result->path != 'ist' && $result->path != 'rmib' && $result->path != 'rmib-2') abort(404);
             $result->hasil = json_decode($result->hasil, true);
 
         	// Get the user, the user description, and the role
@@ -190,7 +190,7 @@ class ResultController extends \App\Http\Controllers\Controller
         elseif($result->path == 'sdi')
             return SDIController::detail($result, $user, $user_desc, $role);
         // RMIB
-        elseif($result->path == 'rmib')
+        elseif($result->path == 'rmib' || $result->path == 'rmib-2')
             return RMIBController::detail($result, $user, $user_desc, $role);
     }
 
@@ -248,7 +248,7 @@ class ResultController extends \App\Http\Controllers\Controller
         elseif($request->path == 'sdi')
             return SDIController::print($request);
         // RMIB
-        elseif($request->path == 'rmib')
+        elseif($request->path == 'rmib' || $request->path == 'rmib-2')
             return RMIBController::print($request);
     }
 }
