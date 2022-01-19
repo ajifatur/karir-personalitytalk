@@ -189,8 +189,11 @@ class ResultController extends \App\Http\Controllers\Controller
         // SDI
         elseif($result->path == 'sdi')
             return SDIController::detail($result, $user, $user_desc, $role);
-        // RMIB
-        elseif($result->path == 'rmib' || $result->path == 'rmib-2')
+        // RMIB 1.0
+        elseif($result->path == 'rmib')
+            return RMIBController::detail($result, $user, $user_desc, $role);
+        // RMIB 2.0
+        elseif($result->path == 'rmib-2')
             return RMIBController::detail($result, $user, $user_desc, $role);
     }
 
@@ -247,8 +250,11 @@ class ResultController extends \App\Http\Controllers\Controller
         // SDI
         elseif($request->path == 'sdi')
             return SDIController::print($request);
-        // RMIB
-        elseif($request->path == 'rmib' || $request->path == 'rmib-2')
+        // RMIB 1.0
+        elseif($request->path == 'rmib')
+            return RMIBController::print($request);
+        // RMIB 2.0
+        elseif($request->path == 'rmib-2')
             return RMIBController::print($request);
     }
 }
