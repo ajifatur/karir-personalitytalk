@@ -48,10 +48,10 @@
             <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#table" type="button" role="tab" aria-controls="table" aria-selected="false">Tabel</button>
+                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Deskripsi</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="false">Deskripsi</button>
+                        <button class="nav-link" id="table-tab" data-bs-toggle="tab" data-bs-target="#table" type="button" role="tab" aria-controls="table" aria-selected="false">Tabel</button>
                     </li>
                     @if(array_key_exists('answers', $result->hasil))
                     <li class="nav-item" role="presentation">
@@ -60,7 +60,30 @@
                     @endif
                 </ul>
                 <div class="tab-content p-2" id="myTabContent">
-                    <div class="tab-pane fade show active" id="table" role="tabpanel" aria-labelledby="table-tab">
+                    <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                        <h4>Arah Minat:</h4>
+                        <ol>
+                            @foreach($interests as $key=>$interest)
+                            <li>
+                                <span class="fw-bold">{{ $interest['name'] }}</span>
+                                <br>
+                                {{ $interest['description'] }}
+                                <br>
+                                Contoh: {{ $interest['example'] }}
+                            </li>
+                            @endforeach
+                        </ol>
+                        @if(array_key_exists('occupations', $result->hasil))
+                        <hr>
+                        <h4>Pekerjaan yang paling diinginkan:</h4>
+                        <ol>
+                            @foreach($result->hasil['occupations'] as $occupation)
+                            <li>{{ $occupation }}</li>
+                            @endforeach
+                        </ol>
+                        @endif
+                    </div>
+                    <div class="tab-pane fade" id="table" role="tabpanel" aria-labelledby="table-tab">
                         <table class="table table-sm table-bordered">
                             <thead bgcolor="#bebebe">
                                 <tr>
@@ -94,29 +117,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        @if(array_key_exists('occupations', $result->hasil))
-                        <hr>
-                        <p class="mb-1">Pekerjaan yang paling diinginkan:</p>
-                        <ol>
-                            @foreach($result->hasil['occupations'] as $occupation)
-                            <li>{{ $occupation }}</li>
-                            @endforeach
-                        </ol>
-                        @endif
-                    </div>
-                    <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
-                        <h4>Arah Minat:</h4>
-                        <ol>
-                            @foreach($interests as $key=>$interest)
-                            <li>
-                                <span class="fw-bold">{{ $interest['name'] }}</span>
-                                <br>
-                                {{ $interest['description'] }}
-                                <br>
-                                Contoh: {{ $interest['example'] }}
-                            </li>
-                            @endforeach
-                        </ol>
                     </div>
                     @if(array_key_exists('answers', $result->hasil))
                     <div class="tab-pane fade" id="answer" role="tabpanel" aria-labelledby="answer-tab">
