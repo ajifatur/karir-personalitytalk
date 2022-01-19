@@ -94,6 +94,15 @@
                                 </tr>
                             </tbody>
                         </table>
+                        @if(array_key_exists('occupations', $result->hasil))
+                        <hr>
+                        <p class="mb-1">Pekerjaan yang paling diinginkan:</p>
+                        <ol>
+                            @foreach($result->hasil['occupations'] as $occupation)
+                            <li>{{ $occupation }}</li>
+                            @endforeach
+                        </ol>
+                        @endif
                     </div>
                     <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
                         <h4>Arah Minat:</h4>
