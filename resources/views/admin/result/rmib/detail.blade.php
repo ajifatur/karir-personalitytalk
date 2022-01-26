@@ -6,7 +6,7 @@
 
 <div class="d-sm-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-2 mb-sm-0">Data Hasil Tes</h1>
-    <!-- <a href="#" class="btn btn-sm btn-primary btn-print"><i class="bi-printer me-1"></i> Cetak</a> -->
+    <a href="#" class="btn btn-sm btn-primary btn-print"><i class="bi-printer me-1"></i> Cetak</a>
 </div>
 <div class="row">
     <div class="col-md-4 col-xl-3">
@@ -170,7 +170,7 @@
     <input type="hidden" name="nama" value="{{ $user->nama_user }}">
     <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
     <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">
-    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->nama_role.')' : $role->nama_role }}">
+    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.$role->name.')' : $role->name }}">
     <input type="hidden" name="tes" value="{{ $result->nama_tes }}">
     <input type="hidden" name="path" value="{{ $result->path }}">
 </form>

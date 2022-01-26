@@ -113,23 +113,86 @@ class RMIBController extends \App\Http\Controllers\Controller
     public function print(Request $request)
     {
         // Set the result
-        $hasil = Hasil::find($request->id_hasil);
-        $hasil->hasil = json_decode($hasil->hasil, true);
+        $result = Hasil::find($request->id_hasil);
+        $result->hasil = json_decode($result->hasil, true);
         
         // Set the note
-        $keterangan = Keterangan::where('id_paket','=',$hasil->id_paket)->first();
+        $keterangan = Keterangan::where('id_paket','=',$result->id_paket)->first();
         $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+
+        // Get the questions        
+        $paket = PaketSoal::where('id_tes','=',$result->id_tes)->where('status','=',1)->first();
+        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
+
+        // Set categories
+        $categories = ['Out','Me','Comp','Sci','Prs','Aesth','Lit','Mus','So. Se','Cler','Prac','Med'];
+
+        // Set letters
+        $letters = ['A','B','C','D','E','F','G','H','I'];
+
+        // Set the sheet and sum
+        $sheets = [];
+        $sums = [];
+        foreach($categories as $keyc=>$category) {
+            $sums[$keyc] = 0;
+            $i = $keyc;
+            foreach($letters as $keyl=>$letter) {
+                $sheets[$keyc][] = $result->hasil['answers'][($keyl+1)][$i];
+                $sums[$keyc] += $result->hasil['answers'][($keyl+1)][$i];
+                $i--;
+                $i = $i < 0 ? 11 : $i;
+            }
+        }
+
+        // Set the category ranks by ordered sums
+        $ordered_sums = $sums;
+        sort($ordered_sums);
+		$occurences = array_count_values($sums);
+        $category_ranks = [];
+        foreach($sums as $keys=>$sum) {
+            foreach($ordered_sums as $keyo=>$ordered_sum) {
+                if($sum === $ordered_sum) {
+					if($occurences[$sum] <= 1)
+                    	$category_ranks[$keys] = $keyo + 1;
+					else
+                    	$category_ranks[$keys] = $keyo;
+				}
+            }
+        }
+
+        // Get interests
+        $interests = [];
+        foreach($category_ranks as $keyc=>$category_rank) {
+            if($category_rank <= 3) {
+                foreach($keterangan->keterangan as $note) {
+                    if($note['code'] == $categories[$keyc]) {
+						if(!array_key_exists($category_rank, $interests))
+                        	$interests[$category_rank] = $note;
+						else
+                        	$interests[$category_rank + 1] = $note;
+					}
+                }
+            }
+        }
+        ksort($interests);
         
         // PDF
         $pdf = PDF::loadview('admin/result/rmib/pdf', [
-            'hasil' => $hasil,
+            'result' => $result,
             'image' => $request->image,
             'nama' => $request->nama,
             'usia' => $request->usia,
             'jenis_kelamin' => $request->jenis_kelamin,
             'posisi' => $request->posisi,
             'tes' => $request->tes,
-            'keterangan' => $keterangan,
+            // 'keterangan' => $keterangan,
+            'questions' => $questions,
+            'categories' => $categories,
+            'letters' => $letters,
+            'sheets' => $sheets,
+            'sums' => $sums,
+            'category_ranks' => $category_ranks,
+            'interests' => $interests,
         ]);
         $pdf->setPaper('A4', 'portrait');
         
