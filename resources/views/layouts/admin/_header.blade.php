@@ -77,7 +77,7 @@
                                 <img src="{{ Auth::user()->foto != '' ? asset('assets/images/foto-user/'.Auth::user()->foto) : asset('assets/images/default/user.png') }}" class="avatar img-fluid rounded-circle me-1" alt="{{ Auth::user()->nama_user }}" /> <span class="text-dark">{{ Auth::user()->nama_user }}</span>
                             </a>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="align-middle me-1" data-feather="user"></i> Profil</a>
+								<!-- <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="align-middle me-1" data-feather="user"></i> Profil</a> -->
 								<a class="dropdown-item" href="{{ route('admin.profile.edit') }}"><i class="align-middle me-1" data-feather="settings"></i> Pengaturan</a>
 								<div class="dropdown-divider"></div>
 								<a class="dropdown-item btn-logout" href="#"><i class="align-middle me-1" data-feather="power"></i> Keluar</a>
