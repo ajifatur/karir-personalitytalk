@@ -6,7 +6,10 @@
 
 <div class="d-sm-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-2 mb-sm-0">Kelola Jabatan</h1>
-    <a href="{{ route('admin.position.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Jabatan</a>
+    <div class="btn-group">
+        <a href="{{ route('admin.position.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Jabatan</a>
+        <a href="{{ route('admin.position-test.index') }}" class="btn btn-sm btn-success"><i class="bi-clipboard me-1"></i> Jabatan Tes</a>
+    </div>
 </div>
 <div class="row">
 	<div class="col-12">

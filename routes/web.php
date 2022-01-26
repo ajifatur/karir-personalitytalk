@@ -108,6 +108,10 @@ Route::group(['middleware' => ['admin']], function() {
 	// Route::get('/admin/test/settings/{path}/{paket}', 'TesController@editSettings');
 	// Route::post('/admin/test/settings/{path}/{paket}/update', 'TesController@updateSettings');
 
+	// Position Test
+	Route::get('/admin/position-test', 'Update\PositionTestController@index')->name('admin.position-test.index');
+	Route::post('/admin/position-test/change', 'Update\PositionTestController@change')->name('admin.position-test.change');
+
 	// STIFIn
 	Route::get('/admin/stifin', 'Update\StifinController@index')->name('admin.stifin.index');
 	Route::get('/admin/stifin/create', 'Update\StifinController@create')->name('admin.stifin.create');
