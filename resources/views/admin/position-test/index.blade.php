@@ -10,6 +10,21 @@
 <div class="row">
 	<div class="col-12">
         <div class="card">
+            @if(Auth::user()->role == role('admin'))
+            <div class="card-header d-sm-flex justify-content-end align-items-center">
+                <div></div>
+                <div class="ms-sm-2 ms-0">
+                    <select name="hrd" class="form-select form-select-sm">
+                        <option value="0">Semua Perusahaan</option>
+                        @foreach($hrds as $hrd)
+                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <hr class="my-0">
+            @endif
+            @if(Request::query('hrd') != 0)
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -46,15 +61,12 @@
                                     <td></td>
                                 </tr>
                                 @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="{{ count($tests) + 2 }}" align="center"><span class="text-danger fst-italic">Tidak ada data.</span></td>
-                                </tr>
                             @endif
                         </tbody>
                     </table>
                 </div>
             </div>
+            @endif
         </div>
 	</div>
 </div>
@@ -77,6 +89,13 @@
     // DataTable
     Spandiv.DataTableRowsGroup("#datatable");
 
+    // Change the HRD
+    $(document).on("change", ".card-header select[name=hrd]", function() {
+        var hrd = $(this).val();
+        if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.position-test.index') }}");
+        else window.location.href = Spandiv.URL("{{ route('admin.position-test.index') }}", {hrd: hrd});
+    });
+
     // Change Status
     $(document).on("click", "#datatable .form-check-input", function(e) {
         e.preventDefault();
@@ -84,7 +103,6 @@
         var isChecked = $(this).prop("checked") == true ? 1 : 0;
         var position = $(this).data("position");
         var test = $(this).data("test");
-        console.log(isChecked);
         $.ajax({
             type: "post",
             url: "{{ route('admin.position-test.change') }}",

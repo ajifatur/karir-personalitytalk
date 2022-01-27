@@ -22,14 +22,35 @@ class PositionTestController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('hrd')) {
+        if(Auth::user()->role == role('admin')) {
+            // Get the HRD
+            $hrd = HRD::find($request->query('hrd'));
+            
+            // Get tests
+            $tests = [];
+            $testArray = [];
+            if($hrd && $hrd->akses_tes != '') {
+                $ids = explode(',', $hrd->akses_tes);
+                $testArray = $ids;
+                foreach($ids as $id) {
+                    $test = Tes::find($id);
+                    if($test) {
+                        array_push($tests, $test);
+                    }
+                }
+            }
+
+            // Get positions
+            $positions = $hrd ? Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get() : [];
+        }
+        elseif(Auth::user()->role == role('hrd')) {
             // Get the HRD
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
 
             // Get tests
             $tests = [];
             $testArray = [];
-            if($hrd->akses_tes != '') {
+            if($hrd && $hrd->akses_tes != '') {
                 $ids = explode(',', $hrd->akses_tes);
                 $testArray = $ids;
                 foreach($ids as $id) {
@@ -43,10 +64,13 @@ class PositionTestController extends \App\Http\Controllers\Controller
             // Get positions
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
-        else abort(404);
+
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // View
         return view('admin/position-test/index', [
+            'hrds' => $hrds,
             'tests' => $tests,
             'positions' => $positions,
             'testArray' => $testArray,
