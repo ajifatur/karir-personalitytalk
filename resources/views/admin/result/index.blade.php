@@ -70,7 +70,9 @@
 
 <script type="text/javascript">
     // DataTable
-    Spandiv.DataTableServerSide("#datatable", {
+    Spandiv.DataTable("#datatable", {
+		serverSide: true,
+		pageLength: 25,
         url: Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: "{{ Request::query('test') }}", hrd: "{{ Request::query('hrd') }}"}),
         columns: [
             {data: 'checkbox', name: 'checkbox', className: 'text-center'},
@@ -86,10 +88,6 @@
 
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
-
-    // Checkbox
-    Spandiv.CheckboxOne();
-    Spandiv.CheckboxAll();
   
     // Change the Test and/or the HRD
     $(document).on("change", ".card-header select[name=test], .card-header select[name=hrd]", function() {
