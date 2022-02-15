@@ -3,22 +3,30 @@
 namespace App\Http\Controllers\API;
 
 use Auth;
+use File;
 use Illuminate\Http\Request;
 use App\Models\Lowongan;
 use App\Models\HRD;
 use App\Models\Pelamar;
 use App\Models\Posisi;
 use App\Models\Seleksi;
+use Ajifatur\Helpers\DateTimeExt;
 
 class VacancyController extends \App\Http\Controllers\Controller
 {
+	public function __construct()
+	{
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+	}
+	
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {		
         // Get vacancies
         $vacancies = Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
 
@@ -26,13 +34,15 @@ class VacancyController extends \App\Http\Controllers\Controller
         $array = [];
         foreach($vacancies as $key=>$vacancy) {
             $array[$key]['id'] = $vacancy->id_lowongan;
-            $array[$key]['judul'] = $vacancy->judul_lowongan;
-            $array[$key]['deskripsi'] = $vacancy->deskripsi_lowongan;
-            $array[$key]['image'] = $vacancy->gambar_lowongan != '' ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : '';
+            $array[$key]['title'] = $vacancy->judul_lowongan;
+            $array[$key]['description'] = html_entity_decode($vacancy->deskripsi_lowongan);
+            $array[$key]['excerpt'] = substr(strip_tags($array[$key]['description']),0,100);
+            $array[$key]['image'] = $vacancy->gambar_lowongan != '' && File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)) ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : asset('assets/images/default/artikel.jpg');
             $array[$key]['url'] = $vacancy->url_lowongan;
             $array[$key]['status'] = $vacancy->status;
             $array[$key]['author'] = $vacancy->nama_lengkap;
             $array[$key]['created_at'] = $vacancy->created_at;
+            $array[$key]['date'] = DateTimeExt::full($vacancy->created_at).' WIB';
         }
 
         // Response
@@ -52,13 +62,15 @@ class VacancyController extends \App\Http\Controllers\Controller
 
         $array = [];
         $array['id'] = $vacancy->id_lowongan;
-        $array['judul'] = $vacancy->judul_lowongan;
-        $array['deskripsi'] = $vacancy->deskripsi_lowongan;
-        $array['image'] = $vacancy->gambar_lowongan != '' ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : '';
+        $array['title'] = $vacancy->judul_lowongan;
+        $array['description'] = html_entity_decode($vacancy->deskripsi_lowongan);
+		$array['excerpt'] = substr(strip_tags($array['description']),0,100);
+		$array['image'] = $vacancy->gambar_lowongan != '' && File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)) ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : asset('assets/images/default/artikel.jpg');
         $array['url'] = $vacancy->url_lowongan;
         $array['status'] = $vacancy->status;
         $array['author'] = $vacancy->nama_lengkap;
         $array['created_at'] = $vacancy->created_at;
+		$array['date'] = DateTimeExt::full($vacancy->created_at).' WIB';
 
         // Response
         return response()->json($array);
