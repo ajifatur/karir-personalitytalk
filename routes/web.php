@@ -149,6 +149,8 @@ Route::group(['middleware' => ['admin']], function() {
 
 	// Applicant
 	Route::get('/admin/applicant', 'Update\ApplicantController@index')->name('admin.applicant.index');
+	Route::get('/admin/applicant/create', 'Update\ApplicantController@create')->name('admin.applicant.create');
+	Route::post('/admin/applicant/store', 'Update\ApplicantController@store')->name('admin.applicant.store');
 	Route::get('/admin/applicant/detail/{id}', 'Update\ApplicantController@detail')->name('admin.applicant.detail');
 	Route::get('/admin/applicant/edit/{id}', 'Update\ApplicantController@edit')->name('admin.applicant.edit');
 	Route::post('/admin/applicant/update', 'Update\ApplicantController@update')->name('admin.applicant.update');

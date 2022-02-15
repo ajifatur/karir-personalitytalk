@@ -82,6 +82,125 @@ class ApplicantController extends \App\Http\Controllers\Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+
+        // Get HRDs
+        $hrds = HRD::orderBy('perusahaan','asc')->get();
+
+        // Get vacancies
+        if(Auth::user()->role == role('admin')) {
+            $vacancies = [];
+        }
+        elseif(Auth::user()->role == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $vacancies = Lowongan::where('id_hrd','=',$hrd->id_hrd)->where('status','=',1)->orderBy('judul_lowongan','asc')->get();
+        }
+
+        // View
+        return view('admin/applicant/create', [
+            'hrds' => $hrds,
+            'vacancies' => $vacancies
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'vacancy' => 'required',
+            'name' => 'required|min:3|max:255',
+            'birthdate' => 'required',
+            'gender' => 'required',
+            'religion' => 'required',
+            'email' => 'required|email',
+            'phone_number' => 'required|numeric',
+            'address' => 'required',
+        ], validationMessages());
+        
+        // Check errors
+        if($validator->fails()) {
+            // Back to form page with validation error messages
+            return redirect()->back()->withErrors($validator->errors())->withInput();
+        }
+        else {
+            // Get the vacancy and HRD
+            $vacancy = Lowongan::find($request->vacancy);
+            $hrd = HRD::find($vacancy->id_hrd);
+            
+            // Generate username
+            $data_user = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest()->first();
+            if(!$data_user)
+                $username = generate_username(null, $hrd->kode);
+            else
+                $username = generate_username($data_user->username, $hrd->kode);
+
+            // Save the user
+            $user = new User;
+            $user->nama_user = $request->name;
+            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $user->jenis_kelamin = $request->gender;
+            $user->email = $request->email;
+            $user->username = $username;
+            $user->password = bcrypt($username);
+            $user->password_str = $username;
+            $user->foto = '';
+            $user->role = role_pelamar();
+            $user->has_access = 0;
+            $user->status = 1;
+            $user->last_visit = date("Y-m-d H:i:s");
+            $user->created_at = date("Y-m-d H:i:s");
+            $user->save();
+
+            // Save the applicant
+            $applicant = new Pelamar;
+            $applicant->id_user = $user->id_user;
+            $applicant->id_hrd = $hrd->id_hrd;
+            $applicant->nama_lengkap = $request->name;
+            $applicant->tempat_lahir = $request->birthplace != '' ? $request->birthplace : '';
+            $applicant->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
+            $applicant->jenis_kelamin = $request->gender;
+            $applicant->agama = $request->religion;
+            $applicant->email = $request->email;
+            $applicant->nomor_hp = $request->phone_number;
+            $applicant->nomor_telepon = '';
+            $applicant->nomor_ktp = $request->identity_number != '' ? $request->identity_number : '';
+            $applicant->status_hubungan = '';
+            $applicant->alamat = $request->address;
+            $applicant->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
+            $applicant->riwayat_pekerjaan = $request->job_experience != '' ? $request->job_experience : '';
+        	$applicant->akun_sosmed = '';
+        	$applicant->data_darurat = '';
+            $applicant->kode_pos = '';
+            $applicant->pendidikan_formal = '';
+            $applicant->pendidikan_non_formal = '';
+            $applicant->riwayat_pekerjaan = '';
+            $applicant->keahlian = '';
+            $applicant->pertanyaan = '';
+            $applicant->pas_foto = '';
+            $applicant->foto_ijazah = '';
+            $applicant->posisi = $vacancy->id_lowongan;
+            $applicant->pelamar_at = date("Y-m-d H:i:s");
+            $applicant->save();
+
+            // Redirect
+            return redirect()->route('admin.applicant.index')->with(['message' => 'Berhasil menambah data.']);
+        }
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  int  $id

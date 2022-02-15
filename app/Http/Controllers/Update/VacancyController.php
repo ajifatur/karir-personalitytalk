@@ -24,6 +24,19 @@ class VacancyController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
+        if($request->ajax()) {
+            // Get vacancies
+            $vacancies = Lowongan::where('id_hrd','=',$request->query('hrd'))->where('status','=',1)->orderBy('judul_lowongan','asc')->get();
+
+            foreach($vacancies as $key=>$vacancy) {
+                $position = Posisi::find($vacancy->posisi);
+                $vacancy->judul_lowongan = $position ? $vacancy->judul_lowongan.', sebagai '.$position->nama_posisi : $vacancy->judul_lowongan;
+            }
+
+            // Return
+            return response()->json($vacancies);
+        }
+
         // Get offices
         if(Auth::user()->role == role('admin')) {
             $hrd = HRD::find($request->query('hrd'));

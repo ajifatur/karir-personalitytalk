@@ -90,9 +90,11 @@
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Sosmed:</div>
                         <div>
-                            @foreach($applicant->akun_sosmed as $sosmed=>$akun)
-                                {{ $akun }} ({{ $sosmed }})
-                            @endforeach
+                            @if($applicant->akun_sosmed != null)
+                                @foreach($applicant->akun_sosmed as $sosmed=>$akun)
+                                    {{ $akun }} ({{ $sosmed }})
+                                @endforeach
+                            @endif
                         </div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
@@ -116,12 +118,14 @@
                         </div>
                     </li>
 
-                    @foreach($applicant->data_darurat as $key=>$value)
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>{{ replaceJsonKey($key) }}:</div>
-                        <div>{{ $value }}</div>
-                    </li>
-                    @endforeach
+                    @if($applicant->data_darurat != null)
+                        @foreach($applicant->data_darurat as $key=>$value)
+                        <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                            <div>{{ replaceJsonKey($key) }}:</div>
+                            <div>{{ $value }}</div>
+                        </li>
+                        @endforeach
+                    @endif
                 </ul>
             </div>
         </div>

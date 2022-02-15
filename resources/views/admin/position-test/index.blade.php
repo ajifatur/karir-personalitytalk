@@ -87,7 +87,9 @@
 
 <script type="text/javascript">
     // DataTable
-    Spandiv.DataTableRowsGroup("#datatable");
+    Spandiv.DataTable("#datatable", {
+        pageLength: -1
+    });
 
     // Change the HRD
     $(document).on("change", ".card-header select[name=hrd]", function() {

@@ -6,7 +6,10 @@
 
 <div class="d-sm-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0">Kelola Pelamar</h1>
-    <a href="{{ route('admin.applicant.export') }}" class="btn btn-sm btn-success"><i class="bi-file-excel me-1"></i> Ekspor Data</a>
+    <div class="btn-group">
+        <a href="{{ route('admin.applicant.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Pelamar</a>
+        <a href="{{ route('admin.applicant.export') }}" class="btn btn-sm btn-success"><i class="bi-file-excel me-1"></i> Ekspor Data</a>
+    </div>
 </div>
 <div class="row">
 	<div class="col-12">
