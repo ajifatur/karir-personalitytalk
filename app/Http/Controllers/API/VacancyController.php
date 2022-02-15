@@ -25,10 +25,15 @@ class VacancyController extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {		
         // Get vacancies
-        $vacancies = Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
+		if($request->query('status') == 'active')
+        	$vacancies = Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.status','=',1)->orderBy('status','desc')->orderBy('created_at','desc')->get();
+		elseif($request->query('status') == 'inactive')
+        	$vacancies = Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.status','=',0)->orderBy('status','desc')->orderBy('created_at','desc')->get();
+		else
+        	$vacancies = Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
 
         // Loop vacancies
         $array = [];
