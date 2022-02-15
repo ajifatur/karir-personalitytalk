@@ -42,7 +42,7 @@ class VacancyController extends \App\Http\Controllers\Controller
             $array[$key]['title'] = $vacancy->judul_lowongan;
             $array[$key]['description'] = html_entity_decode($vacancy->deskripsi_lowongan);
             $array[$key]['excerpt'] = substr(strip_tags($array[$key]['description']),0,100);
-            $array[$key]['image'] = $vacancy->gambar_lowongan != '' && File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)) ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : asset('assets/images/default/artikel.jpg');
+            $array[$key]['image'] = $vacancy->gambar_lowongan != '' && File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)) ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : asset('assets/images/REC12 (1).png');
             $array[$key]['url'] = $vacancy->url_lowongan;
             $array[$key]['status'] = $vacancy->status;
             $array[$key]['author'] = $vacancy->nama_lengkap;
@@ -70,7 +70,7 @@ class VacancyController extends \App\Http\Controllers\Controller
         $array['title'] = $vacancy->judul_lowongan;
         $array['description'] = html_entity_decode($vacancy->deskripsi_lowongan);
 		$array['excerpt'] = substr(strip_tags($array['description']),0,100);
-		$array['image'] = $vacancy->gambar_lowongan != '' && File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)) ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : asset('assets/images/default/artikel.jpg');
+		$array['image'] = $vacancy->gambar_lowongan != '' && File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)) ? asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) : asset('assets/images/REC12 (1).png');
         $array['url'] = $vacancy->url_lowongan;
         $array['status'] = $vacancy->status;
         $array['author'] = $vacancy->nama_lengkap;
