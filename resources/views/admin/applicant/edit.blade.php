@@ -135,10 +135,10 @@
                             <div class="input-group input-group-sm">
                                 <select name="platform" class="form-select form-select-sm {{ $errors->has('platform') ? 'border-danger' : '' }}">
                                     @foreach(platform() as $platform)
-                                    <option value="{{ $platform['name'] }}" {{ array_keys($applicant->akun_sosmed)[0] == $platform['name'] ? 'selected' : '' }}>{{ $platform['name'] }}</option>
+                                    <option value="{{ $platform['name'] }}" {{ is_array($applicant->akun_sosmed) ? array_keys($applicant->akun_sosmed)[0] == $platform['name'] ? 'selected' : '' : '' }}>{{ $platform['name'] }}</option>
                                     @endforeach
                                 </select>
-                                <input type="text" name="socmed" class="form-control form-control-sm {{ $errors->has('socmed') ? 'border-danger' : '' }}" value="{{ $applicant->akun_sosmed[array_keys($applicant->akun_sosmed)[0]] }}">
+                                <input type="text" name="socmed" class="form-control form-control-sm {{ $errors->has('socmed') ? 'border-danger' : '' }}" value="{{ is_array($applicant->akun_sosmed) ? $applicant->akun_sosmed[array_keys($applicant->akun_sosmed)[0]] : '' }}">
                             </div>
                             @if($errors->has('socmed'))
                             <div class="small text-danger">{{ $errors->first('socmed') }}</div>
@@ -149,7 +149,7 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Nama Orang Tua <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <input type="text" name="guardian_name" class="form-control form-control-sm {{ $errors->has('guardian_name') ? 'border-danger' : '' }}" value="{{ $applicant->data_darurat['nama_orang_tua'] }}">
+                            <input type="text" name="guardian_name" class="form-control form-control-sm {{ $errors->has('guardian_name') ? 'border-danger' : '' }}" value="{{ is_array($applicant->data_darurat) ? $applicant->data_darurat['nama_orang_tua'] : '' }}">
                             @if($errors->has('guardian_name'))
                             <div class="small text-danger">{{ $errors->first('guardian_name') }}</div>
                             @endif
@@ -158,7 +158,7 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Alamat Orang Tua <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <textarea name="guardian_address" class="form-control form-control-sm {{ $errors->has('guardian_address') ? 'border-danger' : '' }}" rows="3">{{ $applicant->data_darurat['alamat_orang_tua'] }}</textarea>
+                            <textarea name="guardian_address" class="form-control form-control-sm {{ $errors->has('guardian_address') ? 'border-danger' : '' }}" rows="3">{{ is_array($applicant->data_darurat) ? $applicant->data_darurat['alamat_orang_tua'] : '' }}</textarea>
                             @if($errors->has('guardian_address'))
                             <div class="small text-danger">{{ $errors->first('guardian_address') }}</div>
                             @endif
@@ -167,7 +167,7 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">No. HP Orang Tua <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <input type="text" name="guardian_phone_number" class="form-control form-control-sm {{ $errors->has('guardian_phone_number') ? 'border-danger' : '' }}" value="{{ $applicant->data_darurat['nomor_hp_orang_tua'] }}">
+                            <input type="text" name="guardian_phone_number" class="form-control form-control-sm {{ $errors->has('guardian_phone_number') ? 'border-danger' : '' }}" value="{{ is_array($applicant->data_darurat) ? $applicant->data_darurat['nomor_hp_orang_tua'] : '' }}">
                             @if($errors->has('guardian_phone_number'))
                             <div class="small text-danger">{{ $errors->first('guardian_phone_number') }}</div>
                             @endif
@@ -176,7 +176,7 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Pekerjaan Orang Tua <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <input type="text" name="guardian_occupation" class="form-control form-control-sm {{ $errors->has('guardian_occupation') ? 'border-danger' : '' }}" value="{{ $applicant->data_darurat['pekerjaan_orang_tua'] }}">
+                            <input type="text" name="guardian_occupation" class="form-control form-control-sm {{ $errors->has('guardian_occupation') ? 'border-danger' : '' }}" value="{{ is_array($applicant->data_darurat) ? $applicant->data_darurat['pekerjaan_orang_tua'] : '' }}">
                             @if($errors->has('guardian_occupation'))
                             <div class="small text-danger">{{ $errors->first('guardian_occupation') }}</div>
                             @endif
