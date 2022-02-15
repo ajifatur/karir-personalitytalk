@@ -9,6 +9,7 @@ use App\Models\Seleksi;
 use App\Models\HRD;
 use App\Models\Kantor;
 use App\Models\Karyawan;
+use App\Models\Lowongan;
 use App\Models\Pelamar;
 use App\Models\User;
 
@@ -229,5 +230,52 @@ class SelectionController extends \App\Http\Controllers\Controller
 
         // Redirect
         return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil menghapus data.']);
+    }
+
+    /**
+     * Convert the applicant to employee.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function convert(Request $request)
+    {
+        // Check the access
+        // has_access(method(__METHOD__), Auth::user()->role_id);
+        
+        // Get the selection
+        $selection = Seleksi::find($request->id);
+
+        // Get the applicant
+        $applicant = Pelamar::find($selection->id_pelamar);
+
+        // Get the vacancy
+        $vacancy = Lowongan::find($applicant->posisi);
+
+        // Add to employee
+        $employee = new Karyawan;
+        $employee->id_user = $applicant->id_user;
+        $employee->id_hrd = $selection->id_hrd;
+        $employee->nama_lengkap = $applicant->nama_lengkap;
+        $employee->tanggal_lahir = $applicant->tanggal_lahir;
+        $employee->jenis_kelamin = $applicant->jenis_kelamin;
+        $employee->email = $applicant->email;
+        $employee->nomor_hp = $applicant->nomor_hp;
+        $employee->posisi = $vacancy ? $vacancy->posisi : 0;
+        $employee->kantor = 0;
+        $employee->nik_cis = '';
+        $employee->nik = $applicant->nomor_ktp;
+        $employee->alamat = $applicant->alamat;
+        $employee->pendidikan_terakhir = $applicant->pendidikan_terakhir;
+        $employee->awal_bekerja = null;
+        $employee->save();
+
+        // Get the user
+        $user = User::find($applicant->id_user);
+        $user->role = role_karyawan();
+        $user->save();
+
+        // Redirect
+        return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil mengonversi data.']);
     }
 }

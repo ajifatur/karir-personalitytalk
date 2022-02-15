@@ -126,12 +126,12 @@
                     <select name="sosmed" class="form-select {{ $errors->has('akun_sosmed') ? 'border-danger' : '' }}">
                       @if(!empty($array))
                       <option value="Facebook" {{ $array['sosmed'] == 'Facebook' ? 'selected' : '' }}>Facebook</option>
-                      <option value="Twitter" {{ $array['sosmed'] == 'Twitter' ? 'selected' : '' }}>Twitter</option>
+                      <option value="LinkedIn" {{ $array['sosmed'] == 'LinkedIn' ? 'selected' : '' }}>LinkedIn</option>
                       <option value="Instagram" {{ $array['sosmed'] == 'Instagram' ? 'selected' : '' }}>Instagram</option>
                       <option value="YouTube" {{ $array['sosmed'] == 'YouTube' ? 'selected' : '' }}>YouTube</option>
                       @else
                       <option value="Facebook" {{ old('sosmed') == 'Facebook' ? 'selected' : '' }}>Facebook</option>
-                      <option value="Twitter" {{ old('sosmed') == 'Twitter' ? 'selected' : '' }}>Twitter</option>
+                      <option value="LinkedIn" {{ old('sosmed') == 'LinkedIn' ? 'selected' : '' }}>LinkedIn</option>
                       <option value="Instagram" {{ old('sosmed') == 'Instagram' ? 'selected' : '' }}>Instagram</option>
                       <option value="YouTube" {{ old('sosmed') == 'YouTube' ? 'selected' : '' }}>YouTube</option>
                       @endif

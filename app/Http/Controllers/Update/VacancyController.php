@@ -97,7 +97,7 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get data HRD
-    	if(Auth::user()->role == role_hrd()){
+    	if(Auth::user()->role == role_hrd()) {
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
         }
 
@@ -109,11 +109,19 @@ class VacancyController extends \App\Http\Controllers\Controller
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
+            // Get the file
+            $file = $request->file('file');
+            $file_name = $file != null ? date('Y-m-d-H-i-s').'.'.$file->getClientOriginalExtension() : '';
+    
+            // Move file
+            if($file != null)
+                $file->move('assets/images/lowongan', $file_name);
+
             // Get the position
             $position = Posisi::find($request->position);
 
@@ -121,7 +129,8 @@ class VacancyController extends \App\Http\Controllers\Controller
             $vacancy = new Lowongan;
             $vacancy->id_hrd = $position ? $position->id_hrd : 0;
             $vacancy->judul_lowongan = $request->name;
-            $vacancy->deskripsi_lowongan = '';
+            $vacancy->deskripsi_lowongan = quill($request->description, 'assets/images/lowongan-content/');
+            $vacancy->gambar_lowongan = $file_name;
             $vacancy->posisi = $request->position;
             $vacancy->url_lowongan = '';
             $vacancy->status = $request->status;
@@ -187,14 +196,24 @@ class VacancyController extends \App\Http\Controllers\Controller
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
+            // Get the file
+            $file = $request->file('file');
+            $file_name = $file != null ? date('Y-m-d-H-i-s').'.'.$file->getClientOriginalExtension() : '';
+    
+            // Move file
+            if($file != null)
+                $file->move('assets/images/lowongan', $file_name);
+
             // Update the vacancy
             $vacancy = Lowongan::find($request->id);
             $vacancy->judul_lowongan = $request->name;
+            $vacancy->deskripsi_lowongan = quill($request->description, 'assets/images/lowongan-content/');
+            $vacancy->gambar_lowongan = $file_name != '' ? $file_name : $vacancy->gambar_lowongan;
             $vacancy->posisi = $request->position;
             $vacancy->status = $request->status;
             $vacancy->save();

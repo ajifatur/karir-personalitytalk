@@ -37,6 +37,19 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Gambar</label>
+                        <div class="col-lg-10 col-md-9">
+                            <input type="file" name="file">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Deskripsi</label>
+                        <div class="col-lg-10 col-md-9">
+                            <textarea name="description" class="d-none"></textarea>
+                            <div id="editor"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Status <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
                             <div class="form-check">
@@ -65,5 +78,31 @@
         </div>
 	</div>
 </div>
+
+@endsection
+
+@section('js')
+
+<script type="text/javascript">
+    // Quill
+    Spandiv.Quill("#editor");
+
+    // Submit Form
+    $(document).on("click", "button[type=submit]", function(e) {
+        e.preventDefault();
+        var myEditor = document.querySelector('#editor');
+        var html = myEditor.children[0].innerHTML;
+        $("textarea[name=description]").text(html);
+        $(this).parents("form").submit();
+    });
+</script>
+
+@endsection
+
+@section('css')
+
+<style>
+    #editor {height: 300px;}
+</style>
 
 @endsection

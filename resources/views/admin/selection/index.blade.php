@@ -82,7 +82,7 @@
                                 <td align="center">
                                     <div class="btn-group">
                                         @if($selection->hasil == 1 && $selection->isEmployee == false)
-                                        <!-- <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a> -->
+                                        <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a>
                                         @endif
                                         @if($selection->isEmployee == false)
                                         <a href="#" class="btn btn-sm btn-warning btn-set-test" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
@@ -101,6 +101,11 @@
 </div>
 
 <form class="form-delete d-none" method="post" action="{{ route('admin.selection.delete') }}">
+    @csrf
+    <input type="hidden" name="id">
+</form>
+
+<form class="form-convert d-none" method="post" action="{{ route('admin.selection.convert') }}">
     @csrf
     <input type="hidden" name="id">
 </form>
@@ -190,10 +195,18 @@
 
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
+
+    // Button Convert
+    $(document).on("click", ".btn-convert", function(e) {
+        e.preventDefault();
+        var id = $(this).data("id");
+        $(".form-convert").find("input[name=id]").val(id);
+        Spandiv.SwalWarning("Anda yakin ingin mengonversi akun pelamar ke karyawan?", ".form-convert");
+    });
     
     // Checkbox
-    Spandiv.CheckboxOne();
-    Spandiv.CheckboxAll();
+    // Spandiv.CheckboxOne();
+    // Spandiv.CheckboxAll();
   
     // Change the Result and/or the HRD
     $(document).on("change", ".card-header select[name=result], .card-header select[name=hrd]", function() {
