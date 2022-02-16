@@ -117,7 +117,11 @@ class SelectionController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get the HRD
-    	if(Auth::user()->role == role('hrd')) {
+    	if(Auth::user()->role == role('admin')) {
+            $applicant = Pelamar::find($request->applicant_id);
+            if($applicant) $hrd = HRD::find($applicant->id_hrd);
+        }
+    	elseif(Auth::user()->role == role('hrd')) {
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
         }
 
