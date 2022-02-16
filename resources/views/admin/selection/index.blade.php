@@ -14,8 +14,9 @@
                 <div class="mb-sm-0 mb-2">
                     <select name="result" class="form-select form-select-sm">
                         <option value="-1" {{ Request::query('result') == '-1' ? 'selected' : '' }}>Semua Hasil</option>
-                        <option value="1" {{ Request::query('result') == '1' ? 'selected' : '' }}>Lolos</option>
-                        <option value="0" {{ Request::query('result') == '0' ? 'selected' : '' }}>Tidak Lolos</option>
+                        <option value="1" {{ Request::query('result') == '1' ? 'selected' : '' }}>Direkomendasikan</option>
+                        <option value="0" {{ Request::query('result') == '0' ? 'selected' : '' }}>Tidak Direkomendasikan</option>
+                        <option value="2" {{ Request::query('result') == '2' ? 'selected' : '' }}>Dipertimbangkan</option>
                         <option value="99" {{ Request::query('result') == '99' ? 'selected' : '' }}>Belum Dites</option>
                     </select>
                 </div>
@@ -66,9 +67,11 @@
                                 <td>{{ $selection->nama_posisi }}</td>
                                 <td>
                                     @if($selection->hasil == 1)
-                                    <span class="badge bg-success">Lolos</span>
+                                    <span class="badge bg-success">Direkomendasikan</span>
                                     @elseif($selection->hasil == 0)
-                                    <span class="badge bg-danger">Tidak Lolos</span>
+                                    <span class="badge bg-danger">Tidak Direkomendasikan</span>
+                                    @elseif($selection->hasil == 2)
+                                    <span class="badge bg-info">Dipertimbangkan</span>
                                     @elseif($selection->hasil == 99)
                                     <span class="badge bg-warning">Belum Dites</span>
                                     @endif
@@ -127,8 +130,9 @@
                         <div class="col-lg-10 col-md-9">
                             <select name="result" class="form-select form-select-sm {{ $errors->has('result') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
-                                <option value="1" {{ old('result') == '1' ? 'selected' : '' }}>Lolos</option>
-                                <option value="0" {{ old('result') == '0' ? 'selected' : '' }}>Tidak Lolos</option>
+                                <option value="1" {{ old('result') == '1' ? 'selected' : '' }}>Direkomendasikan</option>
+                                <option value="0" {{ old('result') == '0' ? 'selected' : '' }}>Tidak Direkomendasikan</option>
+                                <option value="2" {{ old('result') == '2' ? 'selected' : '' }}>Dipertimbangkan</option>
                                 <option value="99" {{ old('result') == '99' ? 'selected' : '' }}>Belum Dites</option>
                             </select>
                             @if($errors->has('result'))
@@ -203,10 +207,6 @@
         $(".form-convert").find("input[name=id]").val(id);
         Spandiv.SwalWarning("Anda yakin ingin mengonversi akun pelamar ke karyawan?", ".form-convert");
     });
-    
-    // Checkbox
-    // Spandiv.CheckboxOne();
-    // Spandiv.CheckboxAll();
   
     // Change the Result and/or the HRD
     $(document).on("change", ".card-header select[name=result], .card-header select[name=hrd]", function() {
@@ -241,7 +241,7 @@
                 $("#modal-set-test").find("input[name=place]").val(response.tempat_wawancara);
 
                 // Add/Remove Disabled Attribute (Optional)
-                if(response.hasil === 1 || response.hasil === 0) {
+                if(response.hasil === 1 || response.hasil === 2 || response.hasil === 0) {
                     $("#modal-set-test").find("input[name=date]").attr("disabled","disabled");
                     $("#modal-set-test").find("input[name=time]").attr("disabled","disabled");
                     $("#modal-set-test").find("input[name=place]").attr("disabled","disabled");
@@ -263,7 +263,7 @@
     $(document).on("change", "#modal-set-test select[name=result]", function(e) {
         e.preventDefault();
         var result = $(this).val();
-        if(result === "1" || result === "0") {
+        if(result === "1" || result === "2" || result === "0") {
             $("#modal-set-test").find("input[name=date]").attr("disabled","disabled");
             $("#modal-set-test").find("input[name=time]").attr("disabled","disabled");
             $("#modal-set-test").find("input[name=place]").attr("disabled","disabled");
