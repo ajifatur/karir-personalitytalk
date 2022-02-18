@@ -11,12 +11,12 @@
     <div class="col-md-4 col-xl-3">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ Auth::user()->foto != '' ? asset('assets/images/foto-user/'.Auth::user()->foto) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
+                <img src="{{ Auth::user()->avatar != '' ? asset('assets/images/foto-user/'.Auth::user()->avatar) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
             </div>
             <hr class="my-0">
             <div class="card-body">
                 <div class="list-group">
-                    <a href="{{ route('admin.profile') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile'))) ? 'active' : '' }}">Profil</a>
+                    <a href="{{ route('admin.profile.detail') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.detail'))) ? 'active' : '' }}">Profil</a>
                     <a href="{{ route('admin.profile.edit') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.edit'))) && !is_int(strpos(Request::url(), route('admin.profile.edit-password'))) ? 'active' : '' }}">Edit Profil</a>
                     <a href="{{ route('admin.profile.edit-password') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.edit-password'))) ? 'active' : '' }}">Edit Password</a>
                 </div>
@@ -30,7 +30,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Nama:</div>
-                        <div>{{ $user->nama_user }}</div>
+                        <div>{{ $user->name }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Tanggal Lahir:</div>
@@ -56,7 +56,7 @@
                         <div>Registrasi:</div>
                         <div>{{ date('d/m/Y, H:i', strtotime($user->created_at)) }} WIB</div>
                     </li>
-                    @if($user->role == role('hrd'))
+                    @if($user->role_id == role('hrd'))
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
@@ -74,22 +74,6 @@
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>No. Telp Perusahaan:</div>
                         <div>{{ $hrd->telepon_perusahaan }}</div>
-                    </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>Jumlah Kantor:</div>
-                        <div>{{ number_format(count_kantor_by_perusahaan($hrd->id_hrd),0,'.','.') }}</div>
-                    </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>Jumlah Jabatan:</div>
-                        <div>{{ number_format(count_jabatan_by_perusahaan($hrd->id_hrd),0,'.','.') }}</div>
-                    </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>Jumlah Karyawan:</div>
-                        <div>{{ number_format(count_karyawan_by_perusahaan($hrd->id_hrd),0,'.','.') }}</div>
-                    </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>Jumlah Pelamar:</div>
-                        <div>{{ number_format(count_pelamar_by_perusahaan($hrd->id_hrd),0,'.','.') }}</div>
                     </li>
                     @endif
                 </ul>

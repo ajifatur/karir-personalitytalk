@@ -22,12 +22,12 @@ class OfficeController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get offices
-        if(Auth::user()->role == role('admin')){
+        if(Auth::user()->role_id == role('admin')) {
             $hrd = HRD::find($request->query('hrd'));
             $offices = $hrd ? Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get() : Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
         }
-        elseif(Auth::user()->role == role('hrd')){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $offices = Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get();
         }
 
@@ -69,23 +69,23 @@ class OfficeController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get data HRD
-    	if(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	if(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'hrd' => Auth::user()->role == role('admin') ? 'required' : '',
+            'hrd' => Auth::user()->role_id == role('admin') ? 'required' : '',
             'phone_number' => $request->phone_number != '' ? 'numeric' : ''
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
             // Save the office
             $office = new Kantor;
             $office->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
@@ -111,11 +111,11 @@ class OfficeController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the office
-    	if(Auth::user()->role == role('hrd')){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	if(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $office = Kantor::where('id_kantor','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
-        else{
+        else {
             $office = Kantor::findOrFail($id);
         }
 
@@ -140,11 +140,11 @@ class OfficeController extends \App\Http\Controllers\Controller
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
             // Update the office
             $office = Kantor::find($request->id);
             $office->nama_kantor = $request->name;

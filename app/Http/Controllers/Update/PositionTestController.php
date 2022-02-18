@@ -22,7 +22,7 @@ class PositionTestController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get the HRD
             $hrd = HRD::find($request->query('hrd'));
             
@@ -43,9 +43,9 @@ class PositionTestController extends \App\Http\Controllers\Controller
             // Get positions
             $positions = $hrd ? Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get() : [];
         }
-        elseif(Auth::user()->role == role('hrd')) {
+        elseif(Auth::user()->role_id == role('hrd')) {
             // Get the HRD
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
 
             // Get tests
             $tests = [];

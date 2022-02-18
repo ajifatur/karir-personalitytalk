@@ -39,32 +39,32 @@ class ResultController extends \App\Http\Controllers\Controller
             // Get employee results
             if($request->query('role') == role('employee')) {
                 // Get the HRD and the test
-                $hrd = Auth::user()->role == role('admin') ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id_user)->first();
+                $hrd = Auth::user()->role_id == role('admin') ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
                 $test = Tes::find($request->query('test'));
 
                 if($hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('employee'))->where('hasil.id_hrd','=',$hrd->id_hrd)->where('hasil.id_tes','=',$test->id_tes)->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->where('hasil.id_hrd','=',$hrd->id_hrd)->where('hasil.id_tes','=',$test->id_tes)->get();
                 elseif($hrd && !$test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('employee'))->where('hasil.id_hrd','=',$hrd->id_hrd)->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->where('hasil.id_hrd','=',$hrd->id_hrd)->get();
                 elseif(!$hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('employee'))->where('hasil.id_tes','=',$test->id_tes)->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->where('hasil.id_tes','=',$test->id_tes)->get();
                 else
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('employee'))->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->get();
             }
             // Get applicant results
             elseif($request->query('role') == role('applicant')) {
                 // Get the HRD and the test
-                $hrd = Auth::user()->role == role('admin') ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id_user)->first();
+                $hrd = Auth::user()->role_id == role('admin') ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
                 $test = Tes::find($request->query('test'));
 
                 if($hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('applicant'))->where('hasil.id_hrd','=',$hrd->id_hrd)->where('hasil.id_tes','=',$test->id_tes)->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->where('hasil.id_hrd','=',$hrd->id_hrd)->where('hasil.id_tes','=',$test->id_tes)->get();
                 elseif($hrd && !$test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('applicant'))->where('hasil.id_hrd','=',$hrd->id_hrd)->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->where('hasil.id_hrd','=',$hrd->id_hrd)->get();
                 elseif(!$hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('applicant'))->where('hasil.id_tes','=',$test->id_tes)->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->where('hasil.id_tes','=',$test->id_tes)->get();
                 else
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id_user')->where('users.role','=',role('applicant'))->get();
+                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->get();
             }
 
             // Set
@@ -75,7 +75,7 @@ class ResultController extends \App\Http\Controllers\Controller
                         $results[$key]->posisi = $employee ? $employee->nama_posisi : '-';
                     }
                     elseif($request->query('role') == role('applicant')) {
-                        $applicant = $result->role == role('applicant') ? Pelamar::where('id_user','=',$result->id_user)->first() : null;
+                        $applicant = $result->role_id == role('applicant') ? Pelamar::where('id_user','=',$result->id_user)->first() : null;
                         $position = $applicant ? Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_lowongan','=',$applicant->posisi)->first() : null;
                         $results[$key]->posisi = $position ? $position->nama_posisi : '-';
                     }
@@ -85,9 +85,9 @@ class ResultController extends \App\Http\Controllers\Controller
             // Return
             return DataTables::of($results)
                 ->addColumn('checkbox', '<input type="checkbox" class="form-check-input checkbox-one">')
-                ->addColumn('name', '
-                    <span class="d-none">{{ $nama_user }}</span>
-                    <a href="{{ route(\'admin.result.detail\', [\'id\' => $id_hasil]) }}">{{ ucwords($nama_user) }}</a>
+                ->editColumn('name', '
+                    <span class="d-none">{{ $name }}</span>
+                    <a href="{{ route(\'admin.result.detail\', [\'id\' => $id_hasil]) }}">{{ ucwords($name) }}</a>
                     <br>
                     <small class="text-muted">{{ $username }}</small>
                 ')
@@ -147,11 +147,11 @@ class ResultController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
     	// Get the result
-    	if(Auth::user()->role == role('admin')) {
+    	if(Auth::user()->role_id == role('admin')) {
             $result = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->findOrFail($id);
         }
         else {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $result = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->where('id_hasil','=',$id)->where('hasil.id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
 
@@ -162,10 +162,10 @@ class ResultController extends \App\Http\Controllers\Controller
 
         	// Get the user, the user description, and the role
         	$user = User::find($result->id_user);
-        	$role = Role::find($user->role);
-			if($user->role == role('employee'))
+        	$role = Role::find($user->role_id);
+			if($user->role_id == role('employee'))
                 $user_desc = Karyawan::join('posisi','karyawan.posisi','=','posisi.id_posisi')->where('id_user','=',$result->id_user)->firstOrFail();
-        	elseif($user->role == role('applicant'))
+        	elseif($user->role_id == role('applicant'))
                 $user_desc = Pelamar::join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_user','=',$result->id_user)->firstOrFail();
         	else
                 $user_desc = [];
@@ -209,13 +209,13 @@ class ResultController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the result
-        $result = Hasil::join('users','hasil.id_user','=','users.id_user')->find($request->id);
+        $result = Hasil::join('users','hasil.id_user','=','users.id')->find($request->id);
 
         // Delete the result
         $result->delete();
 
         // Redirect
-        return redirect()->route('admin.result.index', ['role' => $result->role])->with(['message' => 'Berhasil menghapus data.']);
+        return redirect()->route('admin.result.index', ['role' => $result->role_id])->with(['message' => 'Berhasil menghapus data.']);
     }
 
     /**

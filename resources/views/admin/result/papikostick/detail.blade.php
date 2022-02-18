@@ -1,6 +1,6 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Data Hasil Tes: '.$user->nama_user)
+@section('title', 'Data Hasil Tes: '.$user->name)
 
 @section('content')
 
@@ -16,7 +16,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Nama:</span>
-                        <span>{{ $user->nama_user }}</span>
+                        <span>{{ $user->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Usia:</span>
@@ -32,7 +32,7 @@
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Role:</span>
-                        <span>{{ role($user->role) }}</span>
+                        <span>{{ role($user->role_id) }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Tes:</span>
@@ -134,10 +134,10 @@
 <form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf    
     <input type="hidden" name="id_hasil" value="{{ $result->id_hasil }}">
-    <input type="hidden" name="nama" value="{{ $user->nama_user }}">
+    <input type="hidden" name="nama" value="{{ $user->name }}">
     <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
     <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">
-    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.role($user->role).')' : role($user->role) }}">
+    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.role($user->role_id).')' : role($user->role_id) }}">
     <input type="hidden" name="tes" value="{{ $result->nama_tes }}">
     <input type="hidden" name="path" value="{{ $result->path }}">
     <input type="hidden" name="image" id="image">

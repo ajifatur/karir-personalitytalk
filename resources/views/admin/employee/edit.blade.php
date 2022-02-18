@@ -96,7 +96,7 @@
                             @endif
                         </div>
                     </div>
-                    @if(Auth::user()->role == role('hrd'))
+                    @if(Auth::user()->role_id == role('hrd'))
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Kantor <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">

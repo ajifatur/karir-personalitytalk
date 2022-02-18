@@ -11,12 +11,12 @@
     <div class="col-md-4 col-xl-3">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ Auth::user()->foto != '' ? asset('assets/images/foto-user/'.Auth::user()->foto) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
+                <img src="{{ Auth::user()->avatar != '' ? asset('assets/images/foto-user/'.Auth::user()->avatar) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
             </div>
             <hr class="my-0">
             <div class="card-body">
                 <div class="list-group">
-                    <a href="{{ route('admin.profile') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile'))) && !is_int(strpos(Request::url(), route('admin.profile.edit'))) ? 'active' : '' }}">Profil</a>
+                    <a href="{{ route('admin.profile.detail') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.detail'))) && !is_int(strpos(Request::url(), route('admin.profile.edit'))) ? 'active' : '' }}">Profil</a>
                     <a href="{{ route('admin.profile.edit') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.edit'))) && !is_int(strpos(Request::url(), route('admin.profile.edit-password'))) ? 'active' : '' }}">Edit Profil</a>
                     <a href="{{ route('admin.profile.edit-password') }}" class="list-group-item list-group-item-action py-2 px-3 {{ is_int(strpos(Request::url(), route('admin.profile.edit-password'))) ? 'active' : '' }}">Edit Password</a>
                 </div>
@@ -35,7 +35,7 @@
                 @endif
                 <form method="post" action="{{ route('admin.profile.update-password') }}" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="id" value="{{ Auth::user()->id_user }}">
+                    <input type="hidden" name="id" value="{{ Auth::user()->id }}">
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Password Lama <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">

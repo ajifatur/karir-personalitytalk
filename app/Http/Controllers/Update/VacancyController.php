@@ -38,17 +38,17 @@ class VacancyController extends \App\Http\Controllers\Controller
         }
 
         // Get offices
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             $hrd = HRD::find($request->query('hrd'));
             $vacancies = $hrd ? Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('hrd.id_hrd','=',$hrd->id_hrd)->orderBy('status','desc')->orderBy('created_at','desc')->get() : Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
         }
-        elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
     	    $vacancies = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_hrd','=',$hrd->id_hrd)->orderBy('status','desc')->orderBy('created_at','desc')->get();
         }
 
         // Set
-        foreach($vacancies as $key=>$vacancy){
+        foreach($vacancies as $key=>$vacancy) {
             $pelamar = Pelamar::where('posisi','=',$vacancy->id_lowongan)->count();
             $vacancies[$key]->pelamar = $pelamar;
         }
@@ -74,11 +74,11 @@ class VacancyController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get tests
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             $positions = Posisi::orderBy('nama_posisi','asc')->get();
         }
-        elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
 
@@ -97,8 +97,8 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get data HRD
-    	if(Auth::user()->role == role_hrd()) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	if(Auth::user()->role_id == role_hrd()) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // Validation
@@ -156,8 +156,8 @@ class VacancyController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the vacancy
-    	if(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	if(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$id)->where('lowongan.id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
         else {
@@ -165,11 +165,11 @@ class VacancyController extends \App\Http\Controllers\Controller
         }
 
         // Get positions
-        if(Auth::user()->role == role_admin()){
+        if(Auth::user()->role_id == role('admin')) {
             $positions = Posisi::where('id_hrd','=',$vacancy->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
-        elseif(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
 
@@ -253,17 +253,17 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function applicant($id)
     {
         // Get the vacancy
-        if(Auth::user()->role == role_admin()){
+        if(Auth::user()->role_id == role('admin')) {
             $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->findOrFail($id);
         }
-        elseif(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_hrd','=',$hrd->id_hrd)->findOrFail($id);
         }
 
         // Get applicants
-        $applicants = Pelamar::join('users','pelamar.id_user','=','users.id_user')->where('posisi','=',$vacancy->id_lowongan)->orderBy('pelamar_at','desc')->get();
-        foreach($applicants as $key=>$applicant){
+        $applicants = Pelamar::join('users','pelamar.id_user','=','users.id')->where('posisi','=',$vacancy->id_lowongan)->orderBy('pelamar_at','desc')->get();
+        foreach($applicants as $key=>$applicant) {
             $selection = Seleksi::where('id_pelamar','=',$applicant->id_pelamar)->where('id_lowongan','=',$id)->first();
             if(!$selection) {
                 $applicants[$key]->badge_color = 'info';
@@ -272,11 +272,15 @@ class VacancyController extends \App\Http\Controllers\Controller
             else {
                 if($selection->hasil == 0) {
                     $applicants[$key]->badge_color = 'danger';
-                    $applicants[$key]->hasil = 'Tidak Lolos';
+                    $applicants[$key]->hasil = 'Tidak Direkomendasikan';
                 }
                 elseif($selection->hasil == 1) {
                     $applicants[$key]->badge_color = 'success';
-                    $applicants[$key]->hasil = 'Lolos';
+                    $applicants[$key]->hasil = 'Direkomendasikan';
+                }
+                elseif($selection->hasil == 2) {
+                    $applicants[$key]->badge_color = 'info';
+                    $applicants[$key]->hasil = 'Dipertimbangkan';
                 }
                 elseif($selection->hasil == 99) {
                     $applicants[$key]->badge_color = 'warning';
@@ -284,7 +288,7 @@ class VacancyController extends \App\Http\Controllers\Controller
                 }
             }
             
-            $applicants[$key]->isKaryawan = $applicant->role == role_karyawan() ? true : false;
+            $applicants[$key]->isKaryawan = $applicant->role_id == role('employee') ? true : false;
         }
 
         // View

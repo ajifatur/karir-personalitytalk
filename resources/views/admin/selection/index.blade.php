@@ -20,7 +20,7 @@
                         <option value="99" {{ Request::query('result') == '99' ? 'selected' : '' }}>Belum Dites</option>
                     </select>
                 </div>
-                @if(Auth::user()->role == role('admin'))
+                @if(Auth::user()->role_id == role('admin'))
                     <div class="ms-sm-2 ms-0">
                         <select name="hrd" class="form-select form-select-sm">
                             <option value="0">Semua Perusahaan</option>

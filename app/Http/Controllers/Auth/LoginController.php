@@ -46,7 +46,7 @@ class LoginController extends \App\Http\Controllers\Controller
             $credentials = [
                 $loginType => $request->username,
                 'password' => $request->password,
-                'has_access' => 1
+                // 'has_access' => 1
             ];
 
             // Auth attempt
@@ -55,7 +55,7 @@ class LoginController extends \App\Http\Controllers\Controller
                 $request->session()->regenerate();
 
                 // Update user's last visit
-                $user = User::find($request->user()->id_user);
+                $user = User::find($request->user()->id);
                 if($user) {
                     $user->last_visit = date('Y-m-d H:i:s');
                     $user->save();

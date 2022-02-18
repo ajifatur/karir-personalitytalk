@@ -28,21 +28,21 @@ class ApplicantController extends \App\Http\Controllers\Controller
     {
         if($request->ajax()) {
             // Get applicants
-            if(Auth::user()->role == role('admin')) {
+            if(Auth::user()->role_id == role('admin')) {
                 $hrd = HRD::find($request->query('hrd'));
-                $applicants = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
+                $applicants = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
             }
-            elseif(Auth::user()->role == role('hrd')) {
-                $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
-                $applicants = Pelamar::join('users','pelamar.id_user','=','users.id_user')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get();
+            elseif(Auth::user()->role_id == role('hrd')) {
+                $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+                $applicants = Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get();
             }
 
             // Return
             return DataTables::of($applicants)
                 ->addColumn('checkbox', '<input type="checkbox" class="form-check-input checkbox-one">')
-                ->addColumn('name', '
-                    <span class="d-none">{{ $nama_user }}</span>
-                    <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id_pelamar]) }}">{{ ucwords($nama_user) }}</a>
+                ->editColumn('name', '
+                    <span class="d-none">{{ $name }}</span>
+                    <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id_pelamar]) }}">{{ ucwords($name) }}</a>
                     <br>
                     <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $email }}</small>
                     <br>
@@ -89,17 +89,17 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        // has_access(method(__METHOD__), Auth::user()->role_id_id);
 
         // Get HRDs
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // Get vacancies
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             $vacancies = [];
         }
-        elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $vacancies = Lowongan::where('id_hrd','=',$hrd->id_hrd)->where('status','=',1)->orderBy('judul_lowongan','asc')->get();
         }
 
@@ -149,24 +149,23 @@ class ApplicantController extends \App\Http\Controllers\Controller
 
             // Save the user
             $user = new User;
-            $user->nama_user = $request->name;
+            $user->role_id = role('applicant');
+            $user->name = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->username = $username;
             $user->password = bcrypt($username);
             $user->password_str = $username;
-            $user->foto = '';
-            $user->role = role_pelamar();
+            $user->avatar = '';
             $user->has_access = 0;
             $user->status = 1;
             $user->last_visit = date("Y-m-d H:i:s");
-            $user->created_at = date("Y-m-d H:i:s");
             $user->save();
 
             // Save the applicant
             $applicant = new Pelamar;
-            $applicant->id_user = $user->id_user;
+            $applicant->id_user = $user->id;
             $applicant->id_hrd = $hrd->id_hrd;
             $applicant->nama_lengkap = $request->name;
             $applicant->tempat_lahir = $request->birthplace != '' ? $request->birthplace : '';
@@ -209,13 +208,13 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function detail($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        // has_access(method(__METHOD__), Auth::user()->role_id_id);
         
         // Get the applicant
-        if(Auth::user()->role == role('admin'))
+        if(Auth::user()->role_id == role('admin'))
             $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
         else {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
     	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
 
@@ -251,14 +250,14 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        // has_access(method(__METHOD__), Auth::user()->role_id_id);
 
         // Get the applicant
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
     	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
         }
-        elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
     	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
 
@@ -336,7 +335,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
 
             // Update the user
             $user = User::find($applicant->id_user);
-            $user->nama_user = $request->name;
+            $user->name = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
@@ -356,7 +355,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        // has_access(method(__METHOD__), Auth::user()->role_id_id);
         
         // Get the applicant
         $applicant = Pelamar::find($request->id);
@@ -389,11 +388,11 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function export(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        // has_access(method(__METHOD__), Auth::user()->role_id_id);
 
         ini_set("memory_limit", "-1");
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get the HRD
             $hrd = HRD::find($request->query('hrd'));
 
@@ -405,9 +404,9 @@ class ApplicantController extends \App\Http\Controllers\Controller
 
             return Excel::download(new PelamarExport($applicants), $filename.'.xlsx');
         }
-        elseif(Auth::user()->role == role('hrd')) {
+        elseif(Auth::user()->role_id == role('hrd')) {
             // Get the HRD
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
 
             // Get applicants
             $applicants = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_hrd','=',$hrd->id_hrd)->get();

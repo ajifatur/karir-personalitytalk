@@ -23,16 +23,16 @@ class ProfileController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the user
-        $user = User::find(Auth::user()->id_user);
+        $user = User::find(Auth::user()->id);
 
-        if($user->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        if($user->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // View
         return view('admin/profile/detail', [
             'user' => $user,
-            'hrd' => Auth::user()->role == role('hrd') ? $hrd : null,
+            'hrd' => Auth::user()->role_id == role('hrd') ? $hrd : null,
         ]);
     }
 
@@ -65,11 +65,11 @@ class ProfileController extends \App\Http\Controllers\Controller
             'gender' => 'required',
             'email' => [
                 'required', 'email',
-                Rule::unique('users')->ignore($request->id, 'id_user'),
+                Rule::unique('users')->ignore($request->id, 'id'),
             ],
             'username' => [
                 'required', 'string', 'min:4',
-                Rule::unique('users')->ignore($request->id, 'id_user'),
+                Rule::unique('users')->ignore($request->id, 'id'),
             ],
         ], validationMessages());
         
@@ -81,7 +81,7 @@ class ProfileController extends \App\Http\Controllers\Controller
         else {
             // Update the user
             $user = User::find($request->id);
-            $user->nama_user = $request->name;
+            $user->name = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
@@ -89,8 +89,8 @@ class ProfileController extends \App\Http\Controllers\Controller
             $user->save();
 
             // Update the HRD
-            if(Auth::user()->role == role('hrd')) {
-                $hrd = HRD::where('id_user','=',$user->id_user)->first();
+            if(Auth::user()->role_id == role('hrd')) {
+                $hrd = HRD::where('id_user','=',$user->id)->first();
                 $hrd->nama_lengkap = $request->name;
                 $hrd->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
                 $hrd->jenis_kelamin = $request->gender;

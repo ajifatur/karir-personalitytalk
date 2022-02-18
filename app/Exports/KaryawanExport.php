@@ -15,12 +15,12 @@ class KaryawanExport implements FromView
     /**
      * Create a new message instance.
      *
-     * int id karyawan
+     * @param  object $employees
      * @return void
      */
-    public function __construct($karyawan)
+    public function __construct($employees)
     {
-        $this->karyawan = $karyawan;
+        $this->employees = $employees;
     }
 
     /**
@@ -29,8 +29,8 @@ class KaryawanExport implements FromView
     public function view(): View
     {
     	// View
-    	return view('karyawan/excel', [
-    		'karyawan' => $this->karyawan
+    	return view('admin.employee.excel', [
+    		'employees' => $this->employees
     	]);
     }
 }

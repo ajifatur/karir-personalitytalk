@@ -13,7 +13,7 @@
             <div class="card-body">
                 <form method="post" action="{{ route('admin.applicant.store') }}" enctype="multipart/form-data">
                     @csrf
-                    @if(Auth::user()->role == role('admin'))
+                    @if(Auth::user()->role_id == role('admin'))
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
@@ -32,7 +32,7 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Lowongan yang Dilamar <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <select name="vacancy" class="form-select form-select-sm {{ $errors->has('vacancy') ? 'border-danger' : '' }}" {{ Auth::user()->role == role('admin') ? 'disabled' : '' }}>
+                            <select name="vacancy" class="form-select form-select-sm {{ $errors->has('vacancy') ? 'border-danger' : '' }}" {{ Auth::user()->role_id == role('admin') ? 'disabled' : '' }}>
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($vacancies as $vacancy)
                                     <?php $position = \App\Models\Posisi::find($vacancy->posisi); ?>

@@ -15,12 +15,12 @@ class PelamarExport implements FromView
     /**
      * Create a new message instance.
      *
-     * int id karyawan
+     * @param  object $applicants
      * @return void
      */
-    public function __construct($pelamar)
+    public function __construct($applicants)
     {
-        $this->pelamar = $pelamar;
+        $this->applicants = $applicants;
     }
 
     /**
@@ -29,8 +29,8 @@ class PelamarExport implements FromView
     public function view(): View
     {
     	// View
-    	return view('pelamar/excel', [
-    		'pelamar' => $this->pelamar
+    	return view('admin/applicant/excel', [
+    		'applicants' => $this->applicants
     	]);
     }
 }

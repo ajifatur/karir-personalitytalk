@@ -23,12 +23,12 @@ class PositionController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get offices
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             $hrd = HRD::find($request->query('hrd'));
             $positions = $hrd ? Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->where('hrd.id_hrd','=',$hrd->id_hrd)->get() : Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
         }
-        elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->get();
         }
 
@@ -56,11 +56,11 @@ class PositionController extends \App\Http\Controllers\Controller
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // Get tests
-        if(Auth::user()->role == role('admin')){
+        if(Auth::user()->role_id == role('admin')) {
     	    $tests = Tes::all();
         }
-        elseif(Auth::user()->role == role('hrd')){
-            $user = HRD::where('id_user','=',Auth::user()->id_user)->first();
+        elseif(Auth::user()->role_id == role('hrd')) {
+            $user = HRD::where('id_user','=',Auth::user()->id)->first();
             $ids = explode(',', $user->akses_tes);
             $tests = Tes::whereIn('id_tes',$ids)->get();
         }
@@ -81,22 +81,22 @@ class PositionController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get data HRD
-    	if(Auth::user()->role == role_hrd()){
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	if(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'hrd' => Auth::user()->role == role('admin') ? 'required' : '',
+            'hrd' => Auth::user()->role_id == role('admin') ? 'required' : '',
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
             // Save the position
             $position = new Posisi;
             $position->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
@@ -122,8 +122,8 @@ class PositionController extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the position
-    	if(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
+    	if(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
             $position = Posisi::where('id_posisi','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
         else {
@@ -160,11 +160,11 @@ class PositionController extends \App\Http\Controllers\Controller
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
             // Update the position
             $position = Posisi::find($request->id);
             $position->nama_posisi = $request->name;

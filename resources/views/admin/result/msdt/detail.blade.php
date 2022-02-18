@@ -1,6 +1,6 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Data Hasil Tes: '.$user->nama_user)
+@section('title', 'Data Hasil Tes: '.$user->name)
 
 @section('content')
 
@@ -16,7 +16,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Nama:</span>
-                        <span>{{ $user->nama_user }}</span>
+                        <span>{{ $user->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Usia:</span>
@@ -32,7 +32,7 @@
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Role:</span>
-                        <span>{{ role($user->role) }}</span>
+                        <span>{{ role($user->role_id) }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Tes:</span>

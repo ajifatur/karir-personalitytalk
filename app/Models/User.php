@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends \Ajifatur\FaturHelper\Models\User
 {
     use Notifiable;
 
@@ -15,7 +15,7 @@ class User extends Authenticatable
      *
      * @var string
      */
-    protected $primaryKey = 'id_user';
+    // protected $primaryKey = 'id_user';
 
     /**
      * The attributes that are mass assignable.
@@ -43,11 +43,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 }

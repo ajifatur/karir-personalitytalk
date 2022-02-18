@@ -10,7 +10,7 @@
 <div class="row">
 	<div class="col-12">
         <div class="card">
-            @if(Auth::user()->role == role('admin'))
+            @if(Auth::user()->role_id == role('admin'))
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
