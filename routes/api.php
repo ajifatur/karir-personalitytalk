@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/vacancy', 'API\VacancyController@index')->name('api.vacancy.index');
 Route::get('/vacancy/{url}', 'API\VacancyController@detail')->name('api.vacancy.detail');
 Route::get('/selection/detail', 'Update\SelectionController@detail')->name('api.selection.detail');
+
+\Ajifatur\Helpers\RouteExt::api();

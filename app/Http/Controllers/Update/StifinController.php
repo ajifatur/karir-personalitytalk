@@ -24,7 +24,7 @@ class StifinController extends \App\Http\Controllers\Controller
         // Check the access
         if(!stifin_access()) abort(403);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
     	    // Get the STIFIns
 			$stifins = Stifin::all();
 
@@ -33,9 +33,9 @@ class StifinController extends \App\Http\Controllers\Controller
 				'stifins' => $stifins,
 			]);
         }
-        elseif(Auth::user()->role == role('hrd')) {
+        elseif(Auth::user()->role_id == role('hrd')) {
 			// Get the HRD
-			$hrd = HRD::where('id_user','=',Auth::user()->id_user)->firstOrFail();
+			$hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
 			
 			// Get the STIFIns
 			$stifins = Stifin::where('hrd_id','=',$hrd->id_hrd)->get();
@@ -70,7 +70,7 @@ class StifinController extends \App\Http\Controllers\Controller
         // Get STIFIn aims
         $aims = StifinAim::all();
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // View
             return view('admin/stifin/create', [
                 'hrds' => $hrds,
@@ -78,7 +78,7 @@ class StifinController extends \App\Http\Controllers\Controller
                 'aims' => $aims,
             ]);
         }
-        elseif(Auth::user()->role == role('hrd')) {
+        elseif(Auth::user()->role_id == role('hrd')) {
             // View
             return view('admin/stifin/create', [
                 'types' => $types,
@@ -96,18 +96,18 @@ class StifinController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get the HRD
-    	if(Auth::user()->role == role('admin')) {
+    	if(Auth::user()->role_id == role('admin')) {
             $hrd = HRD::find($request->hrd);
         }
-    	elseif(Auth::user()->role == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+    	elseif(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'gender' => 'required',
-            'hrd' => Auth::user()->role == role('admin') ? 'required' : '',
+            'hrd' => Auth::user()->role_id == role('admin') ? 'required' : '',
             'type' => 'required',
             'aim' => 'required',
         ], validationMessages());
@@ -157,7 +157,7 @@ class StifinController extends \App\Http\Controllers\Controller
         // Get STIFIn aims
         $aims = StifinAim::all();
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // View
             return view('admin/stifin/edit', [
                 'stifin' => $stifin,
@@ -165,7 +165,7 @@ class StifinController extends \App\Http\Controllers\Controller
                 'aims' => $aims,
             ]);
         }
-        elseif(Auth::user()->role == role('hrd')) {
+        elseif(Auth::user()->role_id == role('hrd')) {
             // View
             return view('admin/stifin/edit', [
                 'stifin' => $stifin,
@@ -248,7 +248,7 @@ class StifinController extends \App\Http\Controllers\Controller
         $stifin = Stifin::join('stifin_tests','stifin.test','=','stifin_tests.id_st')->findOrFail($id);
 
         // View
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
 			// PDF
 			$pdf = PDF::loadview('admin/stifin/print/'.$stifin->test_code, [
                 'stifin' => $stifin,
@@ -257,7 +257,7 @@ class StifinController extends \App\Http\Controllers\Controller
 
 			return $pdf->stream("STIFIn-".$stifin->name.".pdf");
         }
-        elseif(Auth::user()->role == role('hrd')) {
+        elseif(Auth::user()->role_id == role('hrd')) {
 			// PDF
 			$pdf = PDF::loadview('admin/stifin/print/'.$stifin->test_code, [
                 'stifin' => $stifin,

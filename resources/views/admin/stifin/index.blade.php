@@ -25,7 +25,7 @@
                                 <th width="30"><input type="checkbox" class="form-check-input checkbox-all"></th>
                                 <th>Nama</th>
                                 <th width="150">Tipe</th>
-                                @if(Auth::user()->role == role('admin'))
+                                @if(Auth::user()->role_id == role('admin'))
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="60">Opsi</th>
@@ -37,7 +37,7 @@
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td>{{ $stifin->name }}</td>
                                 <td>{{ $stifin->tests->test_name }}</td>
-                                @if(Auth::user()->role == role('admin'))
+                                @if(Auth::user()->role_id == role('admin'))
                                 <td>{{ $stifin->hrd->perusahaan }}</td>
                                 @endif
                                 <td>

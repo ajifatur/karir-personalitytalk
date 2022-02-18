@@ -51,10 +51,10 @@ Route::group(['middleware' => ['admin']], function() {
 	// Logout
 	Route::post('/admin/logout', 'Auth\LoginController@logout')->name('admin.logout');
 
-	// Dashboard
-	Route::get('/admin', function() {
-		return view('admin/dashboard/index');
-	})->name('admin.dashboard');
+	// // Dashboard
+	// Route::get('/admin', function() {
+	// 	return view('admin/dashboard/index');
+	// })->name('admin.dashboard');
 
 	// Profile
 	Route::get('/admin/profile/detail', 'Update\ProfileController@detail')->name('admin.profile.detail');
@@ -159,5 +159,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/applicant/convert', 'Update\ApplicantController@convert')->name('admin.applicant.convert');
 });
 
-RouteExt::user();
-RouteExt::menu();
+// RouteExt::user();
+// RouteExt::menu();
+// \Ajifatur\Helpers\RouteExt::auth();
+\Ajifatur\Helpers\RouteExt::admin();

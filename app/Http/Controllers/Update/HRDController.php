@@ -22,9 +22,9 @@ class HRDController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get HRDs
-            $hrds = HRD::join('users','hrd.id_user','=','users.id_user')->get();
+            $hrds = HRD::join('users','hrd.id_user','=','users.id')->get();
 
             // View
             return view('admin/hrd/index', [
@@ -44,7 +44,7 @@ class HRDController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get tests
     	    $tests = Tes::all();
 
@@ -85,23 +85,22 @@ class HRDController extends \App\Http\Controllers\Controller
         else {
             // Save the user
             $user = new User;
-            $user->nama_user = $request->name;
+            $user->role_id = role('hrd');
+            $user->name = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->username = $request->username;
             $user->password = bcrypt($request->password);
-            $user->foto = '';
-            $user->role = role('hrd');
+            $user->avatar = '';
             $user->has_access = 1;
             $user->status = 1;
             $user->last_visit = null;
-            $user->created_at = date("Y-m-d H:i:s");
             $user->save();
 
             // Save the HRD
             $hrd = new HRD;
-            $hrd->id_user = $user->id_user;
+            $hrd->id_user = $user->id;
             $hrd->nama_lengkap = $request->name;
             $hrd->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $hrd->jenis_kelamin = $request->gender;
@@ -138,7 +137,7 @@ class HRDController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get the HRD
             $hrd = HRD::findOrFail($id);
             $hrd->user = User::find($hrd->id_user);
@@ -162,7 +161,7 @@ class HRDController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get the HRD
             $hrd = HRD::findOrFail($id);
             $hrd->akses_tes = $hrd->akses_tes != '' ? explode(',', $hrd->akses_tes) : [];
@@ -201,11 +200,11 @@ class HRDController extends \App\Http\Controllers\Controller
             'gender' => 'required',
             'email' => [
                 'required',
-                Rule::unique('users')->ignore($hrd->id_user, 'id_user'),
+                Rule::unique('users')->ignore($hrd->id_user, 'id'),
             ],
             'username' => [
                 'required', 'string', 'min:4',
-                Rule::unique('users')->ignore($hrd->id_user, 'id_user'),
+                Rule::unique('users')->ignore($hrd->id_user, 'id'),
             ],
             'password' => $request->password != '' ? 'required|min:4' : '',
             'code' => [
@@ -224,7 +223,7 @@ class HRDController extends \App\Http\Controllers\Controller
         else {
             // Update the user
             $user = User::find($hrd->id_user);
-            $user->nama_user = $request->name;
+            $user->name = $request->name;
             $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
             $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;

@@ -17,7 +17,8 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check() && ($request->user()->role_id == role('admin') || $request->user()->role_id == role('hrd')) && $request->path() == 'login') {
+        // if (Auth::guard($guard)->check() && ($request->user()->role_id == role('admin') || $request->user()->role_id == role('hrd')) && $request->path() == 'login') {
+        if (Auth::guard($guard)->check() && $request->user()->role->is_admin == 1 && $request->path() == 'login') {
             return redirect()->route('admin.dashboard');
         }
 

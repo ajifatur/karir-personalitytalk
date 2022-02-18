@@ -23,7 +23,7 @@ class TestController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
     	    // Get the tests
 			$tests = Tes::all();
 
@@ -45,7 +45,7 @@ class TestController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // View
         	return view('admin/test/create');
         }
@@ -103,8 +103,7 @@ class TestController extends \App\Http\Controllers\Controller
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-
-        if(Auth::user()->role == role('admin')) {
+        if(Auth::user()->role_id == role('admin')) {
             // Get the test
             $test = Tes::findOrFail($id);
 
