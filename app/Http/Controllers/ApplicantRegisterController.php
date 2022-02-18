@@ -524,23 +524,22 @@ class ApplicantRegisterController extends Controller
 
             // Menambah akun pelamar
             $applicant = new User;
-            $applicant->nama_user = $temp_array['step_1']['nama_lengkap'];
+            $applicant->role_id = role('applicant');
+            $applicant->name = $temp_array['step_1']['nama_lengkap'];
             $applicant->tanggal_lahir = generate_date_format($temp_array['step_1']['tanggal_lahir'], 'y-m-d');
             $applicant->jenis_kelamin = $temp_array['step_1']['jenis_kelamin'];
             $applicant->email = $temp_array['step_1']['email'];
             $applicant->username = $username;
             $applicant->password = bcrypt($username);
             $applicant->password_str = $username;
-            $applicant->foto = '';
-            $applicant->role = role_pelamar();
+            $applicant->avatar = '';
             $applicant->has_access = 0;
             $applicant->status = 1;
             $applicant->last_visit = date("Y-m-d H:i:s");
-            $applicant->created_at = date("Y-m-d H:i:s");
             $applicant->save();
 
             // Ambil data akun pelamar
-            $akun = User::where('username','=',$applicant->username)->first();
+            // $akun = User::where('username','=',$applicant->username)->first();
 
             // Menambah data pelamar
             $pelamar = new Pelamar;
@@ -567,20 +566,20 @@ class ApplicantRegisterController extends Controller
             $pelamar->pertanyaan = '';
             $pelamar->pas_foto = array_key_exists('step_2', $temp_array) ? $temp_array['step_2']['pas_foto'] : '';
             $pelamar->foto_ijazah = array_key_exists('step_3', $temp_array) ? $temp_array['step_3']['foto_ijazah'] : '';
-            $pelamar->id_user = $akun->id_user;
+            $pelamar->id_user = $applicant->id;
             $pelamar->posisi = $lowongan->id_lowongan;
             $pelamar->pelamar_at = date("Y-m-d H:i:s");
             $pelamar->save();
 
             // Ambil data akun pelamar
-            $akun_pelamar = Pelamar::where('email','=',$applicant->email)->first();
+            // $akun_pelamar = Pelamar::where('email','=',$applicant->email)->first();
 
             // Send Mail to HRD
             $hrd = HRD::find($lowongan->id_hrd);
-            Mail::to($hrd->email)->send(new HRDMail($akun_pelamar->id_pelamar));
+            Mail::to($hrd->email)->send(new HRDMail($pelamar->id_pelamar));
 
             // Send Mail to Pelamar
-            Mail::to($applicant->email)->send(new ApplicantMail($akun_pelamar->id_pelamar));
+            Mail::to($applicant->email)->send(new ApplicantMail($pelamar->id_pelamar));
 
             // Remove session
             $this->removeSession();
