@@ -50,7 +50,7 @@
                             @endif
                         </div>
                     </div>
-                    @if(Auth::user()->role_id == role('admin'))
+                    @if(Auth::user()->role->is_global === 1)
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">

@@ -22,7 +22,7 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         if($request->ajax()) {
             // Get vacancies
@@ -38,11 +38,11 @@ class VacancyController extends \App\Http\Controllers\Controller
         }
 
         // Get offices
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $hrd = HRD::find($request->query('hrd'));
             $vacancies = $hrd ? Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('hrd.id_hrd','=',$hrd->id_hrd)->orderBy('status','desc')->orderBy('created_at','desc')->get() : Lowongan::join('hrd','lowongan.id_hrd','=','hrd.id_hrd')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('status','desc')->orderBy('created_at','desc')->get();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
     	    $vacancies = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_hrd','=',$hrd->id_hrd)->orderBy('status','desc')->orderBy('created_at','desc')->get();
         }
@@ -71,13 +71,13 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get tests
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $positions = Posisi::orderBy('nama_posisi','asc')->get();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
@@ -153,22 +153,22 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the vacancy
-    	if(Auth::user()->role_id == role('hrd')) {
+    	if(Auth::user()->role->is_global === 1) {
+            $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->findOrFail($id);
+        }
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$id)->where('lowongan.id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
-        else {
-            $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->findOrFail($id);
-        }
 
         // Get positions
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $positions = Posisi::where('id_hrd','=',$vacancy->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
@@ -232,7 +232,7 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the vacancy
         $vacancy = Lowongan::find($request->id);
@@ -253,10 +253,10 @@ class VacancyController extends \App\Http\Controllers\Controller
     public function applicant($id)
     {
         // Get the vacancy
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->findOrFail($id);
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $vacancy = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_hrd','=',$hrd->id_hrd)->findOrFail($id);
         }

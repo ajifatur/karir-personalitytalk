@@ -11,7 +11,7 @@
     <div class="col-md-4 col-xl-3">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ Auth::user()->avatar != '' ? asset('assets/images/foto-user/'.Auth::user()->avatar) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
+                <img src="{{ Auth::user()->avatar != '' ? asset('assets/images/users/'.Auth::user()->avatar) : asset('assets/images/default/user.png') }}" class="rounded-circle" height="150" width="150" alt="Foto">
             </div>
             <hr class="my-0">
             <div class="card-body">

@@ -25,7 +25,7 @@
                                 <th width="30"><input type="checkbox" class="form-check-input checkbox-all"></th>
                                 <th>Nama</th>
                                 <th width="100">Username</th>
-                                @if(Auth::user()->role_id == role('admin'))
+                                @if(Auth::user()->role->is_global === 1)
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="100">Kunjungan Terakhir</th>
@@ -38,7 +38,7 @@
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td><a href="{{ route('admin.hrd.detail', ['id' => $hrd->id_hrd]) }}">{{ $hrd->nama_lengkap }}</a></td>
                                 <td>{{ $hrd->username }}</td>
-                                @if(Auth::user()->role_id == role('admin'))
+                                @if(Auth::user()->role->is_global === 1)
                                 <td>{{ $hrd->perusahaan }}</td>
                                 @endif
                                 <td>

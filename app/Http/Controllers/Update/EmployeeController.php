@@ -25,14 +25,17 @@ class EmployeeController extends \App\Http\Controllers\Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {        
+    {
+        // Check the access
+        has_access(method(__METHOD__), Auth::user()->role_id);
+
         if($request->ajax()) {
             // Get employees
-            if(Auth::user()->role_id == role('admin')) {
+            if(Auth::user()->role->is_global === 1) {
                 $hrd = HRD::find($request->query('hrd'));
                 $employees = $hrd ? Karyawan::join('users','karyawan.id_user','=','users.id')->where('id_hrd','=',$hrd->id_hrd)->get() : Karyawan::join('users','karyawan.id_user','=','users.id')->get();
             }
-            elseif(Auth::user()->role_id == role('hrd')) {
+            elseif(Auth::user()->role->is_global === 0) {
                 $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
                 $employees = Karyawan::join('users','karyawan.id_user','=','users.id')->where('id_hrd','=',$hrd->id_hrd)->get();
             }
@@ -86,17 +89,17 @@ class EmployeeController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get HRD
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // Get tests
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $positions = Posisi::orderBy('nama_posisi','asc')->get();
             $offices = null;
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
             $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
@@ -119,10 +122,10 @@ class EmployeeController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get the HRD
-    	if(Auth::user()->role_id == role('admin')) {
+    	if(Auth::user()->role->is_global === 1) {
             $hrd = HRD::find($request->hrd);
         }
-    	elseif(Auth::user()->role_id == role('hrd')) {
+    	elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
@@ -134,9 +137,9 @@ class EmployeeController extends \App\Http\Controllers\Controller
             'email' => 'required|email',
             'phone_number' => 'required|numeric',
             'status' => 'required',
-            'hrd' => Auth::user()->role_id == role('admin') ? 'required' : '',
-            'office' => Auth::user()->role_id == role('hrd') ? 'required' : '',
-            'position' => Auth::user()->role_id == role('hrd') ? 'required' : '',
+            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'office' => Auth::user()->role->is_global === 0 ? 'required' : '',
+            'position' => Auth::user()->role->is_global === 0 ? 'required' : '',
         ], validationMessages());
         
         // Check errors
@@ -177,8 +180,8 @@ class EmployeeController extends \App\Http\Controllers\Controller
             $employee->jenis_kelamin = $request->gender;
             $employee->email = $request->email;
             $employee->nomor_hp = $request->phone_number;
-            $employee->posisi = Auth::user()->role_id == role('hrd') ? $request->position : 0;
-            $employee->kantor = Auth::user()->role_id == role('hrd') ? $request->office : 0;
+            $employee->posisi = Auth::user()->role->is_global === 0 ? $request->position : 0;
+            $employee->kantor = Auth::user()->role->is_global === 0 ? $request->office : 0;
             $employee->nik_cis = '';
             $employee->nik = $request->identity_number != '' ? $request->identity_number : '';
             $employee->alamat = $request->address != '' ? $request->address : '';
@@ -200,10 +203,10 @@ class EmployeeController extends \App\Http\Controllers\Controller
     public function detail($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the applicant
-        if(Auth::user()->role_id == role('admin'))
+        if(Auth::user()->role->is_global === 1)
             $employee = Karyawan::findOrFail($id);
         else {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
@@ -231,10 +234,10 @@ class EmployeeController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the employee
-    	if(Auth::user()->role_id == role('hrd')) {
+    	if(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
             $employee = Karyawan::join('users','karyawan.id_user','=','users.id')->where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
@@ -243,12 +246,12 @@ class EmployeeController extends \App\Http\Controllers\Controller
         }
 
         // Get positions and offices
-        if(Auth::user()->role_id == role('admin')){
+        if(Auth::user()->role->is_global === 1){
             $hrd = HRD::find($employee->id_hrd);
             $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
         }
-        elseif(Auth::user()->role_id == role('hrd')){
+        elseif(Auth::user()->role->is_global === 0){
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
@@ -278,8 +281,8 @@ class EmployeeController extends \App\Http\Controllers\Controller
             'email' => 'required|email',
             'phone_number' => 'required|numeric',
             'status' => 'required',
-            'office' => Auth::user()->role_id == role('hrd') ? 'required' : '',
-            'position' => Auth::user()->role_id == role('hrd') ? 'required' : '',
+            'office' => Auth::user()->role->is_global === 0 ? 'required' : '',
+            'position' => Auth::user()->role->is_global === 0 ? 'required' : '',
         ], validationMessages());
         
         // Check errors
@@ -295,8 +298,8 @@ class EmployeeController extends \App\Http\Controllers\Controller
             $employee->jenis_kelamin = $request->gender;
             $employee->email = $request->email;
             $employee->nomor_hp = $request->phone_number;
-            $employee->posisi = Auth::user()->role_id == role('hrd') ? $request->position : 0;
-            $employee->kantor = Auth::user()->role_id == role('hrd') ? $request->office : 0;
+            $employee->posisi = Auth::user()->role->is_global === 0 ? $request->position : 0;
+            $employee->kantor = Auth::user()->role->is_global === 0 ? $request->office : 0;
             $employee->nik = $request->identity_number != '' ? $request->identity_number : '';
             $employee->alamat = $request->address != '' ? $request->address : '';
             $employee->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
@@ -326,7 +329,7 @@ class EmployeeController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the employee
         $employee = Karyawan::find($request->id);
@@ -359,11 +362,11 @@ class EmployeeController extends \App\Http\Controllers\Controller
     public function export(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         ini_set("memory_limit", "-1");
 
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             // Get the HRD
             $hrd = HRD::find($request->query('hrd'));
 
@@ -375,7 +378,7 @@ class EmployeeController extends \App\Http\Controllers\Controller
 
             return Excel::download(new KaryawanExport($employees), $filename.'.xlsx');
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             // Get the HRD
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
 

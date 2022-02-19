@@ -10,7 +10,7 @@
 <div class="row">
 	<div class="col-12">
         <div class="card">
-            @if(Auth::user()->role_id == role('admin'))
+            @if(Auth::user()->role->is_global === 1)
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
@@ -36,12 +36,10 @@
                     <table class="table table-sm table-hover table-bordered" id="datatable">
                         <thead class="bg-light">
                             <tr>
-                                <th width="30"></th>
                                 <th>Jabatan</th>
                                 @foreach($tests as $test)
                                 <th width="50">{{ $test->nama_tes }}</th>
                                 @endforeach
-                                <th width="30"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,14 +49,12 @@
                                     $position->tes = explode(',', $position->tes);
                                 ?>
                                 <tr data-id="{{ $position->id_posisi }}">
-                                    <td></td>
                                     <td>{{ $position->nama_posisi }}</td>
                                     @foreach($tests as $test)
                                     <td align="center">
                                         <input class="form-check-input" type="checkbox" data-test="{{ $test->id_tes }}" data-position="{{ $position->id_posisi }}" {{ in_array($test->id_tes, $position->tes) ? 'checked' : '' }}>
                                     </td>
                                     @endforeach
-                                    <td></td>
                                 </tr>
                                 @endforeach
                             @endif
@@ -88,7 +84,8 @@
 <script type="text/javascript">
     // DataTable
     Spandiv.DataTable("#datatable", {
-        pageLength: -1
+        pageLength: -1,
+        orderAll: true
     });
 
     // Change the HRD

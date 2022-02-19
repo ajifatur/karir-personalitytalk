@@ -11,7 +11,7 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
-            @if(Auth::user()->role_id == role('admin'))
+            @if(Auth::user()->role->is_global === 1)
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
@@ -42,7 +42,7 @@
                                 <th width="100">Pelamar</th>
                                 <th width="100">Status</th>
                                 <th width="100">Waktu</th>
-                                @if(Auth::user()->role_id == role('admin') && Request::query('hrd') == null)
+                                @if(Auth::user()->role->is_global === 1 && Request::query('hrd') == null)
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="60">Opsi</th>
@@ -74,7 +74,7 @@
                                     <br>
                                     <small class="text-muted">{{ date('H:i', strtotime($vacancy->created_at)) }} WIB</span>
                                 </td>
-                                @if(Auth::user()->role_id == role('admin') && Request::query('hrd') == null)
+                                @if(Auth::user()->role->is_global === 1 && Request::query('hrd') == null)
                                 <td>{{ $vacancy->perusahaan }}</td>
                                 @endif
                                 <td>

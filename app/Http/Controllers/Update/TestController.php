@@ -21,18 +21,15 @@ class TestController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-    	    // Get the tests
-			$tests = Tes::all();
+        // Get the tests
+        $tests = Tes::all();
 
-            // View
-        	return view('admin/test/index', [
-        		'tests' => $tests,
-        	]);
-        }
-        else abort(403);
+        // View
+        return view('admin/test/index', [
+            'tests' => $tests,
+        ]);
     }
 
     /**
@@ -43,13 +40,10 @@ class TestController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-            // View
-        	return view('admin/test/create');
-        }
-        else abort(403);
+        // View
+        return view('admin/test/create');
     }
 
     /**
@@ -101,18 +95,15 @@ class TestController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-            // Get the test
-            $test = Tes::findOrFail($id);
+        // Get the test
+        $test = Tes::findOrFail($id);
 
-            // View
-        	return view('admin/test/edit', [
-                'test' => $test
-            ]);
-        }
-        else abort(403);
+        // View
+        return view('admin/test/edit', [
+            'test' => $test
+        ]);
     }
 
     /**
@@ -162,7 +153,7 @@ class TestController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the test
         $test = Tes::find($request->id);

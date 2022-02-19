@@ -14,7 +14,7 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
-            @if(Auth::user()->role_id == role('admin'))
+            @if(Auth::user()->role->is_global === 1)
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
@@ -77,7 +77,7 @@
             {data: 'username', name: 'username'},
             {data: 'posisi', name: 'posisi'},
             {data: 'status', name: 'status'},
-            {data: 'company', name: 'company', visible: {{ Auth::user()->role_id == role('admin') && Request::query('hrd') == null ? 'true' : 'false' }}},
+            {data: 'company', name: 'company', visible: {{ Auth::user()->role->is_global === 1 && Request::query('hrd') == null ? 'true' : 'false' }}},
             {data: 'options', name: 'options', className: 'text-center', orderable: false},
         ],
         order: [2, 'asc']

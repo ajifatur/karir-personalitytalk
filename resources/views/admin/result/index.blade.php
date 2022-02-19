@@ -19,7 +19,7 @@
                         @endforeach
                     </select>
                 </div>
-                @if(Auth::user()->role_id == role('admin'))
+                @if(Auth::user()->role->is_global === 1)
                     <div class="ms-sm-2 ms-0">
                         <select name="hrd" class="form-select form-select-sm">
                             <option value="0">Semua Perusahaan</option>
@@ -80,7 +80,7 @@
             {data: 'posisi', name: 'posisi'},
             {data: 'datetime', name: 'datetime'},
             {data: 'tes', name: 'tes', visible: {{ Request::query('test') == null ? 'true' : 'false' }}},
-            {data: 'company', name: 'company', visible: {{ Auth::user()->role_id == role('admin') && Request::query('hrd') == null ? 'true' : 'false' }}},
+            {data: 'company', name: 'company', visible: {{ Auth::user()->role->is_global === 1 && Request::query('hrd') == null ? 'true' : 'false' }}},
             {data: 'options', name: 'options', className: 'text-center', orderable: false},
         ],
         order: [3, 'desc']

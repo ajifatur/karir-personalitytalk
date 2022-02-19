@@ -14,9 +14,9 @@ if(!function_exists('subdomain_tes')){
 // STIFIn access
 if(!function_exists('stifin_access')) {
     function stifin_access() {
-        if(Auth::user()->role_id == role('admin'))
+        if(Auth::user()->role->is_global === 1)
             return true;
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             if($hrd){
                 if($hrd->akses_stifin == 1) return true;
@@ -141,7 +141,7 @@ if(!function_exists('get_data_update')){
 // Get User HRD
 if(!function_exists('get_user_hrd')) {
     function get_user_hrd() {
-        if(Auth::user()->role_id == role('hrd')) {
+        if(Auth::user()->role->is_global === 0) {
             $data = DB::table('hrd')->where('id_user','=',Auth::user()->id)->first();
             return $data->id_hrd;
         }
@@ -285,9 +285,9 @@ if(!function_exists('count_pelamar_by_perusahaan')){
 // Menghitung jumlah pelamar belum diseleksi berdasarkan lowongan
 if(!function_exists('count_pelamar_belum_diseleksi_by_lowongan')) {
     function count_pelamar_belum_diseleksi_by_lowongan($id){
-        if(Auth::user()->role_id == role('admin'))
+        if(Auth::user()->role->is_global === 1)
             $pelamar = DB::table('pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$id)->get();
-        elseif(Auth::user()->role_id == role('hrd'))
+        elseif(Auth::user()->role->is_global === 0)
             $pelamar = DB::table('pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',get_user_hrd())->where('id_lowongan','=',$id)->get();
 
         $count = 0;
@@ -305,9 +305,9 @@ if(!function_exists('count_pelamar_belum_diseleksi_by_lowongan')) {
 // Menghitung jumlah pelamar belum dites berdasarkan lowongan
 if(!function_exists('count_pelamar_belum_dites_by_lowongan')) {
     function count_pelamar_belum_dites_by_lowongan($id) {
-        if(Auth::user()->role_id == role('admin'))
+        if(Auth::user()->role->is_global === 1)
             $data = DB::table('seleksi')->join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_lowongan','=',$id)->where('seleksi.hasil','=',99)->count();
-        elseif(Auth::user()->role_id == role('hrd'))
+        elseif(Auth::user()->role->is_global === 0)
             $data = DB::table('seleksi')->join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_lowongan','=',$id)->where('seleksi.hasil','=',99)->where('seleksi.id_hrd','=',get_user_hrd())->count();
         return $data;
     }
@@ -316,9 +316,9 @@ if(!function_exists('count_pelamar_belum_dites_by_lowongan')) {
 // Menghitung jumlah pelamar belum diseleksi
 if(!function_exists('count_pelamar_belum_diseleksi')) {
     function count_pelamar_belum_diseleksi() {
-        if(Auth::user()->role_id == role('admin'))
+        if(Auth::user()->role->is_global === 1)
             $pelamar = DB::table('pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->get();
-        elseif(Auth::user()->role_id == role('hrd'))
+        elseif(Auth::user()->role->is_global === 0)
             $pelamar = DB::table('pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',get_user_hrd())->get();
 
         $count = 0;

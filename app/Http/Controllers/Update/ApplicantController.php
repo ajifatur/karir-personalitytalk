@@ -26,13 +26,16 @@ class ApplicantController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
+        // Check the access
+        has_access(method(__METHOD__), Auth::user()->role_id);
+
         if($request->ajax()) {
             // Get applicants
-            if(Auth::user()->role_id == role('admin')) {
+            if(Auth::user()->role->is_global === 1) {
                 $hrd = HRD::find($request->query('hrd'));
                 $applicants = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
             }
-            elseif(Auth::user()->role_id == role('hrd')) {
+            elseif(Auth::user()->role->is_global === 0) {
                 $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
                 $applicants = Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get();
             }
@@ -89,16 +92,16 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get HRDs
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // Get vacancies
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $vacancies = [];
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $vacancies = Lowongan::where('id_hrd','=',$hrd->id_hrd)->where('status','=',1)->orderBy('judul_lowongan','asc')->get();
         }
@@ -208,10 +211,10 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function detail($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the applicant
-        if(Auth::user()->role_id == role('admin'))
+        if(Auth::user()->role->is_global === 1)
             $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
         else {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
@@ -250,13 +253,13 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the applicant
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
     	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
     	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
@@ -355,7 +358,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the applicant
         $applicant = Pelamar::find($request->id);
@@ -388,11 +391,11 @@ class ApplicantController extends \App\Http\Controllers\Controller
     public function export(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         ini_set("memory_limit", "-1");
 
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             // Get the HRD
             $hrd = HRD::find($request->query('hrd'));
 
@@ -404,7 +407,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
 
             return Excel::download(new PelamarExport($applicants), $filename.'.xlsx');
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             // Get the HRD
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
 

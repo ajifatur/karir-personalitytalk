@@ -20,14 +20,14 @@ class PositionController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get offices
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $hrd = HRD::find($request->query('hrd'));
             $positions = $hrd ? Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->where('hrd.id_hrd','=',$hrd->id_hrd)->get() : Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->get();
         }
@@ -50,16 +50,16 @@ class PositionController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get HRD
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // Get tests
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
     	    $tests = Tes::all();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $user = HRD::where('id_user','=',Auth::user()->id)->first();
             $ids = explode(',', $user->akses_tes);
             $tests = Tes::whereIn('id_tes',$ids)->get();
@@ -81,14 +81,14 @@ class PositionController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get data HRD
-    	if(Auth::user()->role_id == role('hrd')) {
+    	if(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'hrd' => Auth::user()->role_id == role('admin') ? 'required' : '',
+            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
         ], validationMessages());
         
         // Check errors
@@ -119,10 +119,10 @@ class PositionController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the position
-    	if(Auth::user()->role_id == role('hrd')) {
+    	if(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
             $position = Posisi::where('id_posisi','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
@@ -186,7 +186,7 @@ class PositionController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the position
         $position = Posisi::find($request->id);

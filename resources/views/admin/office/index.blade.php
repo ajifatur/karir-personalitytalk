@@ -11,7 +11,7 @@
 <div class="row">
 	<div class="col-12">
 		<div class="card">
-            @if(Auth::user()->role_id == role('admin'))
+            @if(Auth::user()->role->is_global === 1)
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
@@ -39,7 +39,7 @@
                                 <th width="30"><input type="checkbox" class="form-check-input checkbox-all"></th>
                                 <th>Nama</th>
                                 <th width="80">Karyawan</th>
-                                @if(Auth::user()->role_id == role('admin') && Request::query('hrd') == null)
+                                @if(Auth::user()->role->is_global === 1 && Request::query('hrd') == null)
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="60">Opsi</th>
@@ -51,7 +51,7 @@
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td>{{ $office->nama_kantor }}</td>
                                 <td align="right">{{ number_format(count_karyawan_by_kantor($office->id_kantor),0,',',',') }}</td>
-                                @if(Auth::user()->role_id == role('admin') && Request::query('hrd') == null)
+                                @if(Auth::user()->role->is_global === 1 && Request::query('hrd') == null)
                                 <td>{{ $office->perusahaan }}</td>
                                 @endif
                                 <td>

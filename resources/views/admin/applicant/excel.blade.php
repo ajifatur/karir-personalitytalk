@@ -11,7 +11,9 @@
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Alamat</strong></td>
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Riwayat Pekerjaan</strong></td>
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Posisi</strong></td>
+		@if(Auth::user()->role->is_global === 1)
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Perusahaan</strong></td>
+		@endif
 	</tr>
 	@foreach($applicants as $key=>$applicant)
 	<tr>
@@ -26,7 +28,9 @@
         <td>{{ $applicant->alamat }}</td>
         <td>{{ $applicant->riwayat_pekerjaan }}</td>
         <td>{{ get_posisi_name($applicant->posisi) }}</td>
+		@if(Auth::user()->role->is_global === 1)
         <td>{{ get_perusahaan_name($applicant->id_hrd) }}</td>
+		@endif
 	</tr>
 	@endforeach
 </table>

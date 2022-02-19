@@ -38,7 +38,7 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::post('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
 
 	// URL Form
-	Route::get('/lowongan/{url}', 'LowonganController@visitForm');
+	Route::get('/lowongan/{url}', 'Update\VacancyController@visit');
 
 	// Register as General Member
 	// Route::get('/register', 'Auth\RegisterController@showRegistrationForm');
@@ -159,7 +159,5 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/applicant/convert', 'Update\ApplicantController@convert')->name('admin.applicant.convert');
 });
 
-// RouteExt::user();
-// RouteExt::menu();
 // \Ajifatur\Helpers\RouteExt::auth();
 \Ajifatur\Helpers\RouteExt::admin();

@@ -22,16 +22,16 @@ class HRDController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
-        if(Auth::user()->role_id == role('admin')) {
-            // Get HRDs
-            $hrds = HRD::join('users','hrd.id_user','=','users.id')->get();
+        // Check the access
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-            // View
-            return view('admin/hrd/index', [
-                'hrds' => $hrds
-            ]);
-        }
-        else abort(403);
+        // Get HRDs
+        $hrds = HRD::join('users','hrd.id_user','=','users.id')->get();
+
+        // View
+        return view('admin/hrd/index', [
+            'hrds' => $hrds
+        ]);
     }
 
     /**
@@ -42,18 +42,15 @@ class HRDController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-            // Get tests
-    	    $tests = Tes::all();
+        // Get tests
+        $tests = Tes::all();
 
-            // View
-            return view('admin/hrd/create', [
-                'tests' => $tests
-            ]);
-        }
-        else abort(403);
+        // View
+        return view('admin/hrd/create', [
+            'tests' => $tests
+        ]);
     }
 
     /**
@@ -135,19 +132,16 @@ class HRDController extends \App\Http\Controllers\Controller
     public function detail($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-            // Get the HRD
-            $hrd = HRD::findOrFail($id);
-            $hrd->user = User::find($hrd->id_user);
+        // Get the HRD
+        $hrd = HRD::findOrFail($id);
+        $hrd->user = User::find($hrd->id_user);
 
-            // View
-            return view('admin/hrd/detail', [
-                'hrd' => $hrd
-            ]);
-        }
-        else abort(403);
+        // View
+        return view('admin/hrd/detail', [
+            'hrd' => $hrd
+        ]);
     }
 
     /**
@@ -159,27 +153,24 @@ class HRDController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-            // Get the HRD
-            $hrd = HRD::findOrFail($id);
-            $hrd->akses_tes = $hrd->akses_tes != '' ? explode(',', $hrd->akses_tes) : [];
+        // Get the HRD
+        $hrd = HRD::findOrFail($id);
+        $hrd->akses_tes = $hrd->akses_tes != '' ? explode(',', $hrd->akses_tes) : [];
 
-            // Get the user
-            $user = User::findOrFail($hrd->id_user);
+        // Get the user
+        $user = User::findOrFail($hrd->id_user);
 
-            // Get tests
-    	    $tests = Tes::all();
+        // Get tests
+        $tests = Tes::all();
 
-            // View
-            return view('admin/hrd/edit', [
-                'hrd' => $hrd,
-                'user' => $user,
-                'tests' => $tests
-            ]);
-        }
-        else abort(403);
+        // View
+        return view('admin/hrd/edit', [
+            'hrd' => $hrd,
+            'user' => $user,
+            'tests' => $tests
+        ]);
     }
 
     /**
@@ -264,7 +255,7 @@ class HRDController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the HRD
         $hrd = HRD::find($request->id);

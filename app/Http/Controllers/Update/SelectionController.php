@@ -24,9 +24,9 @@ class SelectionController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             if($request->query('hrd') != null && $request->query('result') != null) {
                 $hrd = HRD::find($request->query('hrd'));
 
@@ -51,7 +51,7 @@ class SelectionController extends \App\Http\Controllers\Controller
             // Get offices
             $offices = Kantor::all();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
 			// Get the HRD
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
 			
@@ -93,13 +93,10 @@ class SelectionController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
-        if(Auth::user()->role_id == role('admin')) {
-            // View
-        	return view('admin/test/create');
-        }
-        else abort(403);
+        // View
+        return view('admin/test/create');
     }
 
     /**
@@ -111,11 +108,11 @@ class SelectionController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get the HRD
-    	if(Auth::user()->role_id == role('admin')) {
+    	if(Auth::user()->role->is_global === 1) {
             $applicant = Pelamar::find($request->applicant_id);
             if($applicant) $hrd = HRD::find($applicant->id_hrd);
         }
-    	elseif(Auth::user()->role_id == role('hrd')) {
+    	elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
         }
 
@@ -162,10 +159,7 @@ class SelectionController extends \App\Http\Controllers\Controller
      * @return \Illuminate\Http\Response
      */
     public function detail(Request $request)
-    {
-        // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
-        
+    {        
         if($request->ajax()) {
             // Get the selection
             $selection = Seleksi::find($request->id);
@@ -218,7 +212,7 @@ class SelectionController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the selection
         $selection = Seleksi::find($request->id);
@@ -239,7 +233,7 @@ class SelectionController extends \App\Http\Controllers\Controller
     public function convert(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the selection
         $selection = Seleksi::find($request->id);

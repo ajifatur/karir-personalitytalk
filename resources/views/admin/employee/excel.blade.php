@@ -12,7 +12,7 @@
 		<td align="center" width="20" style="background-color: #f88315;"><strong>Awal Bekerja</strong></td>
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Posisi</strong></td>
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Kantor</strong></td>
-		@if(Auth::user()->role_id == role('admin'))
+		@if(Auth::user()->role->is_global === 1)
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Perusahaan</strong></td>
 		@endif
 	</tr>
@@ -30,7 +30,7 @@
         <td>{{ $employee->awal_bekerja != null ? date('d/m/Y', strtotime($employee->awal_bekerja)) : '' }}</td>
         <td>{{ get_posisi_name($employee->posisi) }}</td>
         <td>{{ get_kantor_name($employee->kantor) }}</td>
-		@if(Auth::user()->role_id == role('admin'))
+		@if(Auth::user()->role->is_global === 1)
         <td>{{ get_perusahaan_name($employee->id_hrd) }}</td>
         @endif
 	</tr>

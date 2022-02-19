@@ -19,14 +19,14 @@ class OfficeController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role->id);
 
         // Get offices
-        if(Auth::user()->role_id == role('admin')) {
+        if(Auth::user()->role->is_global === 1) {
             $hrd = HRD::find($request->query('hrd'));
             $offices = $hrd ? Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get() : Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
         }
-        elseif(Auth::user()->role_id == role('hrd')) {
+        elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
             $offices = Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get();
         }
@@ -49,7 +49,7 @@ class OfficeController extends \App\Http\Controllers\Controller
     public function create()
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get HRDs
         $hrds = HRD::orderBy('perusahaan','asc')->get();
@@ -76,7 +76,7 @@ class OfficeController extends \App\Http\Controllers\Controller
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'hrd' => Auth::user()->role_id == role('admin') ? 'required' : '',
+            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
             'phone_number' => $request->phone_number != '' ? 'numeric' : ''
         ], validationMessages());
         
@@ -108,7 +108,7 @@ class OfficeController extends \App\Http\Controllers\Controller
     public function edit($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the office
     	if(Auth::user()->role_id == role('hrd')) {
@@ -166,7 +166,7 @@ class OfficeController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the office
         $office = Kantor::find($request->id);

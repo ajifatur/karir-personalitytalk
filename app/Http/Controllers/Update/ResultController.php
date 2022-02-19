@@ -35,11 +35,14 @@ class ResultController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
+        // Check the access
+        has_access(method(__METHOD__), Auth::user()->role_id);
+
         if($request->ajax()) {
             // Get employee results
             if($request->query('role') == role('employee')) {
                 // Get the HRD and the test
-                $hrd = Auth::user()->role_id == role('admin') ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
+                $hrd = Auth::user()->role->is_global === 1 ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
                 $test = Tes::find($request->query('test'));
 
                 if($hrd && $test)
@@ -54,7 +57,7 @@ class ResultController extends \App\Http\Controllers\Controller
             // Get applicant results
             elseif($request->query('role') == role('applicant')) {
                 // Get the HRD and the test
-                $hrd = Auth::user()->role_id == role('admin') ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
+                $hrd = Auth::user()->role->is_global === 1 ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
                 $test = Tes::find($request->query('test'));
 
                 if($hrd && $test)
@@ -144,10 +147,10 @@ class ResultController extends \App\Http\Controllers\Controller
     public function detail($id)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 
     	// Get the result
-    	if(Auth::user()->role_id == role('admin')) {
+    	if(Auth::user()->role->is_global === 1) {
             $result = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->findOrFail($id);
         }
         else {
@@ -206,7 +209,7 @@ class ResultController extends \App\Http\Controllers\Controller
     public function delete(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the result
         $result = Hasil::join('users','hasil.id_user','=','users.id')->find($request->id);
@@ -227,7 +230,7 @@ class ResultController extends \App\Http\Controllers\Controller
     public function print(Request $request)
     {
         // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role_id);
 		
         ini_set('max_execution_time', '300');
 		
