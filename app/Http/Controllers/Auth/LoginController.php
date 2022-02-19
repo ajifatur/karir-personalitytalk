@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Ajifatur\FaturHelper\Models\Visitor;
 
 class LoginController extends \App\Http\Controllers\Controller
 {
@@ -59,6 +61,18 @@ class LoginController extends \App\Http\Controllers\Controller
                 if($user) {
                     $user->last_visit = date('Y-m-d H:i:s');
                     $user->save();
+                }
+				
+                // Add to visitors
+                if(Schema::hasTable('visitors')) {
+                    $visitor = new Visitor;
+                    $visitor->user_id = $user->id;
+                    $visitor->ip_address = $request->ip();
+                    $visitor->device = device_info();
+                    $visitor->browser = browser_info();
+                    $visitor->platform = platform_info();
+                    $visitor->location = location_info($request->ip());
+                    $visitor->save();
                 }
 
                 // Redirect
