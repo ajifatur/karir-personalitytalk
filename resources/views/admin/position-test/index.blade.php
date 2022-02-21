@@ -24,7 +24,7 @@
             </div>
             <hr class="my-0">
             @endif
-            @if(Request::query('hrd') != 0)
+            @if($hrd)
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -45,17 +45,15 @@
                         <tbody>
                             @if(count($positions) > 0)
                                 @foreach($positions as $position)
-                                <?php
-                                    $position->tes = explode(',', $position->tes);
-                                ?>
-                                <tr data-id="{{ $position->id_posisi }}">
-                                    <td>{{ $position->nama_posisi }}</td>
-                                    @foreach($tests as $test)
-                                    <td align="center">
-                                        <input class="form-check-input" type="checkbox" data-test="{{ $test->id_tes }}" data-position="{{ $position->id_posisi }}" {{ in_array($test->id_tes, $position->tes) ? 'checked' : '' }}>
-                                    </td>
-                                    @endforeach
-                                </tr>
+                                    <?php $position->tes = explode(',', $position->tes); ?>
+                                    <tr data-id="{{ $position->id_posisi }}">
+                                        <td>{{ $position->nama_posisi }}</td>
+                                        @foreach($tests as $test)
+                                        <td align="center">
+                                            <input class="form-check-input" type="checkbox" data-test="{{ $test->id_tes }}" data-position="{{ $position->id_posisi }}" {{ in_array($test->id_tes, $position->tes) ? 'checked' : '' }}>
+                                        </td>
+                                        @endforeach
+                                    </tr>
                                 @endforeach
                             @endif
                         </tbody>

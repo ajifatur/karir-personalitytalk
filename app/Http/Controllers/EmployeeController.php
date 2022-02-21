@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Update;
+namespace App\Http\Controllers;
 
 use Auth;
 use DataTables;

@@ -46,6 +46,7 @@ class VacancyController extends \App\Http\Controllers\Controller
             $array[$key]['url'] = $vacancy->url_lowongan;
             $array[$key]['status'] = $vacancy->status;
             $array[$key]['author'] = $vacancy->nama_lengkap;
+            $array[$key]['company'] = $vacancy->perusahaan;
             $array[$key]['created_at'] = $vacancy->created_at;
             $array[$key]['date'] = DateTimeExt::full($vacancy->created_at).' WIB';
         }
@@ -74,6 +75,7 @@ class VacancyController extends \App\Http\Controllers\Controller
         $array['url'] = $vacancy->url_lowongan;
         $array['status'] = $vacancy->status;
         $array['author'] = $vacancy->nama_lengkap;
+        $array['company'] = $vacancy->perusahaan;
         $array['created_at'] = $vacancy->created_at;
 		$array['date'] = DateTimeExt::full($vacancy->created_at).' WIB';
 

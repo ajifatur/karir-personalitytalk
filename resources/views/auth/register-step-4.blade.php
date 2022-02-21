@@ -91,9 +91,11 @@
                 <div class="card rounded-2 border-0 shadow-sm mb-3 mb-lg-0 sticky-top top">
                     <img class="card-img-top" data-pt="image" src="">
                     <div class="card-body">		          	
-                        <h5 class="mb-3" data-pt="title"></h5>
+                        <h5 class="mb-1" data-pt="title"></h5>
                         <p class="mb-1" data-pt="status"></p>
-                        <p class="m-0">Oleh : <span data-pt="author"></span> <br> Terakhir diperbarui pada <span data-pt="date"></span></p>
+                        <p class="mb-0"><i class="bi-person"></i> <span data-pt="author"></span></p>
+                        <p class="mb-0"><i class="bi-building"></i> <span data-pt="company"></span></p>
+                        <p class="mb-0"><i class="bi-calendar2"></i> <span data-pt="date"></span></p>
                     </div>
 		        </div>
             </div>
@@ -122,6 +124,7 @@
                 $("[data-pt=image]").attr("src",response.image);
                 $("[data-pt=url]").attr("href","https://karir.psikologanda.com/lowongan/" + response.url);
                 $("[data-pt=author]").text(response.author);
+                $("[data-pt=company]").text(response.company);
                 $("[data-pt=date]").text(response.date);
 			    $("[data-pt=status]").html(response.status == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Tidak Aktif</span>');
             }

@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Update;
+namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Posisi;
+use App\Models\Kantor;
 use App\Models\HRD;
-use App\Models\Tes;
 
-class PositionController extends \App\Http\Controllers\Controller
+class OfficeController extends \App\Http\Controllers\Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,24 +19,24 @@ class PositionController extends \App\Http\Controllers\Controller
     public function index(Request $request)
     {
         // Check the access
-        has_access(method(__METHOD__), Auth::user()->role_id);
+        has_access(method(__METHOD__), Auth::user()->role->id);
 
         // Get offices
         if(Auth::user()->role->is_global === 1) {
             $hrd = HRD::find($request->query('hrd'));
-            $positions = $hrd ? Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->where('hrd.id_hrd','=',$hrd->id_hrd)->get() : Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
+            $offices = $hrd ? Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get() : Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
         }
         elseif(Auth::user()->role->is_global === 0) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->get();
+            $offices = Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get();
         }
 
         // Get HRDs
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
         // View
-        return view('admin/position/index', [
-            'positions' => $positions,
+        return view('admin/office/index', [
+            'offices' => $offices,
             'hrds' => $hrds
         ]);
     }
@@ -52,23 +51,12 @@ class PositionController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get HRD
+        // Get HRDs
         $hrds = HRD::orderBy('perusahaan','asc')->get();
 
-        // Get tests
-        if(Auth::user()->role->is_global === 1) {
-    	    $tests = Tes::all();
-        }
-        elseif(Auth::user()->role->is_global === 0) {
-            $user = HRD::where('id_user','=',Auth::user()->id)->first();
-            $ids = explode(',', $user->akses_tes);
-            $tests = Tes::whereIn('id_tes',$ids)->get();
-        }
-
         // View
-        return view('admin/position/create', [
-            'hrds' => $hrds,
-            'tests' => $tests
+        return view('admin/office/create', [
+            'hrds' => $hrds
         ]);
     }
 
@@ -81,7 +69,7 @@ class PositionController extends \App\Http\Controllers\Controller
     public function store(Request $request)
     {
     	// Get data HRD
-    	if(Auth::user()->role->is_global === 0) {
+    	if(Auth::user()->role_id == role('hrd')) {
             $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
@@ -89,6 +77,7 @@ class PositionController extends \App\Http\Controllers\Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'phone_number' => $request->phone_number != '' ? 'numeric' : ''
         ], validationMessages());
         
         // Check errors
@@ -97,16 +86,16 @@ class PositionController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Save the position
-            $position = new Posisi;
-            $position->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
-            $position->nama_posisi = $request->name;
-            $position->tes = !empty($request->get('tests')) ? implode(',', array_filter($request->get('tests'))) : '';
-            $position->keahlian = !empty($request->get('skills')) ? implode(',', array_filter($request->get('skills'))) : '';
-            $position->save();
+            // Save the office
+            $office = new Kantor;
+            $office->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
+            $office->nama_kantor = $request->name;
+            $office->alamat_kantor = $request->address != '' ? $request->address : '';
+            $office->telepon_kantor = $request->phone_number != '' ? $request->phone_number : '';
+            $office->save();
 
             // Redirect
-            return redirect()->route('admin.position.index')->with(['message' => 'Berhasil menambah data.']);
+            return redirect()->route('admin.office.index')->with(['message' => 'Berhasil menambah data.']);
         }
     }
 
@@ -121,28 +110,18 @@ class PositionController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get the position
-    	if(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
-            $position = Posisi::where('id_posisi','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
+        // Get the office
+    	if(Auth::user()->role_id == role('hrd')) {
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+            $office = Kantor::where('id_kantor','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
         }
         else {
-            $position = Posisi::findOrFail($id);
+            $office = Kantor::findOrFail($id);
         }
-
-        // Set position tests and skills
-        if($position) {
-        	$position->tes = $position->tes != '' ? explode(',', $position->tes) : array();
-            $position->keahlian = $position->keahlian != '' ? explode(',', $position->keahlian) : array();
-        }
-
-        // Get tests
-    	$tests = get_perusahaan_tes($position->id_hrd);
 
         // View
-        return view('admin/position/edit', [
-            'position' => $position,
-            'tests' => $tests
+        return view('admin/office/edit', [
+            'office' => $office
         ]);
     }
 
@@ -157,6 +136,7 @@ class PositionController extends \App\Http\Controllers\Controller
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'phone_number' => $request->phone_number != '' ? 'numeric' : ''
         ], validationMessages());
         
         // Check errors
@@ -165,15 +145,15 @@ class PositionController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Update the position
-            $position = Posisi::find($request->id);
-            $position->nama_posisi = $request->name;
-            $position->tes = !empty($request->get('tests')) ? implode(',', array_filter($request->get('tests'))) : '';
-            $position->keahlian = !empty($request->get('skills')) ? implode(',', array_filter($request->get('skills'))) : '';
-            $position->save();
+            // Update the office
+            $office = Kantor::find($request->id);
+            $office->nama_kantor = $request->name;
+            $office->alamat_kantor = $request->address != '' ? $request->address : '';
+            $office->telepon_kantor = $request->phone_number != '' ? $request->phone_number : '';
+            $office->save();
 
             // Redirect
-            return redirect()->route('admin.position.index')->with(['message' => 'Berhasil mengupdate data.']);
+            return redirect()->route('admin.office.index')->with(['message' => 'Berhasil mengupdate data.']);
         }
     }
 
@@ -188,13 +168,13 @@ class PositionController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
         
-        // Get the position
-        $position = Posisi::find($request->id);
+        // Get the office
+        $office = Kantor::find($request->id);
 
-        // Delete the position
-        $position->delete();
+        // Delete the office
+        $office->delete();
 
         // Redirect
-        return redirect()->route('admin.position.index')->with(['message' => 'Berhasil menghapus data.']);
+        return redirect()->route('admin.office.index')->with(['message' => 'Berhasil menghapus data.']);
     }
 }

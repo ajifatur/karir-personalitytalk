@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Update;
+namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
@@ -71,6 +71,7 @@ class PositionTestController extends \App\Http\Controllers\Controller
         // View
         return view('admin/position-test/index', [
             'hrds' => $hrds,
+            'hrd' => $hrd,
             'tests' => $tests,
             'positions' => $positions,
             'testArray' => $testArray,
