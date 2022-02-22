@@ -68,6 +68,6 @@ class MSDTController extends \App\Http\Controllers\Controller
         ]);
         $pdf->setPaper('A4', 'portrait');
         
-        return $pdf->stream("Result.pdf");
+        return $pdf->stream($request->nama . '_' . $request->tes . '.pdf');
     }
 }

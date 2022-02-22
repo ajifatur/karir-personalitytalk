@@ -63,7 +63,7 @@ Route::group(['middleware' => ['admin']], function() {
 	})->name('admin.dashboard');
 
 	// Profile
-	Route::get('/admin/profile/detail', 'ProfileController@detail')->name('admin.profile.detail');
+	Route::get('/admin/profile', 'ProfileController@detail')->name('admin.profile');
 	Route::get('/admin/profile/edit', 'ProfileController@edit')->name('admin.profile.edit');
 	Route::post('/admin/profile/update', 'ProfileController@update')->name('admin.profile.update');
 	Route::get('/admin/profile/edit-password', 'ProfileController@editPassword')->name('admin.profile.edit-password');
