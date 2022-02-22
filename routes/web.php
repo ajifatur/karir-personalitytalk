@@ -13,6 +13,9 @@ use Ajifatur\Helpers\RouteExt;
 |
 */
 
+// \Ajifatur\Helpers\RouteExt::auth();
+\Ajifatur\Helpers\RouteExt::admin();
+
 // Guest Capabilities
 Route::group(['middleware' => ['guest']], function() {
 
@@ -23,7 +26,7 @@ Route::group(['middleware' => ['guest']], function() {
 
 	// Login
 	Route::get('/login', 'Auth\LoginController@show')->name('auth.login');
-	Route::post('/login', 'Auth\LoginController@authenticate')->name('auth.post-login');
+	Route::post('/login', '\Ajifatur\FaturHelper\Http\Controllers\Auth\LoginController@authenticate');
 
 	// Applicant Register
 	Route::get('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
@@ -53,6 +56,11 @@ Route::group(['middleware' => ['admin']], function() {
 
 	// Logout
 	Route::post('/admin/logout', 'Auth\LoginController@logout')->name('admin.logout');
+
+	// Dashboard
+	Route::get('/admin', function() {
+		return view('admin/dashboard/index');
+	})->name('admin.dashboard');
 
 	// Profile
 	Route::get('/admin/profile/detail', 'ProfileController@detail')->name('admin.profile.detail');
@@ -156,6 +164,3 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/applicant/export', 'ApplicantController@export')->name('admin.applicant.export');
 	Route::post('/admin/applicant/convert', 'ApplicantController@convert')->name('admin.applicant.convert');
 });
-
-// \Ajifatur\Helpers\RouteExt::auth();
-\Ajifatur\Helpers\RouteExt::admin();

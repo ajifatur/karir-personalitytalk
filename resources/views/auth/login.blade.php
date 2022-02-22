@@ -29,12 +29,10 @@
                     <p class="m-0">Untuk tetap terhubung dengan kami, silakan login dengan informasi pribadi Anda melalui Username dan Password 🔔</p>
                 </div>
                 <div class="card-body">
-                  <form class="login-form" action="/login" method="post">
+                  <form class="login-form" action="{{ route('auth.login') }}" method="post">
                       {{ csrf_field() }}
-                      @if(isset($message))
-                      <div class="alert alert-danger">
-                          {{ $message }}
-                      </div>
+                      @if($errors->has('message'))
+                      <div class="alert alert-danger" role="alert">{{ $errors->first('message') }}</div>
                       @endif
                       <div class="form-group  mb-4">
                           <label class="control-label">Username / Email</label>
