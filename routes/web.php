@@ -44,7 +44,7 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::get('/lowongan/{url}', 'VacancyController@visit');
 
 	// Register as Applicant
-	Route::post('/register', 'RegisterController@store')->name('auth.register');
+	// Route::post('/register', 'RegisterController@store')->name('auth.register');
 
 	// Register as General Member
 	// Route::get('/register', 'Auth\RegisterController@showRegistrationForm');
