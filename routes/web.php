@@ -163,4 +163,16 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/applicant/delete', 'ApplicantController@delete')->name('admin.applicant.delete');
 	Route::get('/admin/applicant/export', 'ApplicantController@export')->name('admin.applicant.export');
 	Route::post('/admin/applicant/convert', 'ApplicantController@convert')->name('admin.applicant.convert');
+
+	/******************************** */
+
+	// Sync
+	Route::get('/admin/sync/user', 'SyncController@user');
+	Route::get('/admin/sync/applicant', 'SyncController@applicant');
+	Route::get('/admin/sync/applicant/attachment', 'SyncController@applicantAttachment');
+	Route::get('/admin/sync/applicant/socmed', 'SyncController@applicantSocmed');
+	Route::get('/admin/sync/applicant/guardian', 'SyncController@applicantGuardian');
+	Route::get('/admin/sync/applicant/skill', 'SyncController@applicantSkill');
+	Route::get('/admin/sync/employee', 'SyncController@employee');
+	Route::get('/admin/sync/internship', 'SyncController@internship');
 });

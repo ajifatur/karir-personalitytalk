@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
+header('Access-Control-Allow-Origin: *');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
