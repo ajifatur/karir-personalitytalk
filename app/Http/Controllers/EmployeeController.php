@@ -149,7 +149,7 @@ class EmployeeController extends \App\Http\Controllers\Controller
         }
         else{
             // Generate username
-            $userdata = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest()->first();
+            $userdata = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest('username')->first();
             if(!$userdata)
                 $username = generate_username(null, $hrd->kode);
             else
