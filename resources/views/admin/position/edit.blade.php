@@ -13,13 +13,29 @@
             <div class="card-body">
                 <form method="post" action="{{ route('admin.position.update') }}" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $position->id_posisi }}">
+                    <input type="hidden" name="id" value="{{ $position->id }}">
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Nama <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <input type="text" name="name" class="form-control form-control-sm {{ $errors->has('name') ? 'border-danger' : '' }}" value="{{ $position->nama_posisi }}" autofocus>
+                            <input type="text" name="name" class="form-control form-control-sm {{ $errors->has('name') ? 'border-danger' : '' }}" value="{{ $position->name }}" autofocus>
                             @if($errors->has('name'))
                             <div class="small text-danger">{{ $errors->first('name') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Role <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role-{{ role('employee') }}" value="{{ role('employee') }}" {{ $position->role_id == role('employee') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role-{{ role('employee') }}">{{ role(role('employee')) }}</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role-{{ role('internship') }}" value="{{ role('internship') }}" {{ $position->role_id == role('internship') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role-{{ role('internship') }}">{{ role(role('internship')) }}</label>
+                            </div>
+                            @if($errors->has('role'))
+                            <div class="small text-danger">{{ $errors->first('role') }}</div>
                             @endif
                         </div>
                     </div>
@@ -29,8 +45,8 @@
                             <div>
                                 @foreach($tests as $test)
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" name="tests[]" type="checkbox" value="{{ $test->id_tes }}" {{ in_array($test->id_tes, $position->tes) ? 'checked' : '' }}>
-                                    <span class="form-check-label">{{ $test->nama_tes }}</span>
+                                    <input class="form-check-input" name="tests[]" type="checkbox" value="{{ $test->id }}" {{ in_array($test->id, $position->tests()->pluck('id')->toArray()) ? 'checked' : '' }}>
+                                    <span class="form-check-label">{{ $test->name }}</span>
                                 </label>
                                 @endforeach
                             </div>
@@ -40,11 +56,11 @@
                         <label class="col-lg-2 col-md-3 col-form-label">Keahlian</label>
                         <div class="col-lg-10 col-md-9">
                             <div class="row">
-                                @if(count($position->keahlian)>0)
-                                    @foreach($position->keahlian as $key=>$skill)
+                                @if(count($position->skills) > 0)
+                                    @foreach($position->skills as $key=>$skill)
                                     <div class="col-12 mb-2 input-skill" data-id="{{ ($key+1) }}">
                                         <div class="input-group">
-                                            <input name="skills[]" type="text" class="form-control form-control-sm" placeholder="Masukkan Keahlian" value="{{ $skill }}">
+                                            <input name="skills[]" type="text" class="form-control form-control-sm" placeholder="Masukkan Keahlian" value="{{ $skill->name }}">
                                             <button class="btn btn-sm btn-success btn-add" type="button" data-id="{{ ($key+1) }}" title="Tambah"><i class="bi-plus"></i></button>
                                             <button class="btn btn-sm btn-danger btn-delete" type="button" data-id="{{ ($key+1) }}" title="Hapus"><i class="bi-trash"></i></button>
                                         </div>

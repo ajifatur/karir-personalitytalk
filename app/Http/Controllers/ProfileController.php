@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Ajifatur\Helpers\DateTimeExt;
 use App\Models\User;
-use App\Models\HRD;
 
 class ProfileController extends \App\Http\Controllers\Controller
 {
@@ -19,20 +19,12 @@ class ProfileController extends \App\Http\Controllers\Controller
      */
     public function detail()
     {
-        // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
-
         // Get the user
         $user = User::find(Auth::user()->id);
 
-        if($user->role_id == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-        }
-
         // View
         return view('admin/profile/detail', [
-            'user' => $user,
-            'hrd' => Auth::user()->role_id == role('hrd') ? $hrd : null,
+            'user' => $user
         ]);
     }
 
@@ -43,9 +35,6 @@ class ProfileController extends \App\Http\Controllers\Controller
      */
     public function edit()
     {
-        // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
-
         // View
         return view('admin/profile/edit');
     }
@@ -82,21 +71,14 @@ class ProfileController extends \App\Http\Controllers\Controller
             // Update the user
             $user = User::find($request->id);
             $user->name = $request->name;
-            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->username = $request->username;
             $user->save();
 
-            // Update the HRD
-            if(Auth::user()->role_id == role('hrd')) {
-                $hrd = HRD::where('id_user','=',$user->id)->first();
-                $hrd->nama_lengkap = $request->name;
-                $hrd->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-                $hrd->jenis_kelamin = $request->gender;
-                $hrd->email = $request->email;
-                $hrd->save();
-            }
+            // Update the user attributes
+            $user->attribute->birthdate = DateTimeExt::change($request->birthdate);
+            $user->attribute->gender = $request->gender;
+            $user->attribute->save();
 
             // Redirect
             return redirect()->route('admin.profile.edit')->with(['message' => 'Berhasil mengupdate data.']);
@@ -110,9 +92,6 @@ class ProfileController extends \App\Http\Controllers\Controller
      */
     public function editPassword()
     {
-        // Check the access
-        // has_access(method(__METHOD__), Auth::user()->role_id);
-
         // View
         return view('admin/profile/edit-password');
     }

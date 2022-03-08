@@ -22,10 +22,10 @@
                 </div>
                 @if(Auth::user()->role->is_global === 1)
                     <div class="ms-sm-2 ms-0">
-                        <select name="hrd" class="form-select form-select-sm">
+                        <select name="company" class="form-select form-select-sm">
                             <option value="0">Semua Perusahaan</option>
-                            @foreach($hrds as $hrd)
-                            <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                            @foreach($companies as $company)
+                            <option value="{{ $company->id }}" {{ Request::query('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -57,40 +57,40 @@
                             <tr>
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td>
-                                    <a href="{{ route('admin.applicant.detail', ['id' => $selection->id_pelamar]) }}">{{ ucwords($selection->nama_lengkap) }}</a>
+                                    <a href="{{ route('admin.applicant.detail', ['id' => $selection->user_id]) }}">{{ ucwords($selection->user->name) }}</a>
                                     <br>
-                                    <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $selection->email }}</small>
+                                    <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $selection->user->email }}</small>
                                     <br>
-                                    <small class="text-muted"><i class="bi-phone me-2"></i>{{ $selection->nomor_hp }}</small>
+                                    <small class="text-muted"><i class="bi-phone me-2"></i>{{ $selection->user->attribute->phone_number }}</small>
                                 </td>
-                                <td>{{ $selection->username }}</td>
-                                <td>{{ $selection->nama_posisi }}</td>
+                                <td>{{ $selection->user->username }}</td>
+                                <td>{{ $selection->vacancy->position ? $selection->vacancy->position->name : '-' }}</td>
                                 <td>
-                                    @if($selection->hasil == 1)
+                                    @if($selection->status == 1)
                                     <span class="badge bg-success">Direkomendasikan</span>
-                                    @elseif($selection->hasil == 0)
+                                    @elseif($selection->status == 0)
                                     <span class="badge bg-danger">Tidak Direkomendasikan</span>
-                                    @elseif($selection->hasil == 2)
+                                    @elseif($selection->status == 2)
                                     <span class="badge bg-info">Dipertimbangkan</span>
-                                    @elseif($selection->hasil == 99)
+                                    @elseif($selection->status == 99)
                                     <span class="badge bg-warning">Belum Dites</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <span class="d-none">{{ $selection->waktu_wawancara != null ? $selection->waktu_wawancara : '' }}</span>
-                                    {{ $selection->waktu_wawancara != null ? date('d/m/Y', strtotime($selection->waktu_wawancara)) : '-' }}
+                                    <span class="d-none">{{ $selection->test_time != null ? $selection->test_time : '' }}</span>
+                                    {{ $selection->test_time != null ? date('d/m/Y', strtotime($selection->test_time)) : '-' }}
                                     <br>
-                                    <small class="text-muted">{{ $selection->waktu_wawancara != null ? date('H:i', strtotime($selection->waktu_wawancara)).' WIB' : '' }}</small>
+                                    <small class="text-muted">{{ $selection->test_time != null ? date('H:i', strtotime($selection->test_time)).' WIB' : '' }}</small>
                                 </td>
                                 <td align="center">
                                     <div class="btn-group">
-                                        @if($selection->hasil == 1 && $selection->isEmployee == false)
-                                        <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a>
+                                        @if($selection->status == 1 && $selection->isEmployee == false)
+                                        <a href="#" class="btn btn-sm btn-success btn-convert" data-id="{{ $selection->id }}" data-bs-toggle="tooltip" title="Lantik Menjadi Karyawan"><i class="bi-check-circle"></i></a>
                                         @endif
                                         @if($selection->isEmployee == false)
-                                        <a href="#" class="btn btn-sm btn-warning btn-set-test" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                                        <a href="#" class="btn btn-sm btn-warning btn-set-test" data-id="{{ $selection->id }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
                                         @endif
-                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $selection->id_seleksi }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $selection->id }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -208,15 +208,15 @@
         Spandiv.SwalWarning("Anda yakin ingin mengonversi akun pelamar ke karyawan?", ".form-convert");
     });
   
-    // Change the Result and/or the HRD
-    $(document).on("change", ".card-header select[name=result], .card-header select[name=hrd]", function() {
+    // Change the result and/or the company
+    $(document).on("change", ".card-header select[name=result], .card-header select[name=company]", function() {
         var result = $(".card-header select[name=result]").val();
-        var hrd = $(".card-header select[name=hrd]").length === 1 ? $(".card-header select[name=hrd]").val() : null;
+        var company = $(".card-header select[name=company]").length === 1 ? $(".card-header select[name=company]").val() : null;
 
         // Redirect
-        if(hrd !== null) {
-            if(result == -1 && hrd == 0) window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}");
-            else window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}", {result: result, hrd: hrd});
+        if(company !== null) {
+            if(result == -1 && company == 0) window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}");
+            else window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}", {result: result, company: company});
         }
         else {
             if(result == -1) window.location.href = Spandiv.URL("{{ route('admin.selection.index') }}");
@@ -234,14 +234,14 @@
             data: {_token: "{{ csrf_token() }}", id: id},
             success: function(response) {
                 // Set Test Form
-                $("#modal-set-test").find("input[name=id]").val(response.id_seleksi);
-                $("#modal-set-test").find("select[name=result]").val(response.hasil);
-                $("#modal-set-test").find("input[name=date]").val(response.tanggal_wawancara);
-                $("#modal-set-test").find("input[name=time]").val(response.waktu_wawancara.split(" ")[1].substr(0,5));
-                $("#modal-set-test").find("input[name=place]").val(response.tempat_wawancara);
+                $("#modal-set-test").find("input[name=id]").val(response.id);
+                $("#modal-set-test").find("select[name=result]").val(response.status);
+                $("#modal-set-test").find("input[name=date]").val(response.test_date);
+                $("#modal-set-test").find("input[name=time]").val(response.test_time.split(" ")[1].substr(0,5));
+                $("#modal-set-test").find("input[name=place]").val(response.test_place);
 
                 // Add/Remove Disabled Attribute (Optional)
-                if(response.hasil === 1 || response.hasil === 2 || response.hasil === 0) {
+                if(response.status === 1 || response.status === 2 || response.status === 0) {
                     $("#modal-set-test").find("input[name=date]").attr("disabled","disabled");
                     $("#modal-set-test").find("input[name=time]").attr("disabled","disabled");
                     $("#modal-set-test").find("input[name=place]").attr("disabled","disabled");
@@ -253,8 +253,7 @@
                 }
 
                 // Show Modal
-                var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
-                modal.show();
+                Spandiv.Modal("#modal-set-test").show();
             }
         });
     });
@@ -279,8 +278,7 @@
 @if(count($errors) > 0)
 <script type="text/javascript">
     // Show Modal
-    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
-    modal.show();
+    Spandiv.Modal("#modal-set-test").show();
 </script>
 @endif
 

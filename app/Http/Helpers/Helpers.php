@@ -3,6 +3,7 @@
 // use Auth;
 use App\Models\HRD;
 use App\Models\TesSettings;
+use App\Models\Company;
 
 // Subdomain Tes Psikologanda
 if(!function_exists('subdomain_tes')){
@@ -17,9 +18,9 @@ if(!function_exists('stifin_access')) {
         if(Auth::user()->role->is_global === 1)
             return true;
         elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            if($hrd){
-                if($hrd->akses_stifin == 1) return true;
+            $company = Company::find(Auth::user()->attribute->company_id);
+            if($company){
+                if($company->stifin == 1) return true;
                 else return false;
             }
             else return false;

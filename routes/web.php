@@ -97,12 +97,12 @@ Route::group(['middleware' => ['admin']], function() {
 
 	// Selection
 	Route::get('/admin/selection', 'SelectionController@index')->name('admin.selection.index');
-	Route::post('/admin/selection/store', 'SelectionController@store')->name('admin.selection.store');
+	Route::post('/admin/selection/store', 'SelectionController@store')->name('admin.selection.store'); // TBC
 	Route::post('/admin/selection/update', 'SelectionController@update')->name('admin.selection.update');
-	Route::post('/admin/selection/convert', 'SelectionController@convert')->name('admin.selection.convert');
+	Route::post('/admin/selection/convert', 'SelectionController@convert')->name('admin.selection.convert'); // TBC
 	Route::post('/admin/selection/delete', 'SelectionController@delete')->name('admin.selection.delete');
 
-	// Test
+	// Test // TBC
 	Route::get('/admin/test', 'TestController@index')->name('admin.test.index');
 	Route::get('/admin/test/create', 'TestController@create')->name('admin.test.create');
 	Route::post('/admin/test/store', 'TestController@store')->name('admin.test.store');
@@ -175,4 +175,10 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/sync/applicant/skill', 'SyncController@applicantSkill');
 	Route::get('/admin/sync/employee', 'SyncController@employee');
 	Route::get('/admin/sync/internship', 'SyncController@internship');
+	Route::get('/admin/sync/hrd', 'SyncController@hrd');
+
+	Route::get('/admin/sync/company-test', 'SyncController@companyTest');
+	Route::get('/admin/sync/position-test', 'SyncController@positionTest');
+	Route::get('/admin/sync/position-skill', 'SyncController@positionSkill');
+	Route::get('/admin/sync/selection', 'SyncController@selection');
 });

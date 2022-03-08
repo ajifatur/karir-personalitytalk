@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Kantor;
-use App\Models\HRD;
+use App\Models\Office;
+use App\Models\Company;
 
 class OfficeController extends \App\Http\Controllers\Controller
 {
@@ -23,21 +23,21 @@ class OfficeController extends \App\Http\Controllers\Controller
 
         // Get offices
         if(Auth::user()->role->is_global === 1) {
-            $hrd = HRD::find($request->query('hrd'));
-            $offices = $hrd ? Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get() : Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->get();
+            $company = Company::find($request->query('company'));
+            $offices = $company ? $company->offices()->orderBy('is_main','desc')->orderBy('name','asc')->get() : Office::has('company')->orderBy('is_main','desc')->orderBy('name','asc')->get();
         }
         elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $offices = Kantor::join('hrd','kantor.id_hrd','=','hrd.id_hrd')->where('kantor.id_hrd','=',$hrd->id_hrd)->get();
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $offices = $company ? $company->offices()->orderBy('is_main','desc')->orderBy('name','asc')->get() : [];
         }
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // View
         return view('admin/office/index', [
             'offices' => $offices,
-            'hrds' => $hrds
+            'companies' => $companies
         ]);
     }
 
@@ -51,12 +51,12 @@ class OfficeController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // View
         return view('admin/office/create', [
-            'hrds' => $hrds
+            'companies' => $companies
         ]);
     }
 
@@ -68,16 +68,17 @@ class OfficeController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get data HRD
+    	// Get the company
     	if(Auth::user()->role_id == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+            $company = Company::find(Auth::user()->attribute->company_id);
         }
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
-            'phone_number' => $request->phone_number != '' ? 'numeric' : ''
+            'company' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'phone_number' => $request->phone_number != '' ? 'numeric' : '',
+            'is_main' => 'required',
         ], validationMessages());
         
         // Check errors
@@ -87,11 +88,12 @@ class OfficeController extends \App\Http\Controllers\Controller
         }
         else {
             // Save the office
-            $office = new Kantor;
-            $office->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
-            $office->nama_kantor = $request->name;
-            $office->alamat_kantor = $request->address != '' ? $request->address : '';
-            $office->telepon_kantor = $request->phone_number != '' ? $request->phone_number : '';
+            $office = new Office;
+            $office->company_id = isset($company) ? $company->id : $request->company;
+            $office->name = $request->name;
+            $office->address = $request->address != '' ? $request->address : '';
+            $office->phone_number = $request->phone_number != '' ? $request->phone_number : '';
+            $office->is_main = $request->is_main;
             $office->save();
 
             // Redirect
@@ -111,12 +113,12 @@ class OfficeController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the office
-    	if(Auth::user()->role_id == role('hrd')) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $office = Kantor::where('id_kantor','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
+    	if(Auth::user()->role->is_global === 1) {
+            $office = Office::has('company')->findOrFail($id);
         }
-        else {
-            $office = Kantor::findOrFail($id);
+        elseif(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $office = Office::where('company_id','=',$company->id)->findOrFail($id);
         }
 
         // View
@@ -136,7 +138,8 @@ class OfficeController extends \App\Http\Controllers\Controller
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'phone_number' => $request->phone_number != '' ? 'numeric' : ''
+            'phone_number' => $request->phone_number != '' ? 'numeric' : '',
+            'is_main' => 'required',
         ], validationMessages());
         
         // Check errors
@@ -146,10 +149,11 @@ class OfficeController extends \App\Http\Controllers\Controller
         }
         else {
             // Update the office
-            $office = Kantor::find($request->id);
-            $office->nama_kantor = $request->name;
-            $office->alamat_kantor = $request->address != '' ? $request->address : '';
-            $office->telepon_kantor = $request->phone_number != '' ? $request->phone_number : '';
+            $office = Office::find($request->id);
+            $office->name = $request->name;
+            $office->address = $request->address != '' ? $request->address : '';
+            $office->phone_number = $request->phone_number != '' ? $request->phone_number : '';
+            $office->is_main = $request->is_main;
             $office->save();
 
             // Redirect
@@ -169,7 +173,7 @@ class OfficeController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the office
-        $office = Kantor::find($request->id);
+        $office = Office::find($request->id);
 
         // Delete the office
         $office->delete();

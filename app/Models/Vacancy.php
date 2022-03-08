@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Stifin extends Model
+class Vacancy extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'stifins';
+    protected $table = 'vacancies';
 
     /**
      * The attributes that are mass assignable.
@@ -19,11 +19,11 @@ class Stifin extends Model
      * @var array
      */
     protected $fillable = [
-        'description'
+        'name', 'code', 'description', 'image', 'status'
     ];
     
     /**
-     * Get the company that owns the stifin.
+     * Get the company that owns the vacancy.
      */
     public function company()
     {
@@ -31,18 +31,10 @@ class Stifin extends Model
     }
     
     /**
-     * Get the type that owns the stifin.
+     * Get the position that owns the vacancy.
      */
-    public function type()
+    public function position()
     {
-        return $this->belongsTo(StifinType::class, 'type_id');
-    }
-    
-    /**
-     * Get the aim that owns the stifin.
-     */
-    public function aim()
-    {
-        return $this->belongsTo(StifinAim::class, 'aim_id');
+        return $this->belongsTo(Position::class, 'position_id');
     }
 }

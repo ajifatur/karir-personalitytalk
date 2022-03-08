@@ -28,7 +28,7 @@
                             <select name="position" class="form-select form-select-sm {{ $errors->has('position') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($positions as $position)
-                                <option value="{{ $position->id_posisi }}">{{ $position->nama_posisi }} ({{ get_perusahaan_name($position->id_hrd) }})</option>
+                                <option value="{{ $position->id }}" {{ old('position') == $position->id ? 'selected' : '' }}>{{ $position->name }} ({{ $position->company->name }})</option>
                                 @endforeach
                             </select>
                             @if($errors->has('position'))

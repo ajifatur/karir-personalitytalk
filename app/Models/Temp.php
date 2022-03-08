@@ -11,32 +11,14 @@ class Temp extends Model
      *
      * @var string
      */
-    protected $table = 'temp';
+    protected $table = 'temps';
 
     /**
-     * The primary key for the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
-     */
-    protected $primaryKey = 'id_temp';
-
-    /**
-     * Fill the model with an array of attributes.
-     *
-     * @param  array  $attributes
-     * @return $this
-     *
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     * @var array
      */
     protected $fillable = [
-        'email',
-        'json',
-	];
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
+        'email', 'json'
+    ];
 }

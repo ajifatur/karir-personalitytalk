@@ -11,13 +11,6 @@ class User extends \Ajifatur\FaturHelper\Models\User
     use Notifiable;
 
     /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    // protected $primaryKey = 'id_user';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -43,4 +36,12 @@ class User extends \Ajifatur\FaturHelper\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the company associated with the user.
+     */
+    public function company()
+    {
+        return $this->hasOne(Company::class);
+    }
 }

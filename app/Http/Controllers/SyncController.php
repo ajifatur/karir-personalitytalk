@@ -187,4 +187,77 @@ class SyncController extends \App\Http\Controllers\Controller
 		}
 		var_dump(count($users));
     }
+
+    public function companyTest()
+    {
+		$hrds = \App\Models\HRD::all();
+		foreach($hrds as $hrd) {
+			$company = \App\Models\Company::find($hrd->id_hrd);
+			$tests = explode(',', $hrd->akses_tes);
+
+			if($company) {
+				$company->tests()->sync($tests);
+			}
+		}
+		var_dump(count($hrds));
+    }
+
+    public function positionTest()
+    {
+		$positions = \App\Models\Position::all();
+		foreach($positions as $position) {
+			if($position->tes != '') {
+				$tests = explode(',', $position->tes);
+				$position->tests()->sync($tests);
+			}
+		}
+		var_dump(count($positions));
+    }
+
+    public function positionSkill()
+    {
+		$positions = \App\Models\Position::all();
+		foreach($positions as $position) {
+			if($position->keahlian != '') {
+				$skills = explode(',', $position->keahlian);
+				$skillArray = [];
+				if(count($skills) > 0) {
+					foreach($skills as $skill) {
+                        $s = \App\Models\Skill::firstOrCreate(['name' => $skill]); // Get or add skill
+						array_push($skillArray, $s->id);
+					}
+				}
+				if(count($skillArray) > 0)
+					$position->skills()->sync($skillArray);
+			}
+		}
+		var_dump(count($positions));
+    }
+
+    public function selection()
+    {
+		$selections = \App\Models\Selection::all();
+		foreach($selections as $selection) {
+			$applicant = \App\Models\Pelamar::find($selection->id_pelamar);
+			if($applicant) {
+				$selection->user_id = $applicant->id_user;
+				$selection->save();
+			}
+		}
+		var_dump(count($selections));
+    }
+
+    public function hrd()
+    {
+		$hrds = \App\Models\HRD::all();
+		foreach($hrds as $hrd) {
+			$user_attr = \App\Models\UserAttribute::where('user_id','=',$hrd->id_user)->first();
+
+			if($user_attr) {
+				$user_attr->company_id = $hrd->id_hrd;
+				$user_attr->save();
+			}
+		}
+		var_dump(count($hrds));
+    }
 }

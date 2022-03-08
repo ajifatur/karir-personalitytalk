@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StifinAim extends Model
+class Packet extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'stifin_aims';
+    protected $table = 'packets';
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +19,14 @@ class StifinAim extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'part', 'name', 'description', 'type', 'amount', 'status'
     ];
+    
+    /**
+     * Get the test that owns the packet.
+     */
+    public function test()
+    {
+        return $this->belongsTo(Test::class, 'test_id');
+    }
 }

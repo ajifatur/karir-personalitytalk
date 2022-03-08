@@ -36,9 +36,9 @@
                             <tr>
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
                                 <td>{{ $stifin->name }}</td>
-                                <td>{{ $stifin->tests->test_name }}</td>
+                                <td>{{ $stifin->type->name }}</td>
                                 @if(Auth::user()->role->is_global === 1)
-                                <td>{{ $stifin->hrd->perusahaan }}</td>
+                                <td>{{ $stifin->company->name }}</td>
                                 @endif
                                 <td>
                                     <div class="btn-group">
@@ -72,10 +72,6 @@
 
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
-    
-    // Checkbox
-    Spandiv.CheckboxOne();
-    Spandiv.CheckboxAll();
 </script>
 
 @endsection

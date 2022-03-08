@@ -13,11 +13,11 @@
             <div class="card-body">
                 <form method="post" action="{{ route('admin.vacancy.update') }}" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $vacancy->id_lowongan }}">
+                    <input type="hidden" name="id" value="{{ $vacancy->id }}">
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Judul <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <input type="text" name="name" class="form-control form-control-sm {{ $errors->has('name') ? 'border-danger' : '' }}" value="{{ $vacancy->judul_lowongan }}" autofocus>
+                            <input type="text" name="name" class="form-control form-control-sm {{ $errors->has('name') ? 'border-danger' : '' }}" value="{{ $vacancy->name }}" autofocus>
                             @if($errors->has('name'))
                             <div class="small text-danger">{{ $errors->first('name') }}</div>
                             @endif
@@ -29,7 +29,7 @@
                             <select name="position" class="form-select form-select-sm {{ $errors->has('position') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($positions as $position)
-                                <option value="{{ $position->id_posisi }}" {{ $vacancy->posisi == $position->id_posisi ? 'selected' : '' }}>{{ $position->nama_posisi }}</option>
+                                <option value="{{ $position->id }}" {{ $vacancy->position_id == $position->id ? 'selected' : '' }}>{{ $position->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('position'))
@@ -41,9 +41,9 @@
                         <label class="col-lg-2 col-md-3 col-form-label">Gambar</label>
                         <div class="col-lg-10 col-md-9">
                             <input type="file" name="file">
-                            @if($vacancy->gambar_lowongan != '' && \File::exists(public_path('assets/images/lowongan/'.$vacancy->gambar_lowongan)))
+                            @if($vacancy->image != '' && \File::exists(public_path('assets/images/lowongan/'.$vacancy->image)))
                                 <br>
-                                <img src="{{ asset('assets/images/lowongan/'.$vacancy->gambar_lowongan) }}" class="img-thumbnail mt-3" style="height: 200px;">
+                                <img src="{{ asset('assets/images/lowongan/'.$vacancy->image) }}" class="img-thumbnail mt-3" style="height: 200px;">
                             @endif
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <label class="col-lg-2 col-md-3 col-form-label">Deskripsi</label>
                         <div class="col-lg-10 col-md-9">
                             <textarea name="description" class="d-none"></textarea>
-                            <div id="editor">{!! html_entity_decode($vacancy->deskripsi_lowongan) !!}</div>
+                            <div id="editor">{!! html_entity_decode($vacancy->description) !!}</div>
                         </div>
                     </div>
                     <div class="row mb-3">
