@@ -113,7 +113,7 @@ class SelectionController extends \App\Http\Controllers\Controller
             if($applicant) $hrd = HRD::find($applicant->id_hrd);
         }
     	elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
         }
 
         // Validation
@@ -264,7 +264,7 @@ class SelectionController extends \App\Http\Controllers\Controller
 
         // Get the user
         $user = User::find($applicant->id_user);
-        $user->role_id = role_karyawan();
+        $user->role_id = role('employee');
         $user->save();
 
         // Redirect
