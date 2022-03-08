@@ -144,7 +144,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
             $hrd = HRD::find($vacancy->id_hrd);
             
             // Generate username
-            $data_user = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest()->first();
+            $data_user = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest('username')->first();
             if(!$data_user)
                 $username = generate_username(null, $hrd->kode);
             else
