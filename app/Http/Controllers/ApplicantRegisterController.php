@@ -500,7 +500,7 @@ class ApplicantRegisterController extends Controller
             $data_hrd = HRD::find($lowongan->id_hrd);
             
             // Generate username
-            $data_user = User::where('has_access','=',0)->where('username','like', $data_hrd->kode.'%')->latest()->first();
+            $data_user = User::where('has_access','=',0)->where('username','like', $data_hrd->kode.'%')->latest('username')->first();
             if(!$data_user){
                 $username = generate_username(null, $data_hrd->kode);
             }
