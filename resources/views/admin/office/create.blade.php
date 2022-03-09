@@ -26,14 +26,14 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <select name="hrd" class="form-select form-select-sm {{ $errors->has('hrd') ? 'border-danger' : '' }}">
+                            <select name="company" class="form-select form-select-sm {{ $errors->has('company') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
-                                @foreach($hrds as $hrd)
-                                <option value="{{ $hrd->id_hrd }}">{{ $hrd->perusahaan }}</option>
+                                @foreach($companies as $company)
+                                <option value="{{ $company->id }}">{{ $company->name }}</option>
                                 @endforeach
                             </select>
-                            @if($errors->has('hrd'))
-                            <div class="small text-danger">{{ $errors->first('hrd') }}</div>
+                            @if($errors->has('company'))
+                            <div class="small text-danger">{{ $errors->first('company') }}</div>
                             @endif
                         </div>
                     </div>
@@ -53,6 +53,22 @@
                             <textarea name="address" class="form-control form-control-sm {{ $errors->has('address') ? 'border-danger' : '' }}" rows="3">{{ old('address') }}</textarea>
                             @if($errors->has('address'))
                             <div class="small text-danger">{{ $errors->first('address') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Status</label>
+                        <div class="col-lg-10 col-md-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="is_main" id="is_main-1" value="1" {{ old('is_main') == "1" ? 'checked' : '' }}>
+                                <label class="form-check-label" for="is_main-1">Pusat</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="is_main" id="is_main-0" value="0" {{ old('is_main') == "0" ? 'checked' : '' }}>
+                                <label class="form-check-label" for="is_main-0">Cabang</label>
+                            </div>
+                            @if($errors->has('is_main'))
+                            <div class="small text-danger">{{ $errors->first('is_main') }}</div>
                             @endif
                         </div>
                     </div>

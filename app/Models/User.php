@@ -11,13 +11,6 @@ class User extends \Ajifatur\FaturHelper\Models\User
     use Notifiable;
 
     /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    // protected $primaryKey = 'id_user';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -43,4 +36,36 @@ class User extends \Ajifatur\FaturHelper\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the attribute associated with the user.
+     */
+    public function attribute()
+    {
+        return $this->hasOne(UserAttribute::class);
+    }
+
+    /**
+     * Get the socmed associated with the user.
+     */
+    public function socmed()
+    {
+        return $this->hasOne(UserSocmed::class);
+    }
+
+    /**
+     * Get the guardian associated with the user.
+     */
+    public function guardian()
+    {
+        return $this->hasOne(UserGuardian::class);
+    }
+
+    /**
+     * Get the attachments for the packet.
+     */
+    public function attachments()
+    {
+        return $this->hasMany(UserAttachment::class);
+    }
 }

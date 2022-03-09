@@ -102,7 +102,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/selection/convert', 'SelectionController@convert')->name('admin.selection.convert');
 	Route::post('/admin/selection/delete', 'SelectionController@delete')->name('admin.selection.delete');
 
-	// Test
+	// Test // TBC
 	Route::get('/admin/test', 'TestController@index')->name('admin.test.index');
 	Route::get('/admin/test/create', 'TestController@create')->name('admin.test.create');
 	Route::post('/admin/test/store', 'TestController@store')->name('admin.test.store');
@@ -131,9 +131,9 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/result', 'ResultController@index')->name('admin.result.index');
 	Route::get('/admin/result/detail/{id}', 'ResultController@detail')->name('admin.result.detail');
 	Route::post('/admin/result/delete', 'ResultController@delete')->name('admin.result.delete');
-	Route::post('/admin/result/print', 'ResultController@print')->name('admin.result.print');
+	Route::post('/admin/result/print', 'ResultController@print')->name('admin.result.print'); // TBC
 
-	// HRD
+	// HRD // TBC
 	Route::get('/admin/hrd', 'HRDController@index')->name('admin.hrd.index');
 	Route::get('/admin/hrd/create', 'HRDController@create')->name('admin.hrd.create');
 	Route::post('/admin/hrd/store', 'HRDController@store')->name('admin.hrd.store');
@@ -162,5 +162,22 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/applicant/update', 'ApplicantController@update')->name('admin.applicant.update');
 	Route::post('/admin/applicant/delete', 'ApplicantController@delete')->name('admin.applicant.delete');
 	Route::get('/admin/applicant/export', 'ApplicantController@export')->name('admin.applicant.export');
-	Route::post('/admin/applicant/convert', 'ApplicantController@convert')->name('admin.applicant.convert');
+
+	/******************************** */
+
+	// Sync
+	Route::get('/admin/sync/user', 'SyncController@user');
+	Route::get('/admin/sync/applicant', 'SyncController@applicant');
+	Route::get('/admin/sync/applicant/attachment', 'SyncController@applicantAttachment');
+	Route::get('/admin/sync/applicant/socmed', 'SyncController@applicantSocmed');
+	Route::get('/admin/sync/applicant/guardian', 'SyncController@applicantGuardian');
+	Route::get('/admin/sync/applicant/skill', 'SyncController@applicantSkill');
+	Route::get('/admin/sync/employee', 'SyncController@employee');
+	Route::get('/admin/sync/internship', 'SyncController@internship');
+	Route::get('/admin/sync/hrd', 'SyncController@hrd');
+
+	Route::get('/admin/sync/company-test', 'SyncController@companyTest');
+	Route::get('/admin/sync/position-test', 'SyncController@positionTest');
+	Route::get('/admin/sync/position-skill', 'SyncController@positionSkill');
+	Route::get('/admin/sync/selection', 'SyncController@selection');
 });

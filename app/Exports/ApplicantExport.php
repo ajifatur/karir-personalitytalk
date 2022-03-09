@@ -2,25 +2,24 @@
 
 namespace App\Exports;
 
-use App\Models\Karyawan;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\Exportable;
 
-class KaryawanExport implements FromView
+class ApplicantExport implements FromView
 {
 	use Exportable;
 
     /**
      * Create a new message instance.
      *
-     * @param  object $employees
+     * @param  object $applicants
      * @return void
      */
-    public function __construct($employees)
+    public function __construct($applicants)
     {
-        $this->employees = $employees;
+        $this->applicants = $applicants;
     }
 
     /**
@@ -29,8 +28,8 @@ class KaryawanExport implements FromView
     public function view(): View
     {
     	// View
-    	return view('admin.employee.excel', [
-    		'employees' => $this->employees
+    	return view('admin/applicant/excel', [
+    		'applicants' => $this->applicants
     	]);
     }
 }

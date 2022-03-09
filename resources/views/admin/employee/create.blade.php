@@ -95,18 +95,27 @@
                             @endif
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Riwayat Pekerjaan</label>
+                        <div class="col-lg-10 col-md-9">
+                            <textarea name="job_experience" class="form-control form-control-sm {{ $errors->has('job_experience') ? 'border-danger' : '' }}" rows="3">{{ old('job_experience') }}</textarea>
+                            @if($errors->has('job_experience'))
+                            <div class="small text-danger">{{ $errors->first('job_experience') }}</div>
+                            @endif
+                        </div>
+                    </div>
                     @if(Auth::user()->role->is_global === 1)
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <select name="hrd" class="form-select form-select-sm {{ $errors->has('hrd') ? 'border-danger' : '' }}">
+                            <select name="company" class="form-select form-select-sm {{ $errors->has('company') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
-                                @foreach($hrds as $hrd)
-                                <option value="{{ $hrd->id_hrd }}">{{ $hrd->perusahaan }}</option>
+                                @foreach($companies as $company)
+                                <option value="{{ $company->id }}" {{ old('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
                             </select>
-                            @if($errors->has('hrd'))
-                            <div class="small text-danger">{{ $errors->first('hrd') }}</div>
+                            @if($errors->has('company'))
+                            <div class="small text-danger">{{ $errors->first('company') }}</div>
                             @endif
                         </div>
                     </div>
@@ -118,7 +127,7 @@
                             <select name="office" class="form-select form-select-sm {{ $errors->has('office') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($offices as $office)
-                                <option value="{{ $office->id_kantor }}">{{ $office->nama_kantor }}</option>
+                                <option value="{{ $office->id }}" {{ old('office') == $office->id ? 'selected' : '' }}>{{ $office->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('office'))
@@ -132,7 +141,7 @@
                             <select name="position" class="form-select form-select-sm {{ $errors->has('position') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($positions as $position)
-                                <option value="{{ $position->id_posisi }}">{{ $position->nama_posisi }}</option>
+                                <option value="{{ $position->id }}" {{ old('position') == $position->id ? 'selected' : '' }}>{{ $position->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('position'))

@@ -6,10 +6,11 @@ use Auth;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Ajifatur\Helpers\DateTimeExt;
 use App\Models\Stifin;
 use App\Models\StifinAim;
-use App\Models\StifinTest;
-use App\Models\HRD;
+use App\Models\StifinType;
+use App\Models\Company;
 
 class StifinController extends \App\Http\Controllers\Controller
 {
@@ -35,15 +36,14 @@ class StifinController extends \App\Http\Controllers\Controller
 			]);
         }
         elseif(Auth::user()->role->is_global === 0) {
-			// Get the HRD
-			$hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
+			// Get the company
+            $company = Company::find(Auth::user()->attribute->company_id);
 			
 			// Get the STIFIns
-			$stifins = Stifin::where('hrd_id','=',$hrd->id_hrd)->get();
+			$stifins = $company ? Stifin::where('company_id','=',$company->id)->get() : [];
 
 			// View
 			return view('admin/stifin/index', [
-				'hrd' => $hrd,
 				'stifins' => $stifins,
 			]);
 		}
@@ -60,11 +60,11 @@ class StifinController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         if(!stifin_access()) abort(403);
 
-    	// Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // Get STIFIn types
-        $types = StifinTest::all();
+        $types = StifinType::all();
 		
         // Get STIFIn aims
         $aims = StifinAim::all();
@@ -72,7 +72,7 @@ class StifinController extends \App\Http\Controllers\Controller
         if(Auth::user()->role->is_global === 1) {
             // View
             return view('admin/stifin/create', [
-                'hrds' => $hrds,
+                'companies' => $companies,
                 'types' => $types,
                 'aims' => $aims,
             ]);
@@ -94,19 +94,17 @@ class StifinController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get the HRD
-    	if(Auth::user()->role->is_global === 1) {
-            $hrd = HRD::find($request->hrd);
-        }
-    	elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-        }
+    	// Get the company
+    	if(Auth::user()->role->is_global === 1)
+            $company = Company::find($request->company);
+    	elseif(Auth::user()->role->is_global === 0)
+            $company = Company::find(Auth::user()->attribute->company_id);
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'gender' => 'required',
-            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'company' => Auth::user()->role->is_global === 1 ? 'required' : '',
             'type' => 'required',
             'aim' => 'required',
         ], validationMessages());
@@ -119,13 +117,13 @@ class StifinController extends \App\Http\Controllers\Controller
         else {
             // Save the STIFIn
             $stifin = new Stifin;
+            $stifin->company_id = isset($company) ? $company->id : $request->company;
+            $stifin->type_id = $request->type;
+            $stifin->aim_id = $request->aim;
             $stifin->name = $request->name;
             $stifin->gender = $request->gender;
-            $stifin->test = $request->type;
-            $stifin->aim = $request->aim;
-            $stifin->hrd_id = isset($hrd) ? $hrd->id_hrd : $request->hrd;
-            $stifin->birthdate = $request->birthdate != '' ? generate_date_format($request->birthdate, 'y-m-d') : null;
-            $stifin->test_at = $request->test_at != '' ? generate_date_format($request->test_at, 'y-m-d') : null;
+            $stifin->birthdate = $request->birthdate != '' ? DateTimeExt::change($request->birthdate) : null;
+            $stifin->test_at = $request->test_at != '' ? DateTimeExt::change($request->test_at) : null;
             $stifin->save();
 
             // Redirect
@@ -146,10 +144,10 @@ class StifinController extends \App\Http\Controllers\Controller
         if(!stifin_access()) abort(403);
 
         // Get the STIFIn
-        $stifin = Stifin::findOrFail($id);
+        $stifin = Stifin::has('company')->has('type')->has('aim')->findOrFail($id);
 
         // Get STIFIn types
-        $types = StifinTest::all();
+        $types = StifinType::all();
 		
         // Get STIFIn aims
         $aims = StifinAim::all();
@@ -196,12 +194,12 @@ class StifinController extends \App\Http\Controllers\Controller
         else {
             // Update the STIFIn
             $stifin = Stifin::find($request->id);
+            $stifin->type_id = $request->type;
+            $stifin->aim_id = $request->aim;
             $stifin->name = $request->name;
             $stifin->gender = $request->gender;
-            $stifin->test = $request->type;
-            $stifin->aim = $request->aim;
-            $stifin->birthdate = $request->birthdate != '' ? generate_date_format($request->birthdate, 'y-m-d') : null;
-            $stifin->test_at = $request->test_at != '' ? generate_date_format($request->test_at, 'y-m-d') : null;
+            $stifin->birthdate = $request->birthdate != '' ? DateTimeExt::change($request->birthdate) : null;
+            $stifin->test_at = $request->test_at != '' ? DateTimeExt::change($request->test_at) : null;
             $stifin->save();
 
             // Redirect
@@ -244,12 +242,12 @@ class StifinController extends \App\Http\Controllers\Controller
         if(!stifin_access()) abort(403);
 
         // Get the STIFIn
-        $stifin = Stifin::join('stifin_tests','stifin.test','=','stifin_tests.id_st')->findOrFail($id);
+        $stifin = Stifin::has('company')->has('type')->has('aim')->findOrFail($id);
 
         // View
         if(Auth::user()->role->is_global === 1) {
 			// PDF
-			$pdf = PDF::loadview('admin/stifin/print/'.$stifin->test_code, [
+			$pdf = PDF::loadview('admin/stifin/print/'.$stifin->type->code, [
                 'stifin' => $stifin,
 			]);
 			$pdf->setPaper('A4', 'portrait');
@@ -258,7 +256,7 @@ class StifinController extends \App\Http\Controllers\Controller
         }
         elseif(Auth::user()->role->is_global === 0) {
 			// PDF
-			$pdf = PDF::loadview('admin/stifin/print/'.$stifin->test_code, [
+			$pdf = PDF::loadview('admin/stifin/print/'.$stifin->type->code, [
                 'stifin' => $stifin,
 			]);
 			$pdf->setPaper('A4', 'portrait');

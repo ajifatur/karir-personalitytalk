@@ -15,10 +15,10 @@
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
-                    <select name="hrd" class="form-select form-select-sm">
+                    <select name="company" class="form-select form-select-sm">
                         <option value="0">Semua Perusahaan</option>
-                        @foreach($hrds as $hrd)
-                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @foreach($companies as $company)
+                        <option value="{{ $company->id }}" {{ Request::query('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -42,7 +42,7 @@
                                 <th width="100">Pelamar</th>
                                 <th width="100">Status</th>
                                 <th width="100">Waktu</th>
-                                @if(Auth::user()->role->is_global === 1 && Request::query('hrd') == null)
+                                @if(Auth::user()->role->is_global === 1 && Request::query('company') == null)
                                 <th width="200">Perusahaan</th>
                                 @endif
                                 <th width="60">Opsi</th>
@@ -52,18 +52,12 @@
                             @foreach($vacancies as $vacancy)
                             <tr>
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
-                                <td><a href="{{ route('admin.vacancy.applicant', ['id' => $vacancy->id_lowongan]) }}">{{ $vacancy->judul_lowongan }}</a></td>
-                                <td>{{ $vacancy->nama_posisi }}</td>
-                                <td>
-                                    {{ $vacancy->pelamar }} 
-                                    <br>
-                                    <span class="badge bg-info">{{ count_pelamar_belum_diseleksi_by_lowongan($vacancy->id_lowongan) }} belum diseleksi</span>
-                                    <br>
-                                    <span class="badge bg-warning">{{ count_pelamar_belum_dites_by_lowongan($vacancy->id_lowongan) }} belum dites</span>
-                                </td>
+                                <td><a href="{{ route('admin.vacancy.applicant', ['id' => $vacancy->id]) }}">{{ $vacancy->name }}</a></td>
+                                <td>{{ $vacancy->position->name }}</td>
+                                <td>{{ $vacancy->applicants }}</td>
                                 <td>
                                     <span class="d-none">{{ $vacancy->status }}</span>
-                                    <select data-id="{{ $vacancy->id_lowongan }}" data-value="{{ $vacancy->status }}" class="form-select form-select-sm status">
+                                    <select data-id="{{ $vacancy->id }}" data-value="{{ $vacancy->status }}" class="form-select form-select-sm status">
                                         <option value="1" {{ $vacancy->status == 1 ? 'selected' : '' }}>Aktif</option>
                                         <option value="0" {{ $vacancy->status == 0 ? 'selected' : '' }}>Tidak Aktif</option>
                                     </select>
@@ -74,14 +68,14 @@
                                     <br>
                                     <small class="text-muted">{{ date('H:i', strtotime($vacancy->created_at)) }} WIB</span>
                                 </td>
-                                @if(Auth::user()->role->is_global === 1 && Request::query('hrd') == null)
-                                <td>{{ $vacancy->perusahaan }}</td>
+                                @if(Auth::user()->role->is_global === 1 && Request::query('company') == null)
+                                <td>{{ $vacancy->company->name }}</td>
                                 @endif
                                 <td>
                                     <div class="btn-group">
-                                        <a href="#" class="btn btn-sm btn-info btn-url" data-id="{{ $vacancy->id_lowongan }}" data-url="{{ $vacancy->url_lowongan }}" data-bs-toggle="tooltip" title="Lihat URL"><i class="bi-link"></i></a>
-                                        <a href="{{ route('admin.vacancy.edit', ['id' => $vacancy->id_lowongan]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
-                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $vacancy->id_lowongan }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                                        <a href="#" class="btn btn-sm btn-info btn-url" data-id="{{ $vacancy->id }}" data-url="{{ $vacancy->code }}" data-bs-toggle="tooltip" title="Lihat URL"><i class="bi-link"></i></a>
+                                        <a href="{{ route('admin.vacancy.edit', ['id' => $vacancy->id]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $vacancy->id }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -133,16 +127,12 @@
 
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
-
-    // Checkbox
-    Spandiv.CheckboxOne();
-    Spandiv.CheckboxAll();
   
-    // Change the HRD
-    $(document).on("change", ".card-header select[name=hrd]", function() {
-        var hrd = $(this).val();
-        if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.vacancy.index') }}");
-        else window.location.href = Spandiv.URL("{{ route('admin.vacancy.index') }}", {hrd: hrd});
+    // Change the company
+    $(document).on("change", ".card-header select[name=company]", function() {
+        var company = $(this).val();
+        if(company === "0") window.location.href = Spandiv.URL("{{ route('admin.vacancy.index') }}");
+        else window.location.href = Spandiv.URL("{{ route('admin.vacancy.index') }}", {company: company});
     });
 
     // Button URL

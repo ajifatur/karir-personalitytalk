@@ -6,9 +6,9 @@ use Auth;
 use PDF;
 use Dompdf\FontMetrics;
 use Illuminate\Http\Request;
+use App\Models\Description;
+use App\Models\Packet;
 use App\Models\Hasil;
-use App\Models\Keterangan;
-use App\Models\PaketSoal;
 use App\Models\Soal;
 
 class RMIBController extends \App\Http\Controllers\Controller
@@ -17,23 +17,19 @@ class RMIBController extends \App\Http\Controllers\Controller
      * Display the specified resource.
      *
      * @param  object  $result
-     * @param  object  $user
-     * @param  object  $user_desc
-     * @param  object  $role
      * @return \Illuminate\Http\Response
      */
-    public static function detail($result, $user, $user_desc, $role)
+    public static function detail($result)
     {
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Set the note
-        $keterangan = Keterangan::where('id_paket','=',$result->id_paket)->first();
-        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+        // Set the description
+        $description = Description::where('packet_id','=',$result->packet_id)->first();
+        $description->description = json_decode($description->description, true);
 
-        // Get the questions        
-        $paket = PaketSoal::where('id_tes','=',$result->id_tes)->where('status','=',1)->first();
-        $questions = Soal::join('paket_soal','soal.id_paket','=','paket_soal.id_paket')->where('soal.id_paket','=',$paket->id_paket)->orderBy('nomor','asc')->get();
+        // Get the questions
+        $questions = $result->packet->questions()->orderBy('number','asc')->get();
 
         // Set categories
         $categories = ['Out','Me','Comp','Sci','Prs','Aesth','Lit','Mus','So. Se','Cler','Prac','Med'];
@@ -48,8 +44,8 @@ class RMIBController extends \App\Http\Controllers\Controller
             $sums[$keyc] = 0;
             $i = $keyc;
             foreach($letters as $keyl=>$letter) {
-                $sheets[$keyc][] = $result->hasil['answers'][($keyl+1)][$i];
-                $sums[$keyc] += $result->hasil['answers'][($keyl+1)][$i];
+                $sheets[$keyc][] = $result->result['answers'][($keyl+1)][$i];
+                $sums[$keyc] += $result->result['answers'][($keyl+1)][$i];
                 $i--;
                 $i = $i < 0 ? 11 : $i;
             }
@@ -75,7 +71,7 @@ class RMIBController extends \App\Http\Controllers\Controller
         $interests = [];
         foreach($category_ranks as $keyc=>$category_rank) {
             if($category_rank <= 3) {
-                foreach($keterangan->keterangan as $note) {
+                foreach($description->description as $note) {
                     if($note['code'] == $categories[$keyc]) {
 						if(!array_key_exists($category_rank, $interests))
                         	$interests[$category_rank] = $note;
@@ -90,9 +86,6 @@ class RMIBController extends \App\Http\Controllers\Controller
         // View
         return view('admin/result/rmib/detail', [
             'result' => $result,
-            'role' => $role,
-            'user' => $user,
-            'user_desc' => $user_desc,
             // 'keterangan' => $keterangan,
             'questions' => $questions,
             'categories' => $categories,

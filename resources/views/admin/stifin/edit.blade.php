@@ -58,7 +58,7 @@
                             <select name="type" class="form-select form-select-sm {{ $errors->has('type') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($types as $type)
-                                <option value="{{ $type->id_st }}" {{ $stifin->test == $type->id_st ? 'selected' : '' }}>{{ $type->test_name }}</option>
+                                <option value="{{ $type->id }}" {{ $stifin->type_id == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('type'))
@@ -84,7 +84,7 @@
                             <select name="aim" class="form-select form-select-sm {{ $errors->has('aim') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($aims as $aim)
-                                <option value="{{ $aim->id_sa }}" {{ $stifin->aim == $aim->id_sa ? 'selected' : '' }}>{{ $aim->aim }}</option>
+                                <option value="{{ $aim->id }}" {{ $stifin->aim_id == $aim->id ? 'selected' : '' }}>{{ $aim->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('aim'))

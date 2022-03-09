@@ -18,10 +18,10 @@
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
-                    <select name="hrd" class="form-select form-select-sm">
+                    <select name="company" class="form-select form-select-sm">
                         <option value="0">Semua Perusahaan</option>
-                        @foreach($hrds as $hrd)
-                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @foreach($companies as $company)
+                        <option value="{{ $company->id }}" {{ Request::query('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -44,6 +44,7 @@
                                 <th width="100">Username</th>
                                 <th width="100">Jabatan</th>
                                 <th width="80">Status</th>
+                                <th width="80">Waktu</th>
                                 <th width="200">Perusahaan</th>
                                 <th width="60">Opsi</th>
                             </tr>
@@ -70,27 +71,28 @@
     Spandiv.DataTable("#datatable", {
 		serverSide: true,
 		pageLength: 25,
-        url: Spandiv.URL("{{ route('admin.employee.index') }}", {hrd: "{{ Request::query('hrd') }}"}),
+        url: Spandiv.URL("{{ route('admin.employee.index') }}", {company: "{{ Request::query('company') }}"}),
         columns: [
             {data: 'checkbox', name: 'checkbox', className: 'text-center'},
             {data: 'name', name: 'name'},
             {data: 'username', name: 'username'},
-            {data: 'posisi', name: 'posisi'},
+            {data: 'position_name', name: 'position_name'},
             {data: 'status', name: 'status'},
-            {data: 'company', name: 'company', visible: {{ Auth::user()->role->is_global === 1 && Request::query('hrd') == null ? 'true' : 'false' }}},
+            {data: 'datetime', name: 'datetime'},
+            {data: 'company_name', name: 'company_name', visible: {{ Auth::user()->role->is_global === 1 && Request::query('company') == null ? 'true' : 'false' }}},
             {data: 'options', name: 'options', className: 'text-center', orderable: false},
         ],
-        order: [2, 'asc']
+        order: [5, 'desc']
     });
 
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
   
-    // Change the HRD
-    $(document).on("change", ".card-header select[name=hrd]", function() {
-		var hrd = $(this).val();
-		if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.employee.index') }}");
-		else window.location.href = Spandiv.URL("{{ route('admin.employee.index') }}", {hrd: hrd});
+    // Change the company
+    $(document).on("change", ".card-header select[name=company]", function() {
+		var company = $(this).val();
+		if(company === "0") window.location.href = Spandiv.URL("{{ route('admin.employee.index') }}");
+		else window.location.href = Spandiv.URL("{{ route('admin.employee.index') }}", {company: company});
     });
 </script>
 

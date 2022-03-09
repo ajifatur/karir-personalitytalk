@@ -6,7 +6,7 @@ use Auth;
 use PDF;
 use Dompdf\FontMetrics;
 use Illuminate\Http\Request;
-use App\Models\Keterangan;
+use App\Models\Description;
 
 class DISC2Controller extends \App\Http\Controllers\Controller
 {
@@ -14,22 +14,19 @@ class DISC2Controller extends \App\Http\Controllers\Controller
      * Display the specified resource.
      *
      * @param  object  $result
-     * @param  object  $user
-     * @param  object  $user_desc
-     * @param  object  $role
      * @return \Illuminate\Http\Response
      */
-    public static function detail($result, $user, $user_desc, $role)
+    public static function detail($result)
     {
         // Check the access
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Set the diff
         $array_selisih = [
-            'D' => $result->hasil['dm'] - $result->hasil['dl'],
-            'I' => $result->hasil['im'] - $result->hasil['il'],
-            'S' => $result->hasil['sm'] - $result->hasil['sl'],
-            'C' => $result->hasil['cm'] - $result->hasil['cl'],
+            'D' => $result->result['dm'] - $result->result['dl'],
+            'I' => $result->result['im'] - $result->result['il'],
+            'S' => $result->result['sm'] - $result->result['sl'],
+            'C' => $result->result['cm'] - $result->result['cl'],
         ];
 
         // Array 1
@@ -134,16 +131,16 @@ class DISC2Controller extends \App\Http\Controllers\Controller
         // Graph
         $graph = [
             1 => [
-                'D' => $array_1[$result->hasil['dm']][0],
-                'I' => $array_1[$result->hasil['im']][1],
-                'S' => $array_1[$result->hasil['sm']][2],
-                'C' => $array_1[$result->hasil['cm']][3],
+                'D' => $array_1[$result->result['dm']][0],
+                'I' => $array_1[$result->result['im']][1],
+                'S' => $array_1[$result->result['sm']][2],
+                'C' => $array_1[$result->result['cm']][3],
             ],
             2 => [
-                'D' => $array_2[$result->hasil['dl']][0],
-                'I' => $array_2[$result->hasil['il']][1],
-                'S' => $array_2[$result->hasil['sl']][2],
-                'C' => $array_2[$result->hasil['cl']][3],
+                'D' => $array_2[$result->result['dl']][0],
+                'I' => $array_2[$result->result['il']][1],
+                'S' => $array_2[$result->result['sl']][2],
+                'C' => $array_2[$result->result['cl']][3],
             ],
             3 => [
                 'D' => $array_3[$array_selisih['D']][0],
@@ -181,20 +178,17 @@ class DISC2Controller extends \App\Http\Controllers\Controller
             if($value == 1) array_push($index['change'], $key);
         }
 
-        // Set the note
-        $keterangan = Keterangan::where('id_paket','=',$result->id_paket)->first();
-        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+        // Set the description
+        $description = Description::where('packet_id','=',$result->packet_id)->first();
+        $description->description = json_decode($description->description, true);
 
         // View
         return view('admin/result/disc-2/detail', [
             'result' => $result,
-            'role' => $role,
-            'user' => $user,
-            'user_desc' => $user_desc,
             'array_selisih' => $array_selisih,
             'graph' => $graph,
             'index' => $index,
-            'keterangan' => $keterangan,
+            'description' => $description,
         ]);
     }
 
@@ -231,7 +225,7 @@ class DISC2Controller extends \App\Http\Controllers\Controller
             'jenis_kelamin' => $request->jenis_kelamin,
             'posisi' => $request->posisi,
             'tes' => $request->tes,
-            'hasil' => $request->hasil,
+            'hasil' => $request->result,
             'array_selisih' => $request->array_selisih,
             'index' => $request->index,
             'disc' => $disc,

@@ -4,17 +4,19 @@ namespace App\Http\Controllers;
 
 use Auth;
 use DataTables;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PelamarExport;
-use App\Models\Agama;
-use App\Models\HRD;
-use App\Models\Karyawan;
-use App\Models\Lowongan;
-use App\Models\Pelamar;
-use App\Models\Seleksi;
+use Ajifatur\Helpers\DateTimeExt;
+use App\Exports\ApplicantExport;
+use App\Models\Company;
 use App\Models\User;
+use App\Models\UserAttribute;
+use App\Models\UserGuardian;
+use App\Models\UserSocmed;
+use App\Models\Selection;
+use App\Models\Vacancy;
 
 class ApplicantController extends \App\Http\Controllers\Controller
 {
@@ -32,12 +34,32 @@ class ApplicantController extends \App\Http\Controllers\Controller
         if($request->ajax()) {
             // Get applicants
             if(Auth::user()->role->is_global === 1) {
-                $hrd = HRD::find($request->query('hrd'));
-                $applicants = $hrd ? Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get() : Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('pelamar_at','desc')->get();
+                $company = Company::find($request->query('company'));
+                if($company) {
+                    $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
+                        return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                    })->where('role_id','=',role('applicant'))->get();
+                }
+                else {
+                    $applicants = User::whereHas('attribute', function (Builder $query) {
+                        return $query->has('company')->has('position');
+                    })->where('role_id','=',role('applicant'))->get();
+                }
             }
             elseif(Auth::user()->role->is_global === 0) {
-                $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-                $applicants = Pelamar::join('users','pelamar.id_user','=','users.id')->join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('pelamar.id_hrd','=',$hrd->id_hrd)->orderBy('pelamar_at','desc')->get();
+                $company = Company::find(Auth::user()->attribute->company_id);
+                $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
+                    return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                })->where('role_id','=',role('applicant'))->get();
+            }
+
+            // Set
+            if(count($applicants) > 0) {
+                foreach($applicants as $key=>$applicant) {
+                    $applicants[$key]->phone_number = $applicant->attribute->phone_number;
+                    $applicants[$key]->company_name = $applicant->attribute->company->name;
+                    $applicants[$key]->position_name = $applicant->attribute->position->name;
+                }
             }
 
             // Return
@@ -45,42 +67,38 @@ class ApplicantController extends \App\Http\Controllers\Controller
                 ->addColumn('checkbox', '<input type="checkbox" class="form-check-input checkbox-one">')
                 ->editColumn('name', '
                     <span class="d-none">{{ $name }}</span>
-                    <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id_pelamar]) }}">{{ ucwords($name) }}</a>
+                    <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id]) }}">{{ ucwords($name) }}</a>
                     <br>
                     <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $email }}</small>
                     <br>
-                    <small class="text-muted"><i class="bi-phone me-2"></i>{{ $nomor_hp }}</small>
+                    <small class="text-muted"><i class="bi-phone me-2"></i>{{ $phone_number }}</small>
                 ')
-                ->editColumn('posisi', '
-                    {{ get_posisi_name($posisi) }}
-                ')
-                ->addColumn('datetime', '
-                    <span class="d-none">{{ $pelamar_at != null ? $pelamar_at : "" }}</span>
-                    {{ $pelamar_at != null ? date("d/m/Y", strtotime($pelamar_at)) : "-" }}
-                    <br>
-                    <small class="text-muted">{{ date("H:i", strtotime($pelamar_at))." WIB" }}</small>
-                ')
-                ->addColumn('company', '
-                    {{ get_perusahaan_name($id_hrd) }}
+                ->editColumn('status', '
+                    <span class="badge {{ $status == 1 ? "bg-success" : "bg-danger" }}">{{ status($status) }}</span>
                 ')
                 ->addColumn('options', '
                     <div class="btn-group">
-                        <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id_pelamar]) }}" class="btn btn-sm btn-info" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
-                        <a href="{{ route(\'admin.applicant.edit\', [\'id\' => $id_pelamar]) }}" class="btn btn-sm btn-warning" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
-                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_pelamar }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                        <a href="{{ route(\'admin.applicant.detail\', [\'id\' => $id]) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
+                        <a href="{{ route(\'admin.applicant.edit\', [\'id\' => $id]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                     </div>
                 ')
-                ->removeColumn('password')
-                ->rawColumns(['checkbox', 'name', 'username', 'posisi', 'datetime', 'company', 'options'])
+                ->addColumn('datetime', '
+                    <span class="d-none">{{ $created_at != null ? $created_at : "" }}</span>
+                    {{ $created_at != null ? date("d/m/Y", strtotime($created_at)) : "-" }}
+                    <br>
+                    <small class="text-muted">{{ date("H:i", strtotime($created_at))." WIB" }}</small>
+                ')
+                ->rawColumns(['checkbox', 'name', 'username', 'status', 'datetime', 'options'])
                 ->make(true);
         }
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // View
         return view('admin/applicant/index', [
-            'hrds' => $hrds
+            'companies' => $companies
         ]);
     }
 
@@ -94,21 +112,21 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // Get vacancies
         if(Auth::user()->role->is_global === 1) {
             $vacancies = [];
         }
         elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $vacancies = Lowongan::where('id_hrd','=',$hrd->id_hrd)->where('status','=',1)->orderBy('judul_lowongan','asc')->get();
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $vacancies = $company ? $company->vacancies()->has('position')->where('status','=',1)->orderBy('name','asc')->get() : [];
         }
 
         // View
         return view('admin/applicant/create', [
-            'hrds' => $hrds,
+            'companies' => $companies,
             'vacancies' => $vacancies
         ]);
     }
@@ -131,6 +149,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
             'email' => 'required|email',
             'phone_number' => 'required|numeric',
             'address' => 'required',
+            'relationship' => 'required',
         ], validationMessages());
         
         // Check errors
@@ -139,63 +158,56 @@ class ApplicantController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Get the vacancy and HRD
-            $vacancy = Lowongan::find($request->vacancy);
-            $hrd = HRD::find($vacancy->id_hrd);
+            // Get the vacancy and company
+            $vacancy = Vacancy::has('company')->find($request->vacancy);
             
             // Generate username
-            $data_user = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest('username')->first();
+            $data_user = User::where('username','like', $vacancy->company->code.'%')->latest('username')->first();
             if(!$data_user)
-                $username = generate_username(null, $hrd->kode);
+                $username = generate_username(null, $vacancy->company->code);
             else
-                $username = generate_username($data_user->username, $hrd->kode);
+                $username = generate_username($data_user->username, $vacancy->company->code);
 
             // Save the user
             $user = new User;
             $user->role_id = role('applicant');
             $user->name = $request->name;
-            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->username = $username;
             $user->password = bcrypt($username);
-            $user->password_str = $username;
+            $user->access_token = null;
             $user->avatar = '';
-            $user->has_access = 0;
             $user->status = 1;
-            $user->last_visit = date("Y-m-d H:i:s");
+            $user->last_visit = null;
+
+            $user->tanggal_lahir = null;
+            $user->jenis_kelamin = '';
+            $user->password_str = '';
+            $user->has_access = 0;
             $user->save();
 
-            // Save the applicant
-            $applicant = new Pelamar;
-            $applicant->id_user = $user->id;
-            $applicant->id_hrd = $hrd->id_hrd;
-            $applicant->nama_lengkap = $request->name;
-            $applicant->tempat_lahir = $request->birthplace != '' ? $request->birthplace : '';
-            $applicant->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $applicant->jenis_kelamin = $request->gender;
-            $applicant->agama = $request->religion;
-            $applicant->email = $request->email;
-            $applicant->nomor_hp = $request->phone_number;
-            $applicant->nomor_telepon = '';
-            $applicant->nomor_ktp = $request->identity_number != '' ? $request->identity_number : '';
-            $applicant->status_hubungan = '';
-            $applicant->alamat = $request->address;
-            $applicant->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
-            $applicant->riwayat_pekerjaan = $request->job_experience != '' ? $request->job_experience : '';
-        	$applicant->akun_sosmed = '';
-        	$applicant->data_darurat = '';
-            $applicant->kode_pos = '';
-            $applicant->pendidikan_formal = '';
-            $applicant->pendidikan_non_formal = '';
-            $applicant->riwayat_pekerjaan = '';
-            $applicant->keahlian = '';
-            $applicant->pertanyaan = '';
-            $applicant->pas_foto = '';
-            $applicant->foto_ijazah = '';
-            $applicant->posisi = $vacancy->id_lowongan;
-            $applicant->pelamar_at = date("Y-m-d H:i:s");
-            $applicant->save();
+            // Save the user attributes
+            $user_attribute = new UserAttribute;
+            $user_attribute->user_id = $user->id;
+            $user_attribute->company_id = $vacancy->company->id;
+            $user_attribute->office_id = 0;
+            $user_attribute->position_id = $vacancy->position_id;
+            $user_attribute->vacancy_id = $vacancy->id;
+            $user_attribute->birthdate = DateTimeExt::change($request->birthdate);
+            $user_attribute->birthplace = $request->birthplace != '' ? $request->birthplace : '';
+            $user_attribute->gender = $request->gender;
+            $user_attribute->country_code = 'ID';
+            $user_attribute->dial_code = '+62';
+            $user_attribute->phone_number = $request->phone_number;
+            $user_attribute->address = $request->address;
+            $user_attribute->identity_number = $request->identity_number != '' ? $request->identity_number : '';
+            $user_attribute->religion = $request->religion;
+            $user_attribute->relationship = $request->relationship;
+            $user_attribute->latest_education = $request->latest_education != '' ? $request->latest_education : '';
+            $user_attribute->job_experience = $request->job_experience != '' ? $request->job_experience : '';
+            $user_attribute->start_date = null;
+            $user_attribute->end_date = null;
+            $user_attribute->save();
 
             // Redirect
             return redirect()->route('admin.applicant.index')->with(['message' => 'Berhasil menambah data.']);
@@ -212,30 +224,28 @@ class ApplicantController extends \App\Http\Controllers\Controller
     {
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
-        
+
         // Get the applicant
-        if(Auth::user()->role->is_global === 1)
-            $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
-        else {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-    	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
+        if(Auth::user()->role->is_global === 1) {
+            $applicant = User::whereHas('attribute', function (Builder $query) {
+                return $query->has('company')->has('position')->has('vacancy');
+            })->where('role_id','=',role('applicant'))->findOrFail($id);
+        }
+        elseif(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $applicant = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->has('position')->has('vacancy')->where('company_id','=',$company->id);
+            })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
 
-        if($applicant) {
-            // Get the vacancy
-            $applicant->posisi = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$applicant->posisi)->first();
-			
-			// Get the user
-			$applicant->user = User::find($applicant->id_user);
+        // Get attachments
+        $photo = $applicant->attachments()->where('attachment_id','=',1)->first();
+        $applicant->photo = $photo ? $photo->file : '';
+        $certificate = $applicant->attachments()->where('attachment_id','=',2)->first();
+        $applicant->certificate = $certificate ? $certificate->file : '';
 
-            // Get the selection
-            $selection = Seleksi::where('id_pelamar','=',$id)->where('id_lowongan','=',$applicant->posisi->id_lowongan)->first();
-
-            // Set the applicant attribute
-            $applicant->akun_sosmed = json_decode($applicant->akun_sosmed, true);
-            $applicant->data_darurat = json_decode($applicant->data_darurat, true);
-            $applicant->keahlian = json_decode($applicant->keahlian, true);
-        }
+        // Get the selection
+        $selection = Selection::has('user')->has('company')->has('vacancy')->where('user_id','=',$applicant->id)->where('vacancy_id','=',$applicant->attribute->vacancy_id)->first();
 
         // View
         return view('admin/applicant/detail', [
@@ -257,19 +267,15 @@ class ApplicantController extends \App\Http\Controllers\Controller
 
         // Get the applicant
         if(Auth::user()->role->is_global === 1) {
-    	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->firstOrFail();
+            $applicant = User::whereHas('attribute', function (Builder $query) {
+                return $query->has('company')->has('position');
+            })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
         elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
-    	    $applicant = Pelamar::join('agama','pelamar.agama','=','agama.id_agama')->where('id_pelamar','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
-        }
-
-        // Set
-        if($applicant) {
-            $applicant->posisi = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_lowongan','=',$applicant->posisi)->first();
-            $applicant->akun_sosmed = json_decode($applicant->akun_sosmed, true);
-            $applicant->data_darurat = json_decode($applicant->data_darurat, true);
-            $applicant->keahlian = json_decode($applicant->keahlian, true);
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $applicant = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+            })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
 
         // View
@@ -296,6 +302,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
             'email' => 'required|email',
             'phone_number' => 'required|numeric',
             'address' => 'required',
+            'relationship' => 'required',
             'socmed' => 'required',
             'guardian_name' => 'required',
             'guardian_address' => 'required',
@@ -309,40 +316,43 @@ class ApplicantController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Set the applicant's socmed
-            $socmed = [$request->platform => $request->socmed];
-
-            // Set the applicant's guardian
-        	$guardians = [];
-        	$guardians['nama_orang_tua'] = $request->guardian_name;
-        	$guardians['alamat_orang_tua'] = $request->guardian_address;
-        	$guardians['nomor_hp_orang_tua'] = $request->guardian_phone_number;
-        	$guardians['pekerjaan_orang_tua'] = $request->guardian_occupation;
-
-            // Update the applicant
-            $applicant = Pelamar::find($request->id);
-            $applicant->nama_lengkap = $request->name;
-            $applicant->tempat_lahir = $request->birthplace;
-            $applicant->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $applicant->jenis_kelamin = $request->gender;
-            $applicant->agama = $request->religion;
-            $applicant->email = $request->email;
-            $applicant->nomor_hp = $request->phone_number;
-            $applicant->nomor_ktp = $request->identity_number != '' ? $request->identity_number : '';
-            $applicant->alamat = $request->address;
-            $applicant->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
-            $applicant->riwayat_pekerjaan = $request->job_experience != '' ? $request->job_experience : '';
-        	$applicant->akun_sosmed = json_encode($socmed);
-        	$applicant->data_darurat = json_encode($guardians);
-            $applicant->save();
-
             // Update the user
-            $user = User::find($applicant->id_user);
+            $user = User::find($request->id);
             $user->name = $request->name;
-            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->save();
+
+            // Update the user attribute
+            $user->attribute->birthdate = DateTimeExt::change($request->birthdate);
+            $user->attribute->gender = $request->gender;
+            $user->attribute->phone_number = $request->phone_number;
+            $user->attribute->address = $request->address;
+            $user->attribute->religion = $request->religion;
+            $user->attribute->relationship = $request->relationship;
+            $user->attribute->identity_number = $request->identity_number != '' ? $request->identity_number : '';
+            $user->attribute->latest_education = $request->latest_education != '' ? $request->latest_education : '';
+            $user->attribute->job_experience = $request->job_experience != '' ? $request->job_experience : '';
+            $user->attribute->save();
+
+            // Update or create the user socmed
+            $user_socmed = UserSocmed::where('user_id','=',$user->id)->first();
+            if(!$user_socmed) $user_socmed = new UserSocmed;
+            $user_socmed->user_id = $user->id;
+            $user_socmed->platform = $request->platform;
+            $user_socmed->account = $request->socmed;
+            $user_socmed->save();
+
+            // Update or create the user guardian
+            $user_guardian = UserGuardian::where('user_id','=',$user->id)->first();
+            if(!$user_guardian) $user_guardian = new UserGuardian;
+            $user_guardian->user_id = $user->id;
+            $user_guardian->name = $request->guardian_name;
+            $user_guardian->address = $request->guardian_address;
+            $user_guardian->country_code = 'ID';
+            $user_guardian->dial_code = '+62';
+            $user_guardian->phone_number = $request->guardian_phone_number;
+            $user_guardian->occupation = $request->guardian_occupation;
+            $user_guardian->save();
 
             // Redirect
             return redirect()->route('admin.applicant.index')->with(['message' => 'Berhasil mengupdate data.']);
@@ -361,19 +371,13 @@ class ApplicantController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the applicant
-        $applicant = Pelamar::find($request->id);
+        $applicant = User::find($request->id);
 
         // Delete the applicant
         $applicant->delete();
         
-        // Get the user
-        $user = User::find($applicant->id_user);
-
-        // Delete the user
-        $user->delete();
-        
         // Get the selection
-        $selection = Seleksi::where('id_pelamar','=',$request->id)->first();
+        $selection = Selection::where('user_id','=',$request->id)->first();
 
         // Delete the selection
         if($selection) $selection->delete();
@@ -393,7 +397,35 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
+        // Set memory limit
         ini_set("memory_limit", "-1");
+
+        // Get applicants
+        if(Auth::user()->role->is_global === 1) {
+            $company = Company::find($request->query('company'));
+            if($company) {
+                $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
+                    return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                })->where('role_id','=',role('applicant'))->get();
+            }
+            else {
+                $applicants = User::whereHas('attribute', function (Builder $query) {
+                    return $query->has('company')->has('position');
+                })->where('role_id','=',role('applicant'))->get();
+            }
+        }
+        elseif(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+            })->where('role_id','=',role('applicant'))->get();
+        }
+
+        // Set filename
+        $filename = $company ? 'Data Pelamar '.$company->name.' ('.date('Y-m-d-H-i-s').')' : 'Data Semua Pelamar ('.date('d-m-Y-H-i-s').')';
+
+        // Return
+        return Excel::download(new ApplicantExport($applicants), $filename.'.xlsx');
 
         if(Auth::user()->role->is_global === 1) {
             // Get the HRD

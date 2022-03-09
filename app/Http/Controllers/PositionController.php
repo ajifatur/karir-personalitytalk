@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Posisi;
-use App\Models\HRD;
-use App\Models\Tes;
+use App\Models\Position;
+use App\Models\Company;
+use App\Models\Test;
+use App\Models\Skill;
 
 class PositionController extends \App\Http\Controllers\Controller
 {
@@ -24,21 +25,21 @@ class PositionController extends \App\Http\Controllers\Controller
 
         // Get offices
         if(Auth::user()->role->is_global === 1) {
-            $hrd = HRD::find($request->query('hrd'));
-            $positions = $hrd ? Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->where('hrd.id_hrd','=',$hrd->id_hrd)->get() : Posisi::join('hrd','posisi.id_hrd','=','hrd.id_hrd')->get();
+            $company = Company::find($request->query('company'));
+            $positions = $company ? $company->positions()->has('role')->orderBy('name','asc')->get() : Position::has('company')->has('role')->orderBy('company_id','asc')->orderBy('name','asc')->get();
         }
         elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->get();
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $positions = $company ? $company->positions()->has('role')->orderBy('name','asc')->get() : [];
         }
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // View
         return view('admin/position/index', [
             'positions' => $positions,
-            'hrds' => $hrds
+            'companies' => $companies
         ]);
     }
 
@@ -52,22 +53,21 @@ class PositionController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get HRD
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // Get tests
         if(Auth::user()->role->is_global === 1) {
-    	    $tests = Tes::all();
+    	    $tests = Test::all();
         }
         elseif(Auth::user()->role->is_global === 0) {
-            $user = HRD::where('id_user','=',Auth::user()->id)->first();
-            $ids = explode(',', $user->akses_tes);
-            $tests = Tes::whereIn('id_tes',$ids)->get();
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $tests = $company ? $company->tests : [];
         }
 
         // View
         return view('admin/position/create', [
-            'hrds' => $hrds,
+            'companies' => $companies,
             'tests' => $tests
         ]);
     }
@@ -80,15 +80,16 @@ class PositionController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get data HRD
-    	if(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+    	// Get the company
+    	if(Auth::user()->role_id == role('hrd')) {
+            $company = Company::find(Auth::user()->attribute->company_id);
         }
 
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'company' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'role' => 'required',
         ], validationMessages());
         
         // Check errors
@@ -98,12 +99,24 @@ class PositionController extends \App\Http\Controllers\Controller
         }
         else {
             // Save the position
-            $position = new Posisi;
-            $position->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
-            $position->nama_posisi = $request->name;
-            $position->tes = !empty($request->get('tests')) ? implode(',', array_filter($request->get('tests'))) : '';
-            $position->keahlian = !empty($request->get('skills')) ? implode(',', array_filter($request->get('skills'))) : '';
+            $position = new Position;
+            $position->company_id = isset($company) ? $company->id : $request->company;
+            $position->role_id = $request->role;
+            $position->name = $request->name;
             $position->save();
+
+            // Save position tests
+            if(count($request->tests) > 0) {
+                $position->tests()->attach($request->tests);
+            }
+
+            // Save position skills
+            if(count($request->skills) > 0) {
+                foreach($request->skills as $s) {
+                    $skill = Skill::firstOrCreate(['name' => $s]);
+                    if($skill) $position->skills()->attach($skill->id);
+                }
+            }
 
             // Redirect
             return redirect()->route('admin.position.index')->with(['message' => 'Berhasil menambah data.']);
@@ -121,23 +134,16 @@ class PositionController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get the position
-    	if(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
-            $position = Posisi::where('id_posisi','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
+        // Get the position and tests
+    	if(Auth::user()->role->is_global === 1) {
+            $position = Position::has('company')->has('role')->findOrFail($id);
+    	    $tests = Test::all();
         }
-        else {
-            $position = Posisi::findOrFail($id);
+        elseif(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $position = Position::has('role')->where('company_id','=',$company->id)->findOrFail($id);
+            $tests = $company ? $company->tests : [];
         }
-
-        // Set position tests and skills
-        if($position) {
-        	$position->tes = $position->tes != '' ? explode(',', $position->tes) : array();
-            $position->keahlian = $position->keahlian != '' ? explode(',', $position->keahlian) : array();
-        }
-
-        // Get tests
-    	$tests = get_perusahaan_tes($position->id_hrd);
 
         // View
         return view('admin/position/edit', [
@@ -157,6 +163,7 @@ class PositionController extends \App\Http\Controllers\Controller
         // Validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'role' => 'required',
         ], validationMessages());
         
         // Check errors
@@ -166,11 +173,25 @@ class PositionController extends \App\Http\Controllers\Controller
         }
         else {
             // Update the position
-            $position = Posisi::find($request->id);
-            $position->nama_posisi = $request->name;
-            $position->tes = !empty($request->get('tests')) ? implode(',', array_filter($request->get('tests'))) : '';
-            $position->keahlian = !empty($request->get('skills')) ? implode(',', array_filter($request->get('skills'))) : '';
+            $position = Position::find($request->id);
+            $position->role_id = $request->role;
+            $position->name = $request->name;
             $position->save();
+
+            // Update position tests
+            if(count($request->tests) > 0) {
+                $position->tests()->sync($request->tests);
+            }
+
+            // Update position skills
+            if(count($request->skills) > 0) {
+                $ids = [];
+                foreach($request->skills as $s) {
+                    $skill = Skill::firstOrCreate(['name' => $s]);
+                    if($skill) array_push($ids, $skill->id);
+                }
+                $position->skills()->sync($ids);
+            }
 
             // Redirect
             return redirect()->route('admin.position.index')->with(['message' => 'Berhasil mengupdate data.']);
@@ -189,9 +210,11 @@ class PositionController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the position
-        $position = Posisi::find($request->id);
+        $position = Position::find($request->id);
 
         // Delete the position
+        $position->tests()->detach();
+        $position->skills()->detach();
         $position->delete();
 
         // Redirect
