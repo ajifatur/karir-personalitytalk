@@ -32,12 +32,12 @@
                             @foreach($tests as $test)
                             <tr>
                                 <td align="center"><input type="checkbox" class="form-check-input checkbox-one"></td>
-                                <td>{{ $test->nama_tes }}</td>
-                                <td><a href="{{ subdomain_tes() }}tes/{{ $test->path }}" target="_blank">{{ subdomain_tes() }}tes/{{ $test->path }}</a></td>
+                                <td>{{ $test->name }}</td>
+                                <td><a href="{{ subdomain_tes() }}tes/{{ $test->code }}" target="_blank">{{ subdomain_tes() }}tes/{{ $test->code }}</a></td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{{ route('admin.test.edit', ['id' => $test->id_tes]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
-                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $test->id_tes }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                                        <a href="{{ route('admin.test.edit', ['id' => $test->id]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $test->id }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -65,10 +65,6 @@
 
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
-    
-    // Checkbox
-    Spandiv.CheckboxOne();
-    Spandiv.CheckboxAll();
 </script>
 
 @endsection

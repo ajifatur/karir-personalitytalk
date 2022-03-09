@@ -33,8 +33,8 @@ class ResultController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
 
         if($request->ajax()) {
-            // Get employee or applicant results
-            if($request->query('role') == role('employee') || $request->query('role') == role('applicant')) {
+            // Get employee, applicant or internship results
+            if(in_array($request->query('role'), [role('employee'), role('applicant'), role('internship')])) {
                 // Get the company, test, role
                 $company = Auth::user()->role->is_global === 1 ? Company::find($request->query('company')) : Company::find(Auth::user()->attribute->company_id);
                 $test = Test::find($request->query('test'));
@@ -95,7 +95,7 @@ class ResultController extends \App\Http\Controllers\Controller
         }
 
         // Auto redirect to employee results
-        if(!in_array($request->query('role'), [role('employee'), role('applicant')])) {
+        if(!in_array($request->query('role'), [role('employee'), role('applicant'), role('internship')])) {
             return redirect()->route('admin.result.index', ['role' => role('employee')]);
         }
 

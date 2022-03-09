@@ -170,6 +170,22 @@ class SyncController extends \App\Http\Controllers\Controller
 
     public function internship()
     {
+		$positions = [
+			'Social Media Manager',
+			'Content Writer',
+			'Event Manager',
+			'Creative and Design Manager',
+			'Video Editor'
+		];
+		foreach($positions as $position) {
+			$p = \App\Models\Position::where('company_id','=',1)->where('role_id','=',role('internship'))->where('name','=',$position)->first();
+			if(!$p) $p = new \App\Models\Position;
+			$p->company_id = 1;
+			$p->role_id = role('internship');
+			$p->name = $position;
+			$p->save();
+		}
+
 		$users = \App\Models\User::where('role_id','=',role('internship'))->get();
 		foreach($users as $user) {
 			$user_attr = \App\Models\UserAttribute::where('user_id','=',$user->id)->first();
@@ -183,9 +199,31 @@ class SyncController extends \App\Http\Controllers\Controller
 				$user_attr->start_date = null;
 				$user_attr->end_date = null;
 				$user_attr->save();
+
+				if(array_key_exists($user->jenis_kelamin - 1, $positions)) {
+					$p = \App\Models\Position::where('company_id','=',1)->where('role_id','=',role('internship'))->where('name','=',$positions[$user->jenis_kelamin - 1])->first();
+					if($p) {
+						$user_attr->position_id = $p->id;
+						$user_attr->save();
+					}
+				}
 			}
 		}
 		var_dump(count($users));
+    }
+
+    public function hrd()
+    {
+		$hrds = \App\Models\HRD::all();
+		foreach($hrds as $hrd) {
+			$user_attr = \App\Models\UserAttribute::where('user_id','=',$hrd->id_user)->first();
+
+			if($user_attr) {
+				$user_attr->company_id = $hrd->id_hrd;
+				$user_attr->save();
+			}
+		}
+		var_dump(count($hrds));
     }
 
     public function companyTest()
@@ -245,19 +283,5 @@ class SyncController extends \App\Http\Controllers\Controller
 			}
 		}
 		var_dump(count($selections));
-    }
-
-    public function hrd()
-    {
-		$hrds = \App\Models\HRD::all();
-		foreach($hrds as $hrd) {
-			$user_attr = \App\Models\UserAttribute::where('user_id','=',$hrd->id_user)->first();
-
-			if($user_attr) {
-				$user_attr->company_id = $hrd->id_hrd;
-				$user_attr->save();
-			}
-		}
-		var_dump(count($hrds));
     }
 }

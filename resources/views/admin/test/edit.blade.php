@@ -13,11 +13,11 @@
             <div class="card-body">
                 <form method="post" action="{{ route('admin.test.update') }}" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $test->id_tes }}">
+                    <input type="hidden" name="id" value="{{ $test->id }}">
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Nama <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <input type="text" name="name" class="form-control form-control-sm {{ $errors->has('name') ? 'border-danger' : '' }}" value="{{ $test->nama_tes }}" autofocus>
+                            <input type="text" name="name" class="form-control form-control-sm {{ $errors->has('name') ? 'border-danger' : '' }}" value="{{ $test->name }}" autofocus>
                             @if($errors->has('name'))
                             <div class="small text-danger">{{ $errors->first('name') }}</div>
                             @endif

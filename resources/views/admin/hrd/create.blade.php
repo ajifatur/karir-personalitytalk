@@ -60,6 +60,15 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">No. HP <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <input type="text" name="phone_number" class="form-control form-control-sm {{ $errors->has('phone_number') ? 'border-danger' : '' }}" value="{{ old('phone_number') }}">
+                            @if($errors->has('phone_number'))
+                            <div class="small text-danger">{{ $errors->first('phone_number') }}</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Username <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
                             <input type="text" name="username" class="form-control form-control-sm {{ $errors->has('username') ? 'border-danger' : '' }}" value="{{ old('username') }}">
@@ -124,8 +133,8 @@
                             <div>
                                 @foreach($tests as $test)
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" name="tests[]" type="checkbox" value="{{ $test->id_tes }}" {{ is_array(old('tests')) && in_array($test->id_tes, old('tests')) ? 'checked' : '' }}>
-                                    <span class="form-check-label">{{ $test->nama_tes }}</span>
+                                    <input class="form-check-input" name="tests[]" type="checkbox" value="{{ $test->id }}" {{ is_array(old('tests')) && in_array($test->id, old('tests')) ? 'checked' : '' }}>
+                                    <span class="form-check-label">{{ $test->name }}</span>
                                 </label>
                                 @endforeach
                             </div>

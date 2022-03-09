@@ -28,7 +28,7 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::get('/login', 'Auth\LoginController@show')->name('auth.login');
 	Route::post('/login', '\Ajifatur\FaturHelper\Http\Controllers\Auth\LoginController@authenticate');
 
-	// Applicant Register
+	// Applicant Register // TBC
 	Route::get('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
 	Route::post('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
 	Route::get('/lowongan/{code}/daftar/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
@@ -40,7 +40,7 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::get('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
 	Route::post('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
 
-	// URL Form
+	// URL Form // TBC
 	Route::get('/lowongan/{url}', 'VacancyController@visit');
 
 	// Register as Applicant
@@ -102,7 +102,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/selection/convert', 'SelectionController@convert')->name('admin.selection.convert');
 	Route::post('/admin/selection/delete', 'SelectionController@delete')->name('admin.selection.delete');
 
-	// Test // TBC
+	// Test
 	Route::get('/admin/test', 'TestController@index')->name('admin.test.index');
 	Route::get('/admin/test/create', 'TestController@create')->name('admin.test.create');
 	Route::post('/admin/test/store', 'TestController@store')->name('admin.test.store');
@@ -133,7 +133,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/result/delete', 'ResultController@delete')->name('admin.result.delete');
 	Route::post('/admin/result/print', 'ResultController@print')->name('admin.result.print'); // TBC
 
-	// HRD // TBC
+	// HRD
 	Route::get('/admin/hrd', 'HRDController@index')->name('admin.hrd.index');
 	Route::get('/admin/hrd/create', 'HRDController@create')->name('admin.hrd.create');
 	Route::post('/admin/hrd/store', 'HRDController@store')->name('admin.hrd.store');

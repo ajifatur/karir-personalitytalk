@@ -1,6 +1,6 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Detail HRD: '.$hrd->nama_lengkap)
+@section('title', 'Detail HRD: '.$hrd->name)
 
 @section('content')
 
@@ -11,7 +11,7 @@
     <div class="col-md-4 col-xl-3">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ asset('assets/images/pas-foto/'.$hrd->user->foto) }}" class="rounded-circle" height="150" width="150" alt="Foto">
+                <img src="{{ asset('assets/images/pas-foto/'.$hrd->avatar) }}" class="rounded-circle" height="150" width="150" alt="Foto">
             </div>
         </div>
     </div>
@@ -22,35 +22,44 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Nama:</div>
-                        <div>{{ $hrd->nama_lengkap }}</div>
+                        <div>{{ $hrd->name }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Tanggal Lahir:</div>
-                        <div>{{ date('d/m/Y', strtotime($hrd->tanggal_lahir)) }}</div>
+                        <div>{{ date('d/m/Y', strtotime($hrd->attribute->birthdate)) }}</div>
+                    </li>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Jenis Kelamin:</div>
+                        <div>{{ gender($hrd->attribute->gender) }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Email:</div>
                         <div>{{ $hrd->email }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>Kode:</div>
-                        <div>{{ $hrd->kode }}</div>
+                        <div>Nomor HP:</div>
+                        <div>{{ $hrd->attribute->phone_number }}</div>
                     </li>
+                    <br>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Nama Perusahaan:</div>
-                        <div>{{ $hrd->perusahaan }}</div>
+                        <div>{{ $hrd->attribute->company->name }}</div>
+                    </li>
+                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
+                        <div>Kode Perusahaan:</div>
+                        <div>{{ $hrd->attribute->company->code }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Alamat Perusahaan:</div>
-                        <div>{{ $hrd->alamat_perusahaan != '' ? $hrd->alamat_perusahaan : '-' }}</div>
+                        <div>{{ $hrd->attribute->company->address }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>No. Telepon Perusahaan:</div>
-                        <div>{{ $hrd->telepon_perusahaan != '' ? $hrd->telepon_perusahaan : '-' }}</div>
+                        <div>{{ $hrd->attribute->company->phone_number }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Akses STIFIn:</div>
-                        <div>{{ $hrd->akses_stifin == 1 ? 'Ya' : 'Tidak' }}</div>
+                        <div>{{ $hrd->attribute->company->stifin == 1 ? 'Ya' : 'Tidak' }}</div>
                     </li>
                 </ul>
             </div>
