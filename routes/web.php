@@ -97,9 +97,9 @@ Route::group(['middleware' => ['admin']], function() {
 
 	// Selection
 	Route::get('/admin/selection', 'SelectionController@index')->name('admin.selection.index');
-	Route::post('/admin/selection/store', 'SelectionController@store')->name('admin.selection.store'); // TBC
+	Route::post('/admin/selection/store', 'SelectionController@store')->name('admin.selection.store');
 	Route::post('/admin/selection/update', 'SelectionController@update')->name('admin.selection.update');
-	Route::post('/admin/selection/convert', 'SelectionController@convert')->name('admin.selection.convert'); // TBC
+	Route::post('/admin/selection/convert', 'SelectionController@convert')->name('admin.selection.convert');
 	Route::post('/admin/selection/delete', 'SelectionController@delete')->name('admin.selection.delete');
 
 	// Test // TBC
@@ -131,9 +131,9 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/result', 'ResultController@index')->name('admin.result.index');
 	Route::get('/admin/result/detail/{id}', 'ResultController@detail')->name('admin.result.detail');
 	Route::post('/admin/result/delete', 'ResultController@delete')->name('admin.result.delete');
-	Route::post('/admin/result/print', 'ResultController@print')->name('admin.result.print');
+	Route::post('/admin/result/print', 'ResultController@print')->name('admin.result.print'); // TBC
 
-	// HRD
+	// HRD // TBC
 	Route::get('/admin/hrd', 'HRDController@index')->name('admin.hrd.index');
 	Route::get('/admin/hrd/create', 'HRDController@create')->name('admin.hrd.create');
 	Route::post('/admin/hrd/store', 'HRDController@store')->name('admin.hrd.store');
@@ -162,7 +162,6 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/applicant/update', 'ApplicantController@update')->name('admin.applicant.update');
 	Route::post('/admin/applicant/delete', 'ApplicantController@delete')->name('admin.applicant.delete');
 	Route::get('/admin/applicant/export', 'ApplicantController@export')->name('admin.applicant.export');
-	Route::post('/admin/applicant/convert', 'ApplicantController@convert')->name('admin.applicant.convert');
 
 	/******************************** */
 

@@ -77,13 +77,13 @@ class SelectionController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get the HRD
+    	// Get the company
     	if(Auth::user()->role->is_global === 1) {
-            $applicant = Pelamar::find($request->applicant_id);
-            if($applicant) $hrd = HRD::find($applicant->id_hrd);
+            $applicant = User::find($request->user_id);
+            if($applicant) $company = $user->attribute->company;
         }
     	elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id_user)->first();
+            $company = Company::find(Auth::user()->attribute->company_id);
         }
 
         // Validation
@@ -100,21 +100,21 @@ class SelectionController extends \App\Http\Controllers\Controller
         }
         else {
             // Check selection
-            $check = Seleksi::where('id_pelamar','=',$request->applicant_id)->where('id_lowongan','=',$request->vacancy_id)->first();
+            $check = Selection::where('user_id','=',$request->user_id)->where('vacancy_id','=',$request->vacancy_id)->first();
 
             // If check is exist
             if($check) {
-                return redirect()->route('admin.applicant.detail', ['id' => $request->applicant_id])->with(['message' => 'Sudah masuk ke data seleksi.']);
+                return redirect()->route('admin.applicant.detail', ['id' => $request->user_id])->with(['message' => 'Sudah masuk ke data seleksi.']);
             }
 
             // Save the selection
-            $selection = new Seleksi;
-            $selection->id_hrd = isset($hrd) ? $hrd->id_hrd : 0;
-            $selection->id_pelamar = $request->applicant_id;
-            $selection->id_lowongan = $request->vacancy_id;
-            $selection->hasil = 99;
-            $selection->waktu_wawancara = generate_date_format($request->date, 'y-m-d')." ".$request->time.":00";
-            $selection->tempat_wawancara = $request->place;
+            $selection = new Selection;
+            $selection->company_id = $company->id;
+            $selection->user_id = $request->user_id;
+            $selection->vacancy_id = $request->vacancy_id;
+            $selection->status = 99;
+            $selection->test_time = DateTimeExt::change($request->date)." ".$request->time.":00";
+            $selection->test_place = $request->place;
             $selection->save();
 
             // Redirect
@@ -206,36 +206,11 @@ class SelectionController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the selection
-        $selection = Selection::find($request->id);
+        $selection = Selection::has('user')->find($request->id);
 
-        // Get the applicant
-        $applicant = Pelamar::find($selection->id_pelamar);
-
-        // Get the vacancy
-        $vacancy = Lowongan::find($applicant->posisi);
-
-        // Add to employee
-        $employee = new Karyawan;
-        $employee->id_user = $applicant->id_user;
-        $employee->id_hrd = $selection->id_hrd;
-        $employee->nama_lengkap = $applicant->nama_lengkap;
-        $employee->tanggal_lahir = $applicant->tanggal_lahir;
-        $employee->jenis_kelamin = $applicant->jenis_kelamin;
-        $employee->email = $applicant->email;
-        $employee->nomor_hp = $applicant->nomor_hp;
-        $employee->posisi = $vacancy ? $vacancy->posisi : 0;
-        $employee->kantor = 0;
-        $employee->nik_cis = '';
-        $employee->nik = $applicant->nomor_ktp;
-        $employee->alamat = $applicant->alamat;
-        $employee->pendidikan_terakhir = $applicant->pendidikan_terakhir;
-        $employee->awal_bekerja = null;
-        $employee->save();
-
-        // Get the user
-        $user = User::find($applicant->id_user);
-        $user->role_id = role('employee');
-        $user->save();
+        // Update the user role
+        $selection->user->role_id = role('employee');
+        $selection->user->save();
 
         // Redirect
         return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil mengonversi data.']);

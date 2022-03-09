@@ -29,4 +29,12 @@ class Packet extends Model
     {
         return $this->belongsTo(Test::class, 'test_id');
     }
+
+    /**
+     * Get the questions for the packet.
+     */
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }

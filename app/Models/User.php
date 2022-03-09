@@ -38,10 +38,34 @@ class User extends \Ajifatur\FaturHelper\Models\User
     ];
 
     /**
-     * Get the company associated with the user.
+     * Get the attribute associated with the user.
      */
-    public function company()
+    public function attribute()
     {
-        return $this->hasOne(Company::class);
+        return $this->hasOne(UserAttribute::class);
+    }
+
+    /**
+     * Get the socmed associated with the user.
+     */
+    public function socmed()
+    {
+        return $this->hasOne(UserSocmed::class);
+    }
+
+    /**
+     * Get the guardian associated with the user.
+     */
+    public function guardian()
+    {
+        return $this->hasOne(UserGuardian::class);
+    }
+
+    /**
+     * Get the attachments for the packet.
+     */
+    public function attachments()
+    {
+        return $this->hasMany(UserAttachment::class);
     }
 }

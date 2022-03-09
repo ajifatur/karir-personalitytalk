@@ -28,7 +28,6 @@ class VacancyController extends \App\Http\Controllers\Controller
         if($request->ajax()) {
             // Get vacancies
             $vacancies = Vacancy::has('company')->has('position')->where('company_id','=',$request->query('company'))->where('status','=',1)->orderBy('name','asc')->get();
-
             foreach($vacancies as $vacancy) {
                 $vacancy->name = $vacancy->name.', sebagai '.$vacancy->position->name;
             }

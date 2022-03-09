@@ -1,6 +1,6 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Data Hasil Tes: '.$user->name)
+@section('title', 'Data Hasil Tes: '.$result->user->name)
 
 @section('content')
 
@@ -16,27 +16,27 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Nama:</span>
-                        <span>{{ $user->name }}</span>
+                        <span>{{ $result->user->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Usia:</span>
-                        <span>{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}</span>
+                        <span>{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Jenis Kelamin:</span>
-                        <span>{{ gender($user->jenis_kelamin) }}</span>
+                        <span>{{ gender($result->user->attribute->gender) }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Jabatan:</span>
-                        <span>{{ !empty($user_desc) ? $user_desc->nama_posisi : $role->nama_role }}</span>
+                        <span>{{ $result->user->attribute->position->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Role:</span>
-                        <span>{{ role($user->role_id) }}</span>
+                        <span>{{ $result->user->role->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-flex justify-content-between">
                         <span>Tes:</span>
-                        <span>{{ $result->nama_tes }}</span>
+                        <span>{{ $result->test->name }}</span>
                     </li>
                 </ul>
             </div>
@@ -97,12 +97,12 @@
 
 <form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf
-    <input type="hidden" name="nama" value="{{ $user->name }}">
-    <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
-    <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">
-    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.role($user->role_id).')' : role($user->role_id) }}">
-    <input type="hidden" name="tes" value="{{ $result->nama_tes }}">
-    <input type="hidden" name="path" value="{{ $result->path }}">
+    <input type="hidden" name="nama" value="{{ $result->user->name }}">
+    <input type="hidden" name="usia" value="{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}">
+    <input type="hidden" name="jenis_kelamin" value="{{ gender($result->user->attribute->gender) }}">
+    <input type="hidden" name="posisi" value="{{ $result->user->attribute->position->name }}">
+    <input type="hidden" name="tes" value="{{ $result->test->name }}">
+    <input type="hidden" name="path" value="{{ $result->test->code }}">
     <input type="hidden" name="image" id="image">
 </form>
 
