@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class SyncController extends \App\Http\Controllers\Controller
@@ -188,8 +189,11 @@ class SyncController extends \App\Http\Controllers\Controller
 
 		$users = \App\Models\User::where('role_id','=',role('internship'))->get();
 		foreach($users as $user) {
-			$user_attr = \App\Models\UserAttribute::where('user_id','=',$user->id)->first();
+			$u = \App\Models\User::find($user->id);
+			$u->username = '';
+			$u->save();
 
+			$user_attr = \App\Models\UserAttribute::where('user_id','=',$user->id)->first();
 			if($user_attr) {
 				$user_attr->company_id = 1;
 				$user_attr->office_id = 0;
@@ -201,9 +205,9 @@ class SyncController extends \App\Http\Controllers\Controller
 				$user_attr->save();
 
 				if(array_key_exists($user->jenis_kelamin - 1, $positions)) {
-					$p = \App\Models\Position::where('company_id','=',1)->where('role_id','=',role('internship'))->where('name','=',$positions[$user->jenis_kelamin - 1])->first();
-					if($p) {
-						$user_attr->position_id = $p->id;
+					$pos = \App\Models\Position::where('company_id','=',1)->where('role_id','=',role('internship'))->where('name','=',$positions[$user->jenis_kelamin - 1])->first();
+					if($pos) {
+						$user_attr->position_id = $pos->id;
 						$user_attr->save();
 					}
 				}
@@ -284,4 +288,18 @@ class SyncController extends \App\Http\Controllers\Controller
 		}
 		var_dump(count($selections));
     }
+
+	public function internshipResult()
+	{
+		$role = role('internship');
+		$results = \App\Models\Result::whereHas('user', function (Builder $query) use ($role) {
+            return $query->where('role_id','=',$role);
+        })->get();
+		foreach($results as $result) {
+			$r = \App\Models\Result::find($result->id);
+			$r->company_id = 1;
+			$r->save();
+		}
+		var_dump(count($results));
+	}
 }

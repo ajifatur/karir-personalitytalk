@@ -162,11 +162,16 @@ class ApplicantController extends \App\Http\Controllers\Controller
             $vacancy = Vacancy::has('company')->find($request->vacancy);
             
             // Generate username
-            $data_user = User::where('username','like', $vacancy->company->code.'%')->latest('username')->first();
+            $data_user = User::whereHas('attribute', function (Builder $query) use ($vacancy) {
+                return $query->has('company')->has('position')->where('company_id','=',$vacancy->company_id);
+            })->latest('username')->first();
             if(!$data_user)
                 $username = generate_username(null, $vacancy->company->code);
             else
                 $username = generate_username($data_user->username, $vacancy->company->code);
+
+            var_dump($data_user);
+            return;
 
             // Save the user
             $user = new User;

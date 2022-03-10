@@ -6,8 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Lowongan;
-use App\Models\Pelamar;
 use App\Models\User;
 
 class HRDMail extends Mailable
@@ -17,12 +15,12 @@ class HRDMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * int id pelamar
+     * int id
      * @return void
      */
     public function __construct($id)
     {
-        $this->id_pelamar = $id;
+        $this->id = $id;
     }
 
     /**
@@ -32,14 +30,11 @@ class HRDMail extends Mailable
      */
     public function build()
     {
-        // Get data pelamar
-        $pelamar = Pelamar::find($this->id_pelamar);
-        $pelamar->posisi = Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->find($pelamar->posisi);
-        $user = User::find($pelamar->id_user);
+        // Get the applicant
+        $applicant = User::find($this->id);
 
         return $this->from('administrator@psikologanda.com')->markdown('email/hrd')->subject('Notifikasi')->with([
-            'pelamar' => $pelamar,
-            'user' => $user,
+            'applicant' => $applicant,
         ]);
     }
 }

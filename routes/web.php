@@ -28,7 +28,7 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::get('/login', 'Auth\LoginController@show')->name('auth.login');
 	Route::post('/login', '\Ajifatur\FaturHelper\Http\Controllers\Auth\LoginController@authenticate');
 
-	// Applicant Register // TBC
+	// Applicant Register
 	Route::get('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@showRegistrationFormStep1');
 	Route::post('/lowongan/{code}/daftar/step-1', 'ApplicantRegisterController@submitRegistrationFormStep1');
 	Route::get('/lowongan/{code}/daftar/step-2', 'ApplicantRegisterController@showRegistrationFormStep2');
@@ -40,7 +40,7 @@ Route::group(['middleware' => ['guest']], function() {
 	Route::get('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@showRegistrationFormStep5');
 	Route::post('/lowongan/{code}/daftar/step-5', 'ApplicantRegisterController@submitRegistrationFormStep5');
 
-	// URL Form // TBC
+	// URL Form
 	Route::get('/lowongan/{url}', 'VacancyController@visit');
 
 	// Register as Applicant
@@ -180,4 +180,6 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/sync/position-test', 'SyncController@positionTest');
 	Route::get('/admin/sync/position-skill', 'SyncController@positionSkill');
 	Route::get('/admin/sync/selection', 'SyncController@selection');
+
+	Route::get('/admin/sync/internship-result', 'SyncController@internshipResult');
 });

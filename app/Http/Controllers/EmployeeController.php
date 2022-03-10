@@ -169,11 +169,13 @@ class EmployeeController extends \App\Http\Controllers\Controller
         }
         else {
             // Generate username
-            $userdata = User::where('username','like', $company->code.'%')->latest('username')->first();
-            if(!$userdata)
+            $data_user = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+            })->latest('username')->first();
+            if(!$data_user)
                 $username = generate_username(null, $company->code);
             else
-                $username = generate_username($userdata->username, $company->code);
+                $username = generate_username($data_user->username, $company->code);
 
             // Save the user
             $user = new User;
