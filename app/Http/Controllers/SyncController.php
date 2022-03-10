@@ -200,6 +200,7 @@ class SyncController extends \App\Http\Controllers\Controller
 				$user_attr->position_id = 0;
 				$user_attr->vacancy_id = 0;
 				$user_attr->address = $user->avatar;
+				$user_attr->phone_number = $user->password_str;
 				$user_attr->start_date = null;
 				$user_attr->end_date = null;
 				$user_attr->save();
