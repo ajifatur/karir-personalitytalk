@@ -41,19 +41,19 @@ class ResultController extends \App\Http\Controllers\Controller
                 $role = $request->query('role');
 
                 if($company && $test)
-                    $results = Result::has('company')->has('test')->has('packet')->whereHas('user', function (Builder $query) use ($role) {
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
                         return $query->where('role_id','=',$role);
                     })->where('company_id','=',$company->id)->where('test_id','=',$test->id)->get();
                 elseif($company && !$test)
-                    $results = Result::has('company')->has('test')->has('packet')->whereHas('user', function (Builder $query) use ($role) {
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
                         return $query->where('role_id','=',$role);
                     })->where('company_id','=',$company->id)->get();
                 elseif(!$company && $test)
-                    $results = Result::has('company')->has('test')->has('packet')->whereHas('user', function (Builder $query) use ($role) {
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
                         return $query->where('role_id','=',$role);
                     })->where('test_id','=',$test->id)->get();
                 else
-                    $results = Result::has('company')->has('test')->has('packet')->whereHas('user', function (Builder $query) use ($role) {
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
                         return $query->where('role_id','=',$role);
                     })->get();
             }
@@ -125,11 +125,11 @@ class ResultController extends \App\Http\Controllers\Controller
 
     	// Get the result
     	if(Auth::user()->role->is_global === 1) {
-            $result = Result::has('user')->has('company')->has('test')->has('packet')->findOrFail($id);
+            $result = Result::has('user')->has('company')->has('test')->findOrFail($id);
         }
         elseif(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
-            $result = Result::has('user')->has('company')->has('test')->has('packet')->where('company_id','=',$company->id)->findOrFail($id);
+            $result = Result::has('user')->has('company')->has('test')->where('company_id','=',$company->id)->findOrFail($id);
         }
 
         // JSON decode
