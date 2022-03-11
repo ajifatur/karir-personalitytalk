@@ -188,11 +188,6 @@ class EmployeeController extends \App\Http\Controllers\Controller
             $user->avatar = '';
             $user->status = $request->status;
             $user->last_visit = null;
-
-            $user->tanggal_lahir = null;
-            $user->jenis_kelamin = '';
-            $user->password_str = '';
-            $user->has_access = 0;
             $user->save();
 
             // Save the user attributes

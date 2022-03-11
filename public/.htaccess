@@ -23,3 +23,12 @@
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
+
+# MAINTENANCE-PAGE REDIRECT
+#<IfModule mod_rewrite.c>
+#    RewriteEngine on
+#    RewriteCond %{REMOTE_ADDR} !^123\.456\.789\.000
+#    RewriteCond %{REQUEST_URI} !/maintenance.html$ [NC]
+#    RewriteCond %{REQUEST_URI} !\.(jpe?g?|png|gif) [NC]
+#    RewriteRule .* /maintenance.html [R=302,L]
+#</IfModule>

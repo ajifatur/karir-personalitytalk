@@ -472,11 +472,6 @@ class ApplicantRegisterController extends Controller
             $user->avatar = '';
             $user->status = 1;
             $user->last_visit = null;
-
-            $user->tanggal_lahir = null;
-            $user->jenis_kelamin = '';
-            $user->password_str = '';
-            $user->has_access = 0;
             $user->save();
 
             // Save the user attributes
@@ -534,12 +529,14 @@ class ApplicantRegisterController extends Controller
             $user_guardian->save();
 
             // Save the user skills
-            foreach($temp_array['step_5'] as $skill) {
-                $user_skill = new UserSkill;
-                $user_skill->user_id = $user->id;
-                $user_skill->skill_id = $skill['id'];
-                $user_skill->score = $skill['score'];
-                $user_skill->save();
+            if(is_array($temp_array['step_5'])) {
+                foreach($temp_array['step_5'] as $skill) {
+                    $user_skill = new UserSkill;
+                    $user_skill->user_id = $user->id;
+                    $user_skill->skill_id = $skill['id'];
+                    $user_skill->score = $skill['score'];
+                    $user_skill->save();
+                }
             }
 
             // Send Mail to HRD
@@ -547,7 +544,7 @@ class ApplicantRegisterController extends Controller
             if($hrd)
                 Mail::to($hrd->email)->send(new HRDMail($user->id));
 
-            // // Send Mail to Pelamar
+            // Send Mail to Pelamar
             Mail::to($user->email)->send(new ApplicantMail($user->id));
 
             // Remove session

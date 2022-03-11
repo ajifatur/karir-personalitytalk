@@ -22,7 +22,7 @@ class SyncController extends \App\Http\Controllers\Controller
 			if(!$user_attr) $user_attr = new \App\Models\UserAttribute;
 
 			$user_attr->user_id = $user->id;
-			$user_attr->birthdate = $user->tanggal_lahir != null ? $user->tanggal_lahir : '';
+			$user_attr->birthdate = $user->tanggal_lahir != null ? $user->tanggal_lahir : null;
 			$user_attr->gender = $user->jenis_kelamin != null ? $user->jenis_kelamin : '';
 			$user_attr->country_code = 'ID';
 			$user_attr->dial_code = '+62';

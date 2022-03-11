@@ -80,7 +80,7 @@ class SelectionController extends \App\Http\Controllers\Controller
     	// Get the company
     	if(Auth::user()->role->is_global === 1) {
             $applicant = User::find($request->user_id);
-            if($applicant) $company = $user->attribute->company;
+            if($applicant) $company = $applicant->attribute->company;
         }
     	elseif(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
