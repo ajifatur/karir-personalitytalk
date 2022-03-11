@@ -54,14 +54,14 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <select name="hrd" class="form-select form-select-sm {{ $errors->has('hrd') ? 'border-danger' : '' }}">
+                            <select name="company" class="form-select form-select-sm {{ $errors->has('company') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
-                                @foreach($hrds as $hrd)
-                                <option value="{{ $hrd->id_hrd }}" {{ old('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                                @foreach($companies as $company)
+                                <option value="{{ $company->id }}" {{ old('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
                             </select>
-                            @if($errors->has('hrd'))
-                            <div class="small text-danger">{{ $errors->first('hrd') }}</div>
+                            @if($errors->has('company'))
+                            <div class="small text-danger">{{ $errors->first('company') }}</div>
                             @endif
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                             <select name="type" class="form-select form-select-sm {{ $errors->has('type') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($types as $type)
-                                <option value="{{ $type->id_st }}" {{ old('type') == $type->id_st ? 'selected' : '' }}>{{ $type->test_name }}</option>
+                                <option value="{{ $type->id }}" {{ old('type') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('type'))
@@ -99,7 +99,7 @@
                             <select name="aim" class="form-select form-select-sm {{ $errors->has('aim') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($aims as $aim)
-                                <option value="{{ $aim->id_sa }}" {{ old('aim') == $aim->id_sa ? 'selected' : '' }}>{{ $aim->aim }}</option>
+                                <option value="{{ $aim->id }}" {{ old('aim') == $aim->id ? 'selected' : '' }}>{{ $aim->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('aim'))

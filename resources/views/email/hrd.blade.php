@@ -62,9 +62,9 @@
 												<td>
 													<strong>Yth HRD,</strong>
 													<br>
-													Sekedar memberitahu bahwa <strong>{{ $pelamar->nama_lengkap }}</strong> telah mendaftar di posisi <strong>{{ $pelamar->posisi->nama_posisi }}</strong> pada tanggal <strong>{{ setFullDate($pelamar->pelamar_at) }}</strong>.
+													Sekedar memberitahu bahwa <strong>{{ $applicant->name }}</strong> telah mendaftar di posisi <strong>{{ $applicant->attribute->position->name }}</strong> pada tanggal <strong>{{ \Ajifatur\Helpers\DateTimeExt::full($applicant->created_at) }}</strong>.
 													<br>
-													Untuk melihat data diri <strong>{{ $pelamar->nama_lengkap }}</strong> bisa dilihat pada link berikut ini:
+													Untuk melihat data diri <strong>{{ $applicant->name }}</strong> bisa dilihat pada link berikut ini:
 												</td>
 											</tr>
 										</table>
@@ -78,7 +78,7 @@
 							                        <table border="0" cellpadding="0" cellspacing="0" role="presentation">
 							                            <tr>
 							                                <td>
-							                                    <a href="{{ URL::to('/') }}/hrd/pelamar/profile/{{ $pelamar->id_pelamar }}" class="button button-primary" target="_blank">Klik Disini</a>
+							                                    <a href="{{ route('admin.applicant.detail', ['id' => $applicant->id]) }}" class="button button-primary" target="_blank">Klik Disini</a>
 							                                </td>
 							                            </tr>
 							                        </table>

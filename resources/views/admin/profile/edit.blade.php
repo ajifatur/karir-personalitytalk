@@ -61,7 +61,7 @@
                         <label class="col-lg-2 col-md-3 col-form-label">Tanggal Lahir <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
                             <div class="input-group input-group-sm">
-                                <input type="text" name="birthdate" class="form-control form-control-sm {{ $errors->has('birthdate') ? 'border-danger' : '' }}" value="{{ date('d/m/Y', strtotime(Auth::user()->tanggal_lahir)) }}" autocomplete="off">
+                                <input type="text" name="birthdate" class="form-control form-control-sm {{ $errors->has('birthdate') ? 'border-danger' : '' }}" value="{{ date('d/m/Y', strtotime(Auth::user()->attribute->birthdate)) }}" autocomplete="off">
                                 <span class="input-group-text {{ $errors->has('birthdate') ? 'border-danger' : '' }}"><i class="bi-calendar2"></i></span>
                             </div>
                             @if($errors->has('birthdate'))
@@ -74,7 +74,7 @@
                         <div class="col-lg-10 col-md-9">
                             @foreach(gender() as $gender)
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gender" id="gender-{{ $gender['key'] }}" value="{{ $gender['key'] }}" {{ Auth::user()->jenis_kelamin == $gender['key'] ? 'checked' : '' }}>
+                                <input class="form-check-input" type="radio" name="gender" id="gender-{{ $gender['key'] }}" value="{{ $gender['key'] }}" {{ Auth::user()->attribute->gender == $gender['key'] ? 'checked' : '' }}>
                                 <label class="form-check-label" for="gender-{{ $gender['key'] }}">
                                     {{ $gender['name'] }}
                                 </label>

@@ -14,17 +14,17 @@
             <div class="card-header d-sm-flex justify-content-end align-items-center">
                 <div></div>
                 <div class="ms-sm-2 ms-0">
-                    <select name="hrd" class="form-select form-select-sm">
+                    <select name="company" class="form-select form-select-sm">
                         <option value="0">Semua Perusahaan</option>
-                        @foreach($hrds as $hrd)
-                        <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                        @foreach($companies as $company)
+                        <option value="{{ $company->id }}" {{ Request::query('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
             <hr class="my-0">
             @endif
-            @if($hrd)
+            @if($company)
             <div class="card-body">
                 @if(Session::get('message'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -38,19 +38,18 @@
                             <tr>
                                 <th>Jabatan</th>
                                 @foreach($tests as $test)
-                                <th width="50">{{ $test->nama_tes }}</th>
+                                <th width="50">{{ $test->name }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
                             @if(count($positions) > 0)
                                 @foreach($positions as $position)
-                                    <?php $position->tes = explode(',', $position->tes); ?>
-                                    <tr data-id="{{ $position->id_posisi }}">
-                                        <td>{{ $position->nama_posisi }}</td>
+                                    <tr data-id="{{ $position->id }}">
+                                        <td>{{ $position->name }}</td>
                                         @foreach($tests as $test)
                                         <td align="center">
-                                            <input class="form-check-input" type="checkbox" data-test="{{ $test->id_tes }}" data-position="{{ $position->id_posisi }}" {{ in_array($test->id_tes, $position->tes) ? 'checked' : '' }}>
+                                            <input class="form-check-input" type="checkbox" data-test="{{ $test->id }}" data-position="{{ $position->id }}" {{ in_array($test->id, $position->tests()->pluck('id')->toArray()) ? 'checked' : '' }}>
                                         </td>
                                         @endforeach
                                     </tr>
@@ -86,11 +85,11 @@
         orderAll: true
     });
 
-    // Change the HRD
-    $(document).on("change", ".card-header select[name=hrd]", function() {
-        var hrd = $(this).val();
-        if(hrd === "0") window.location.href = Spandiv.URL("{{ route('admin.position-test.index') }}");
-        else window.location.href = Spandiv.URL("{{ route('admin.position-test.index') }}", {hrd: hrd});
+    // Change the company
+    $(document).on("change", ".card-header select[name=company]", function() {
+        var company = $(this).val();
+        if(company === "0") window.location.href = Spandiv.URL("{{ route('admin.position-test.index') }}");
+        else window.location.href = Spandiv.URL("{{ route('admin.position-test.index') }}", {company: company});
     });
 
     // Change Status

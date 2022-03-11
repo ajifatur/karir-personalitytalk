@@ -1,6 +1,6 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Detail Pelamar: '.$applicant->nama_lengkap)
+@section('title', 'Detail Pelamar: '.$applicant->name)
 
 @section('content')
 
@@ -14,21 +14,21 @@
     <div class="col-md-4 col-xl-3">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ asset('assets/images/pas-foto/'.$applicant->pas_foto) }}" class="rounded-circle" height="150" width="150" alt="Foto">
+                <img src="{{ asset('assets/images/pas-foto/'.$applicant->photo) }}" class="rounded-circle" height="150" width="150" alt="Foto">
             </div>
             <hr class="my-0">
             <div class="card-body">
                 <h5 class="h6 card-title">Info Pelamar</h5>
                 <ul class="list-unstyled mb-0">
-                    <li class="mb-1"><i class="bi-calendar me-1"></i> Melamar tanggal {{ date('d/m/Y', strtotime($applicant->pelamar_at)) }}</li>
-                    <li class="mb-1"><i class="bi-clock me-1"></i> Melamar pukul {{ date('H:i', strtotime($applicant->pelamar_at)) }} WIB</li>
-                    <li class="mb-1"><i class="bi-shuffle me-1"></i> Jabatan <a href="#">{{ $applicant->posisi->nama_posisi }}</a></li>
+                    <li class="mb-1"><i class="bi-calendar me-1"></i> Melamar tanggal {{ date('d/m/Y', strtotime($applicant->created_at)) }}</li>
+                    <li class="mb-1"><i class="bi-clock me-1"></i> Melamar pukul {{ date('H:i', strtotime($applicant->created_at)) }} WIB</li>
+                    <li class="mb-1"><i class="bi-shuffle me-1"></i> Jabatan <a href="#">{{ $applicant->attribute->position ? $applicant->attribute->position->name : '-' }}</a></li>
                 </ul>
             </div>
             <hr class="my-0">
             <div class="card-body">
                 <h5 class="h6 card-title">Riwayat Pekerjaan</h5>
-                <p class="mb-0">{!! $applicant->riwayat_pekerjaan != '' ? nl2br($applicant->riwayat_pekerjaan) : '-' !!}</p>
+                <p class="mb-0">{!! $applicant->attribute->job_experience != '' ? nl2br($applicant->attribute->job_experience) : '-' !!}</p>
             </div>
         </div>
     </div>
@@ -45,19 +45,19 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Nama:</div>
-                        <div>{{ $applicant->nama_lengkap }}</div>
+                        <div>{{ $applicant->name }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Tempat Lahir:</div>
-                        <div>{{ $applicant->tempat_lahir }}</div>
+                        <div>{{ $applicant->attribute->birthplace }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Tanggal Lahir:</div>
-                        <div>{{ date('d/m/Y', strtotime($applicant->tanggal_lahir)) }}</div>
+                        <div>{{ date('d/m/Y', strtotime($applicant->attribute->birthdate)) }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Agama:</div>
-                        <div>{{ $applicant->nama_agama }}</div>
+                        <div>{{ religion($applicant->attribute->religion) }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Email:</div>
@@ -65,43 +65,37 @@
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Nomor HP:</div>
-                        <div>{{ $applicant->nomor_hp }}</div>
-                    </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <div>Nomor Telepon:</div>
-                        <div>{{ $applicant->nomor_telepon != '' ? $applicant->nomor_telepon : '-' }}</div>
+                        <div>{{ $applicant->attribute->phone_number }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>NIK:</div>
-                        <div>{{ $applicant->nomor_ktp != '' ? $applicant->nomor_ktp : '-' }}</div>
+                        <div>{{ $applicant->attribute->identity_number }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Alamat:</div>
-                        <div>{{ $applicant->alamat }}</div>
+                        <div>{{ $applicant->attribute->address }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Pendidikan Terakhir:</div>
-                        <div>{{ $applicant->pendidikan_terakhir }}</div>
+                        <div>{{ $applicant->attribute->latest_education }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Status Hubungan:</div>
-                        <div>@if($applicant->status_hubungan == 1) Lajang @elseif($applicant->status_hubungan == 2) Menikah @elseif($applicant->status_hubungan == 3) Janda / Duda @endif</div>
+                        <div>{{ relationship($applicant->attribute->relationship) }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Sosmed:</div>
                         <div>
-                            @if($applicant->akun_sosmed != null)
-                                @foreach($applicant->akun_sosmed as $sosmed=>$akun)
-                                    {{ $akun }} ({{ $sosmed }})
-                                @endforeach
+                            @if($applicant->socmed)
+                                {{ $applicant->socmed->account }} ({{ platform($applicant->socmed->platform) }})
                             @endif
                         </div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Pas Foto:</div>
                         <div>
-                            @if($applicant->pas_foto != '')
-                                <a href="{{ asset('assets/images/pas-foto/'.$applicant->pas_foto) }}" class="btn btn-sm btn-primary" target="_blank"><i class="bi-camera me-1"></i> Lihat Foto</a>
+                            @if($applicant->photo != '')
+                                <a href="{{ asset('assets/images/pas-foto/'.$applicant->photo) }}" class="btn btn-sm btn-primary" target="_blank"><i class="bi-camera me-1"></i> Lihat Foto</a>
                             @else
                                 -
                             @endif
@@ -110,8 +104,8 @@
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Ijazah:</div>
                         <div>
-                            @if($applicant->foto_ijazah != '')
-                                <a href="{{ asset('assets/images/foto-ijazah/'.$applicant->foto_ijazah) }}" class="btn btn-sm btn-primary" target="_blank"><i class="bi-camera me-1"></i> Lihat Foto</a>
+                            @if($applicant->certificate != '')
+                                <a href="{{ asset('assets/images/foto-ijazah/'.$applicant->certificate) }}" class="btn btn-sm btn-primary" target="_blank"><i class="bi-camera me-1"></i> Lihat Foto</a>
                             @else
                                 -
                             @endif
@@ -142,8 +136,8 @@
             </div>
             <form method="post" action="{{ route('admin.selection.store') }}">
                 @csrf
-                <input type="hidden" name="applicant_id" value="{{ $applicant->id_pelamar }}">
-                <input type="hidden" name="vacancy_id" value="{{ $applicant->posisi->id_lowongan }}">
+                <input type="hidden" name="user_id" value="{{ $applicant->id }}">
+                <input type="hidden" name="vacancy_id" value="{{ $applicant->attribute->vacancy_id }}">
                 <div class="modal-body">
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Tanggal <span class="text-danger">*</span></label>
@@ -202,16 +196,14 @@
     // Button Set Test
     $(document).on("click", ".btn-set-test", function(e) {
         e.preventDefault();
-        var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
-        modal.show();
+        Spandiv.Modal("#modal-set-test").show();
     });
 </script>
 
 @if(count($errors) > 0)
 <script type="text/javascript">
     // Show Modal
-    var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-set-test"));
-    modal.show();
+        Spandiv.Modal("#modal-set-test").show();
 </script>
 @endif
 

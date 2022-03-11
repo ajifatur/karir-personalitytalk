@@ -10,28 +10,28 @@
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Alamat</strong></td>
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Pend. Terakhir</strong></td>
 		<td align="center" width="20" style="background-color: #f88315;"><strong>Awal Bekerja</strong></td>
-		<td align="center" width="40" style="background-color: #f88315;"><strong>Posisi</strong></td>
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Kantor</strong></td>
+		<td align="center" width="40" style="background-color: #f88315;"><strong>Posisi</strong></td>
 		@if(Auth::user()->role->is_global === 1)
 		<td align="center" width="40" style="background-color: #f88315;"><strong>Perusahaan</strong></td>
 		@endif
 	</tr>
 	@foreach($employees as $key=>$employee)
 	<tr>
-		<td>{{ $employee->id_user }}</td>
+		<td>{{ $employee->id }}</td>
 		<td>{{ ($key+1) }}</td>
-        <td>{{ $employee->nama_lengkap }}</td>
-        <td>{{ $employee->tanggal_lahir != null ? date('d/m/Y', strtotime($employee->tanggal_lahir)) : '' }}</td>
-        <td>{{ $employee->jenis_kelamin }}</td>
+        <td>{{ $employee->name }}</td>
+        <td>{{ $employee->attribute->birthdate != null ? date('d/m/Y', strtotime($employee->attribute->birthdate)) : '' }}</td>
+        <td>{{ gender($employee->attribute->gender) }}</td>
         <td>{{ $employee->email }}</td>
-        <td>{{ $employee->nomor_hp }}</td>
-        <td>{{ $employee->alamat }}</td>
-        <td>{{ $employee->pendidikan_terakhir }}</td>
-        <td>{{ $employee->awal_bekerja != null ? date('d/m/Y', strtotime($employee->awal_bekerja)) : '' }}</td>
-        <td>{{ get_posisi_name($employee->posisi) }}</td>
-        <td>{{ get_kantor_name($employee->kantor) }}</td>
+        <td>{{ $employee->attribute->phone_number }}</td>
+        <td>{{ $employee->attribute->address }}</td>
+        <td>{{ $employee->attribute->latest_education }}</td>
+        <td>{{ $employee->attribute->start_date != null ? date('d/m/Y', strtotime($employee->attribute->start_date)) : '' }}</td>
+        <td>{{ $employee->attribute->office ? $employee->attribute->office->name : '' }}</td>
+        <td>{{ $employee->attribute->position ? $employee->attribute->position->name : '' }}</td>
 		@if(Auth::user()->role->is_global === 1)
-        <td>{{ get_perusahaan_name($employee->id_hrd) }}</td>
+        <td>{{ $employee->attribute->company->name }}</td>
         @endif
 	</tr>
 	@endforeach

@@ -15,16 +15,16 @@
                     <select name="test" class="form-select form-select-sm">
                         <option value="0">Semua Tes</option>
                         @foreach($tests as $test)
-                        <option value="{{ $test->id_tes }}" {{ Request::query('test') == $test->id_tes ? 'selected' : '' }}>{{ $test->nama_tes }}</option>
+                        <option value="{{ $test->id }}" {{ Request::query('test') == $test->id ? 'selected' : '' }}>{{ $test->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 @if(Auth::user()->role->is_global === 1)
                     <div class="ms-sm-2 ms-0">
-                        <select name="hrd" class="form-select form-select-sm">
+                        <select name="company" class="form-select form-select-sm">
                             <option value="0">Semua Perusahaan</option>
-                            @foreach($hrds as $hrd)
-                            <option value="{{ $hrd->id_hrd }}" {{ Request::query('hrd') == $hrd->id_hrd ? 'selected' : '' }}>{{ $hrd->perusahaan }}</option>
+                            @foreach($companies as $company)
+                            <option value="{{ $company->id }}" {{ Request::query('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -62,6 +62,7 @@
 <form class="form-delete d-none" method="post" action="{{ route('admin.result.delete') }}">
     @csrf
     <input type="hidden" name="id">
+    <input type="hidden" name="role" value="{{ Request::query('role') }}">
 </form>
 
 @endsection
@@ -73,14 +74,14 @@
     Spandiv.DataTable("#datatable", {
 		serverSide: true,
 		pageLength: 25,
-        url: Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: "{{ Request::query('test') }}", hrd: "{{ Request::query('hrd') }}"}),
+        url: Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: "{{ Request::query('test') }}", company: "{{ Request::query('company') }}"}),
         columns: [
             {data: 'checkbox', name: 'checkbox', className: 'text-center'},
-            {data: 'name', name: 'name'},
-            {data: 'posisi', name: 'posisi'},
+            {data: 'user', name: 'user'},
+            {data: 'position_name', name: 'position_name'},
             {data: 'datetime', name: 'datetime'},
-            {data: 'tes', name: 'tes', visible: {{ Request::query('test') == null ? 'true' : 'false' }}},
-            {data: 'company', name: 'company', visible: {{ Auth::user()->role->is_global === 1 && Request::query('hrd') == null ? 'true' : 'false' }}},
+            {data: 'test_name', name: 'test_name', visible: {{ Request::query('test') == null ? 'true' : 'false' }}},
+            {data: 'company_name', name: 'company_name', visible: {{ Auth::user()->role->is_global === 1 && Request::query('company') == null ? 'true' : 'false' }}},
             {data: 'options', name: 'options', className: 'text-center', orderable: false},
         ],
         order: [3, 'desc']
@@ -89,17 +90,17 @@
     // Button Delete
     Spandiv.ButtonDelete(".btn-delete", ".form-delete");
   
-    // Change the Test and/or the HRD
-    $(document).on("change", ".card-header select[name=test], .card-header select[name=hrd]", function() {
+    // Change the Test and/or the company
+    $(document).on("change", ".card-header select[name=test], .card-header select[name=company]", function() {
         var test = $(".card-header select[name=test]").val();
-        var hrd = $(".card-header select[name=hrd]").length === 1 ? $(".card-header select[name=hrd]").val() : null;
+        var company = $(".card-header select[name=company]").length === 1 ? $(".card-header select[name=company]").val() : null;
 
         // Redirect
-        if(hrd !== null) {
-            if(test == 0 && hrd == 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}"});
-            else if(test == 0 && hrd != 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", hrd: hrd});
-            else if(test != 0 && hrd == 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: test});
-            else window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: test, hrd: hrd});
+        if(company !== null) {
+            if(test == 0 && company == 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}"});
+            else if(test == 0 && company != 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", company: company});
+            else if(test != 0 && company == 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: test});
+            else window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}", test: test, company: company});
         }
         else {
             if(test == 0) window.location.href = Spandiv.URL("{{ route('admin.result.index') }}", {role: "{{ Request::query('role') }}"});

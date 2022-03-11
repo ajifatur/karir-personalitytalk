@@ -17,14 +17,14 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <select name="hrd" class="form-select form-select-sm {{ $errors->has('hrd') ? 'border-danger' : '' }}">
+                            <select name="company" class="form-select form-select-sm {{ $errors->has('company') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
-                                @foreach($hrds as $hrd)
-                                <option value="{{ $hrd->id_hrd }}">{{ $hrd->perusahaan }}</option>
+                                @foreach($companies as $company)
+                                <option value="{{ $company->id }}" {{ old('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
                             </select>
-                            @if($errors->has('hrd'))
-                            <div class="small text-danger">{{ $errors->first('hrd') }}</div>
+                            @if($errors->has('company'))
+                            <div class="small text-danger">{{ $errors->first('company') }}</div>
                             @endif
                         </div>
                     </div>
@@ -35,8 +35,7 @@
                             <select name="vacancy" class="form-select form-select-sm {{ $errors->has('vacancy') ? 'border-danger' : '' }}" {{ Auth::user()->role->is_global === 1 ? 'disabled' : '' }}>
                                 <option value="" disabled selected>--Pilih--</option>
                                 @foreach($vacancies as $vacancy)
-                                    <?php $position = \App\Models\Posisi::find($vacancy->posisi); ?>
-                                    <option value="{{ $vacancy->id_lowongan }}">{{ $vacancy->judul_lowongan }}, {{ $position ? 'sebagai '.$position->nama_posisi : '' }}</option>
+                                    <option value="{{ $vacancy->id }}">{{ $vacancy->name }}, sebagai {{ $vacancy->position->name }}</option>
                                 @endforeach
                             </select>
                             @if($errors->has('vacancy'))
@@ -159,6 +158,20 @@
                             @endif
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Status Hubungan <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <select name="relationship" class="form-select form-select-sm {{ $errors->has('relationship') ? 'border-danger' : '' }}">
+                                <option value="" disabled selected>--Pilih--</option>
+                                @foreach(relationship() as $relationship)
+                                <option value="{{ $relationship['key'] }}" {{ old('relationship') == $relationship['key'] ? 'selected' : '' }}>{{ $relationship['name'] }}</option>
+                                @endforeach
+                            </select>
+                            @if($errors->has('relationship'))
+                            <div class="small text-danger">{{ $errors->first('relationship') }}</div>
+                            @endif
+                        </div>
+                    </div>
                     <hr>
                     <div class="row">
                         <div class="col-lg-2 col-md-3"></div>
@@ -181,18 +194,18 @@
     // Datepicker
     Spandiv.DatePicker("input[name=birthdate]");
 
-    // Change HRD
-    $(document).on("change", "select[name=hrd]", function() {
-        var hrd = $(this).val();
+    // Change company
+    $(document).on("change", "select[name=company]", function() {
+        var company = $(this).val();
         $.ajax({
             type: "get",
             url: "{{ route('admin.vacancy.index') }}",
-            data: {hrd: hrd},
+            data: {company: company},
             success: function(response) {
                 var html = '';
                 html += '<option value="" disabled selected>--Pilih--</option>';
                 for(i=0; i<response.length; i++) {
-                    html += '<option value="' + response[i].id_lowongan + '">' + response[i].judul_lowongan + '</option>';
+                    html += '<option value="' + response[i].id + '">' + response[i].name + '</option>';
                 }
                 $("select[name=vacancy]").removeAttr("disabled").html(html);
             }

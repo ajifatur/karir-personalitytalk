@@ -52,11 +52,11 @@
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Tanggal Lahir:</div>
-                        <div>{{ date('d/m/Y', strtotime($user->tanggal_lahir)) }}</div>
+                        <div>{{ date('d/m/Y', strtotime($user->attribute->birthdate)) }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Jenis Kelamin:</div>
-                        <div>{{ gender($user->jenis_kelamin) }}</div>
+                        <div>{{ gender($user->attribute->gender) }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Email:</div>
@@ -75,23 +75,22 @@
                         <div>{{ date('d/m/Y, H:i', strtotime($user->created_at)) }} WIB</div>
                     </li>
                     @if($user->role_id == role('hrd'))
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                    </li>
+                    <br>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Nama Perusahaan:</div>
-                        <div>{{ $hrd->perusahaan }}</div>
+                        <div>{{ $user->company->name }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Kode Perusahaan:</div>
-                        <div>{{ $hrd->kode }}</div>
+                        <div>{{ $user->company->code }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Alamat Perusahaan:</div>
-                        <div>{{ $hrd->alamat_perusahaan }}</div>
+                        <div>{{ $user->company->address }}</div>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>No. Telp Perusahaan:</div>
-                        <div>{{ $hrd->telepon_perusahaan }}</div>
+                        <div>{{ $user->company->phone_number }}</div>
                     </li>
                     @endif
                 </ul>

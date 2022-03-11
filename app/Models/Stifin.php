@@ -11,29 +11,38 @@ class Stifin extends Model
      *
      * @var string
      */
-    protected $table = 'stifin';
+    protected $table = 'stifins';
 
     /**
-     * Fill the model with an array of attributes.
+     * The attributes that are mass assignable.
      *
-     * @param  array  $attributes
-     * @return $this
-     *
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     * @var array
      */
-    protected $fillable = ['name', 'birthdate', 'test', 'test_at'];
-
+    protected $fillable = [
+        'description'
+    ];
+    
     /**
-     * Get the test record associated with the stifin.
+     * Get the company that owns the stifin.
      */
-    public function tests(){
-        return $this->hasOne(StifinTest::class, 'id_st', 'test');
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
     }
-
+    
     /**
-     * Get the HRD record associated with the stifin.
+     * Get the type that owns the stifin.
      */
-    public function hrd(){
-        return $this->hasOne(HRD::class, 'id_hrd', 'hrd_id');
+    public function type()
+    {
+        return $this->belongsTo(StifinType::class, 'type_id');
+    }
+    
+    /**
+     * Get the aim that owns the stifin.
+     */
+    public function aim()
+    {
+        return $this->belongsTo(StifinAim::class, 'aim_id');
     }
 }

@@ -26,26 +26,42 @@
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Perusahaan <span class="text-danger">*</span></label>
                         <div class="col-lg-10 col-md-9">
-                            <select name="hrd" class="form-select form-select-sm {{ $errors->has('hrd') ? 'border-danger' : '' }}">
+                            <select name="company" class="form-select form-select-sm {{ $errors->has('company') ? 'border-danger' : '' }}">
                                 <option value="" disabled selected>--Pilih--</option>
-                                @foreach($hrds as $hrd)
-                                <option value="{{ $hrd->id_hrd }}">{{ $hrd->perusahaan }}</option>
+                                @foreach($companies as $company)
+                                <option value="{{ $company->id }}" {{ $company->id == old('company') ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
                             </select>
-                            @if($errors->has('hrd'))
-                            <div class="small text-danger">{{ $errors->first('hrd') }}</div>
+                            @if($errors->has('company'))
+                            <div class="small text-danger">{{ $errors->first('company') }}</div>
                             @endif
                         </div>
                     </div>
                     @endif
+                    <div class="row mb-3">
+                        <label class="col-lg-2 col-md-3 col-form-label">Role <span class="text-danger">*</span></label>
+                        <div class="col-lg-10 col-md-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role-{{ role('employee') }}" value="{{ role('employee') }}" {{ old('role') == role('employee') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role-{{ role('employee') }}">{{ role(role('employee')) }}</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role-{{ role('internship') }}" value="{{ role('internship') }}" {{ old('role') == role('employee') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="role-{{ role('internship') }}">{{ role(role('internship')) }}</label>
+                            </div>
+                            @if($errors->has('role'))
+                            <div class="small text-danger">{{ $errors->first('role') }}</div>
+                            @endif
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <label class="col-lg-2 col-md-3 col-form-label">Tes</label>
                         <div class="col-lg-10 col-md-9">
                             <div>
                                 @foreach($tests as $test)
                                 <label class="form-check form-check-inline">
-                                    <input class="form-check-input" name="tests[]" type="checkbox" value="{{ $test->id_tes }}">
-                                    <span class="form-check-label">{{ $test->nama_tes }}</span>
+                                    <input class="form-check-input" name="tests[]" type="checkbox" value="{{ $test->id }}">
+                                    <span class="form-check-label">{{ $test->name }}</span>
                                 </label>
                                 @endforeach
                             </div>

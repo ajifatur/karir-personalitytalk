@@ -4,18 +4,12 @@ namespace App\Http\Controllers;
 
 use Auth;
 use DataTables;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Hasil;
-use App\Models\HRD;
-use App\Models\Karyawan;
-use App\Models\Keterangan;
-use App\Models\Lowongan;
-use App\Models\Pelamar;
-use App\Models\Posisi;
-use App\Models\Role;
-use App\Models\Seleksi;
-use App\Models\Tes;
+use App\Models\Result;
+use App\Models\Company;
+use App\Models\Test;
 use App\Models\User;
 use App\Http\Controllers\Test\DISC1Controller;
 use App\Http\Controllers\Test\DISC2Controller;
@@ -39,102 +33,82 @@ class ResultController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
 
         if($request->ajax()) {
-            // Get employee results
-            if($request->query('role') == role('employee')) {
-                // Get the HRD and the test
-                $hrd = Auth::user()->role->is_global === 1 ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
-                $test = Tes::find($request->query('test'));
+            // Get employee, applicant or internship results
+            if(in_array($request->query('role'), [role('employee'), role('applicant'), role('internship')])) {
+                // Get the company, test, role
+                $company = Auth::user()->role->is_global === 1 ? Company::find($request->query('company')) : Company::find(Auth::user()->attribute->company_id);
+                $test = Test::find($request->query('test'));
+                $role = $request->query('role');
 
-                if($hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->where('hasil.id_hrd','=',$hrd->id_hrd)->where('hasil.id_tes','=',$test->id_tes)->get();
-                elseif($hrd && !$test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->where('hasil.id_hrd','=',$hrd->id_hrd)->get();
-                elseif(!$hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->where('hasil.id_tes','=',$test->id_tes)->get();
+                if($company && $test)
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
+                        return $query->where('role_id','=',$role);
+                    })->where('company_id','=',$company->id)->where('test_id','=',$test->id)->get();
+                elseif($company && !$test)
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
+                        return $query->where('role_id','=',$role);
+                    })->where('company_id','=',$company->id)->get();
+                elseif(!$company && $test)
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
+                        return $query->where('role_id','=',$role);
+                    })->where('test_id','=',$test->id)->get();
                 else
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('employee'))->get();
-            }
-            // Get applicant results
-            elseif($request->query('role') == role('applicant')) {
-                // Get the HRD and the test
-                $hrd = Auth::user()->role->is_global === 1 ? HRD::find($request->query('hrd')) : HRD::where('id_user','=',Auth::user()->id)->first();
-                $test = Tes::find($request->query('test'));
-
-                if($hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->where('hasil.id_hrd','=',$hrd->id_hrd)->where('hasil.id_tes','=',$test->id_tes)->get();
-                elseif($hrd && !$test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->where('hasil.id_hrd','=',$hrd->id_hrd)->get();
-                elseif(!$hrd && $test)
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->where('hasil.id_tes','=',$test->id_tes)->get();
-                else
-                    $results = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->join('users','hasil.id_user','=','users.id')->where('users.role_id','=',role('applicant'))->get();
+                    $results = Result::has('company')->has('test')->whereHas('user', function (Builder $query) use ($role) {
+                        return $query->where('role_id','=',$role);
+                    })->get();
             }
 
             // Set
-            if(count($results)>0) {
+            if(count($results) > 0) {
                 foreach($results as $key=>$result) {
-                    if($request->query('role') == role('employee')) {
-                        $employee = Karyawan::join('posisi','karyawan.posisi','=','posisi.id_posisi')->where('id_user','=',$result->id_user)->first();
-                        $results[$key]->posisi = $employee ? $employee->nama_posisi : '-';
-                    }
-                    elseif($request->query('role') == role('applicant')) {
-                        $applicant = $result->role_id == role('applicant') ? Pelamar::where('id_user','=',$result->id_user)->first() : null;
-                        $position = $applicant ? Lowongan::join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('lowongan.id_lowongan','=',$applicant->posisi)->first() : null;
-                        $results[$key]->posisi = $position ? $position->nama_posisi : '-';
-                    }
+                    $user = $result->user()->has('attribute')->first();
+                    $results[$key]->user = $user;
+                    $results[$key]->position_name = $user->attribute->position ? $user->attribute->position->name : '-';
+                    $results[$key]->test_name = $result->test->name;
+                    $results[$key]->company_name = $result->company->name;
                 }
             }
 
             // Return
             return DataTables::of($results)
                 ->addColumn('checkbox', '<input type="checkbox" class="form-check-input checkbox-one">')
-                ->editColumn('name', '
-                    <span class="d-none">{{ $name }}</span>
-                    <a href="{{ route(\'admin.result.detail\', [\'id\' => $id_hasil]) }}">{{ ucwords($name) }}</a>
+                ->editColumn('user', '
+                    <span class="d-none">{{ $user->name }}</span>
+                    <a href="{{ route(\'admin.result.detail\', [\'id\' => $id]) }}">{{ ucwords($user->name) }}</a>
                     <br>
-                    <small class="text-muted">{{ $username }}</small>
-                ')
-                ->editColumn('posisi', '
-                    {{ $posisi }}
+                    <small class="text-muted">{{ $user->username }}</small>
                 ')
                 ->addColumn('datetime', '
-                    <span class="d-none">{{ $test_at != null ? $test_at : "" }}</span>
-                    {{ $test_at != null ? date("d/m/Y", strtotime($test_at)) : "-" }}
+                    <span class="d-none">{{ $created_at != null ? $created_at : "" }}</span>
+                    {{ $created_at != null ? date("d/m/Y", strtotime($created_at)) : "-" }}
                     <br>
-                    <small class="text-muted">{{ date("H:i", strtotime($test_at))." WIB" }}</small>
-                ')
-                ->addColumn('tes', '
-                    {{ $nama_tes }}
-                ')
-                ->addColumn('company', '
-                    {{ get_perusahaan_name($id_hrd) }}
+                    <small class="text-muted">{{ date("H:i", strtotime($created_at))." WIB" }}</small>
                 ')
                 ->addColumn('options', '
                     <div class="btn-group">
-                        <a href="{{ route(\'admin.result.detail\', [\'id\' => $id_hasil]) }}" class="btn btn-sm btn-info" data-id="{{ $id_hasil }}" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
-                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_hasil }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                        <a href="{{ route(\'admin.result.detail\', [\'id\' => $id]) }}" class="btn btn-sm btn-info" data-id="{{ $id }}" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
+                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                     </div>
                 ')
-                ->removeColumn('password')
-                ->rawColumns(['checkbox', 'name', 'posisi', 'datetime', 'tes', 'company', 'options'])
+                ->rawColumns(['checkbox', 'user', 'datetime', 'options'])
                 ->make(true);
         }
 
         // Auto redirect to employee results
-        if(!in_array($request->query('role'), [role('employee'), role('applicant')])) {
+        if(!in_array($request->query('role'), [role('employee'), role('applicant'), role('internship')])) {
             return redirect()->route('admin.result.index', ['role' => role('employee')]);
         }
 
         // Get tests
-        $tests = Tes::orderBy('nama_tes','asc')->get();
+        $tests = Test::orderBy('name','asc')->get();
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // View
         return view('admin/result/index', [
             'tests' => $tests,
-            'hrds' => $hrds
+            'companies' => $companies
         ]);
     }
 
@@ -151,53 +125,40 @@ class ResultController extends \App\Http\Controllers\Controller
 
     	// Get the result
     	if(Auth::user()->role->is_global === 1) {
-            $result = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->findOrFail($id);
+            $result = Result::has('user')->has('company')->has('test')->findOrFail($id);
         }
-        else {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $result = Hasil::join('tes','hasil.id_tes','=','tes.id_tes')->where('id_hasil','=',$id)->where('hasil.id_hrd','=',$hrd->id_hrd)->firstOrFail();
+        elseif(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $result = Result::has('user')->has('company')->has('test')->where('company_id','=',$company->id)->findOrFail($id);
         }
 
-        if($result) {
-            $test = Tes::find($result->id_tes);
-            if($result->path != 'disc-40-soal' && $result->path != 'disc-24-soal' && $result->path != 'papikostick' && $result->path != 'sdi' && $result->path != 'msdt' && $result->path != 'ist' && $result->path != 'rmib' && $result->path != 'rmib-2') abort(404);
-            $result->hasil = json_decode($result->hasil, true);
-
-        	// Get the user, the user description, and the role
-        	$user = User::find($result->id_user);
-        	$role = Role::find($user->role_id);
-			if($user->role_id == role('employee'))
-                $user_desc = Karyawan::join('posisi','karyawan.posisi','=','posisi.id_posisi')->where('id_user','=',$result->id_user)->firstOrFail();
-        	elseif($user->role_id == role('applicant'))
-                $user_desc = Pelamar::join('lowongan','pelamar.posisi','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('id_user','=',$result->id_user)->firstOrFail();
-        	else
-                $user_desc = [];
-        }
+        // JSON decode
+        $result->result = json_decode($result->result, true);
 
         // DISC 1.0
-        if($result->path == 'disc-40-soal')
-            return DISC1Controller::detail($result, $user, $user_desc, $role);
+        if($result->test->code == 'disc-40-soal')
+            return DISC1Controller::detail($result);
         // DISC 2.0
-        elseif($result->path == 'disc-24-soal')
-            return DISC2Controller::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'disc-24-soal')
+            return DISC2Controller::detail($result);
         // IST
-        elseif($result->path == 'ist')
-            return ISTController::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'ist')
+            return ISTController::detail($result);
         // MSDT
-        elseif($result->path == 'msdt')
-            return MSDtController::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'msdt')
+            return MSDtController::detail($result);
         // Papikostick
-        elseif($result->path == 'papikostick')
-            return PapikostickController::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'papikostick')
+            return PapikostickController::detail($result);
         // SDI
-        elseif($result->path == 'sdi')
-            return SDIController::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'sdi')
+            return SDIController::detail($result);
         // RMIB 1.0
-        elseif($result->path == 'rmib')
-            return RMIBController::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'rmib')
+            return RMIBController::detail($result);
         // RMIB 2.0
-        elseif($result->path == 'rmib-2')
-            return RMIBController::detail($result, $user, $user_desc, $role);
+        elseif($result->test->code == 'rmib-2')
+            return RMIBController::detail($result);
     }
 
     /**
@@ -212,13 +173,13 @@ class ResultController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the result
-        $result = Hasil::join('users','hasil.id_user','=','users.id')->find($request->id);
+        $result = Result::findOrFail($request->id);
 
         // Delete the result
         $result->delete();
 
         // Redirect
-        return redirect()->route('admin.result.index', ['role' => $result->role_id])->with(['message' => 'Berhasil menghapus data.']);
+        return redirect()->route('admin.result.index', ['role' => $request->role])->with(['message' => 'Berhasil menghapus data.']);
     }
 
     /**

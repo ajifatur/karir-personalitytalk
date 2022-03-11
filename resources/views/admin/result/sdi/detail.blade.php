@@ -1,6 +1,6 @@
 @extends('layouts/admin/main')
 
-@section('title', 'Data Hasil Tes: '.$user->name)
+@section('title', 'Data Hasil Tes: '.$result->user->name)
 
 @section('content')
 
@@ -16,27 +16,27 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Nama:</span>
-                        <span>{{ $user->name }}</span>
+                        <span>{{ $result->user->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Usia:</span>
-                        <span>{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}</span>
+                        <span>{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Jenis Kelamin:</span>
-                        <span>{{ gender($user->jenis_kelamin) }}</span>
+                        <span>{{ gender($result->user->attribute->gender) }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Jabatan:</span>
-                        <span>{{ !empty($user_desc) ? $user_desc->nama_posisi : $role->nama_role }}</span>
+                        <span>{{ $result->user->attribute->position->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Role:</span>
-                        <span>{{ role($user->role_id) }}</span>
+                        <span>{{ $result->user->role->name }}</span>
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <span>Tes:</span>
-                        <span>{{ $result->nama_tes }}</span>
+                        <span>{{ $result->test->name }}</span>
                     </li>
                 </ul>
             </div>
@@ -50,7 +50,7 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="graph-tab" data-bs-toggle="tab" data-bs-target="#graph" type="button" role="tab" aria-controls="graph" aria-selected="true">Grafik</button>
                     </li>
-                    @if(array_key_exists('answers', $result->hasil))
+                    @if(array_key_exists('answers', $result->result))
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="answer-tab" data-bs-toggle="tab" data-bs-target="#answer" type="button" role="tab" aria-controls="answer" aria-selected="false">Jawaban</button>
                     </li>
@@ -70,14 +70,14 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>{{ $result->hasil["A"] }}</td>
-                                            <td>{{ $result->hasil["B"] }}</td>
-                                            <td>{{ $result->hasil["C"] }}</td>
+                                            <td>{{ $result->result["A"] }}</td>
+                                            <td>{{ $result->result["B"] }}</td>
+                                            <td>{{ $result->result["C"] }}</td>
                                         </tr>
                                         <tr>
-                                            <td>{{ $result->hasil["D"] }}</td>
-                                            <td>{{ $result->hasil["E"] }}</td>
-                                            <td>{{ $result->hasil["F"] }}</td>
+                                            <td>{{ $result->result["D"] }}</td>
+                                            <td>{{ $result->result["E"] }}</td>
+                                            <td>{{ $result->result["F"] }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -87,9 +87,9 @@
                                 <div id="json" style="display:none;">
                                 <?php
                                     $coords = array(
-                                        "biru" => array($result->hasil["A"], $result->hasil["D"]),
-                                        "merah" => array($result->hasil["B"], $result->hasil["E"]),
-                                        "hijau" => array($result->hasil["C"], $result->hasil["F"]),
+                                        "biru" => array($result->result["A"], $result->result["D"]),
+                                        "merah" => array($result->result["B"], $result->result["E"]),
+                                        "hijau" => array($result->result["C"], $result->result["F"]),
                                     );
                                 
                                     echo json_encode($coords);
@@ -101,7 +101,7 @@
                             </div>
                         </div>
                     </div>
-                    @if(array_key_exists('answers', $result->hasil))
+                    @if(array_key_exists('answers', $result->result))
                     <div class="tab-pane fade" id="answer" role="tabpanel" aria-labelledby="answer-tab">
                         <div class="row">
                             @for($i=1; $i<=2; $i++)
@@ -120,9 +120,9 @@
                                         @php $l = ['a','b']; @endphp
                                         <tr>
                                             <td align="center" bgcolor="#bebebe"><strong>{{ $j }}</strong></td>
-                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers'][$j-1]['Col1'.$l[$i-1]] }}</td>
-                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers'][$j-1]['Col2'.$l[$i-1]] }}</td>
-                                            <td align="center" bgcolor="#eeeeee">{{ $result->hasil['answers'][$j-1]['Col3'.$l[$i-1]] }}</td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->result['answers'][$j-1]['Col1'.$l[$i-1]] }}</td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->result['answers'][$j-1]['Col2'.$l[$i-1]] }}</td>
+                                            <td align="center" bgcolor="#eeeeee">{{ $result->result['answers'][$j-1]['Col3'.$l[$i-1]] }}</td>
                                         </tr>
                                         @endfor
                                     </tbody>
@@ -140,13 +140,13 @@
 
 <form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf
-    <input type="hidden" name="id_hasil" value="{{ $result->id_hasil }}">
-    <input type="hidden" name="nama" value="{{ $user->nama_user }}">
-    <input type="hidden" name="usia" value="{{ generate_age($user->tanggal_lahir, $result->created_at).' tahun' }}">
-    <input type="hidden" name="jenis_kelamin" value="{{ gender($user->jenis_kelamin) }}">
-    <input type="hidden" name="posisi" value="{{ !empty($user_desc) ? $user_desc->nama_posisi.' ('.role($user->role_id).')' : role($user->role_id) }}">
-    <input type="hidden" name="tes" value="{{ $result->nama_tes }}">
-    <input type="hidden" name="path" value="{{ $result->path }}">
+    <input type="hidden" name="id" value="{{ $result->id }}">
+    <input type="hidden" name="nama" value="{{ $result->user->name }}">
+    <input type="hidden" name="usia" value="{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}">
+    <input type="hidden" name="jenis_kelamin" value="{{ gender($result->user->attribute->gender) }}">
+    <input type="hidden" name="posisi" value="{{ $result->user->attribute->position->name }}">
+    <input type="hidden" name="tes" value="{{ $result->test->name }}">
+    <input type="hidden" name="path" value="{{ $result->test->code }}">
     <input type="hidden" name="image" id="image">
 </form>
 

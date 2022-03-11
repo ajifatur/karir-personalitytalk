@@ -11,22 +11,14 @@ class StifinAim extends Model
      *
      * @var string
      */
-    protected $table = 'stifin_aim';
+    protected $table = 'stifin_aims';
 
     /**
-     * The primary key for the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $primaryKey = 'id_sa';
-
-    /**
-     * Fill the model with an array of attributes.
-     *
-     * @param  array  $attributes
-     * @return $this
-     *
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
-     */
-    protected $fillable = ['aim'];
+    protected $fillable = [
+        'name'
+    ];
 }

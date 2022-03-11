@@ -66,9 +66,9 @@
 													<br>
 													Berikut adalah akun Anda yang akan digunakan untuk melakukan tes:
 													<br>
-													Username: <strong>{{ $user->username }}</strong>
+													Username: <strong>{{ $applicant->username }}</strong>
 													<br>
-													Password: <strong>{{ $user->password_str }}</strong>
+													Password: <strong>{{ $applicant->username }}</strong>
 													<br>
 													Akun username dan password ini <strong>jangan sampai hilang</strong>.
 												</td>

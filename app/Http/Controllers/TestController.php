@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Tes;
-use App\Models\HRD;
-use App\Models\PaketSoal;
-use App\Models\TesSettings;
+use App\Models\Test;
 
 class TestController extends \App\Http\Controllers\Controller
 {
@@ -24,7 +21,7 @@ class TestController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the tests
-        $tests = Tes::all();
+        $tests = Test::all();
 
         // View
         return view('admin/test/index', [
@@ -66,19 +63,13 @@ class TestController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Generate the permalink
-            $permalink = generate_permalink($request->name);
-            $i = 1;
-            while(count_existing_data('tes', 'path', $permalink, 'id_tes', null) > 0){
-                $permalink = rename_permalink(generate_permalink($request->name), $i);
-                $i++;
-            }
+            // Generate code
+            $code = slugify($request->name, Test::pluck('code')->toArray());
 
             // Save the test
-            $test = new Tes;
-            $test->nama_tes = $request->name;
-            $test->path = $permalink;
-            $test->waktu_tes = null;
+            $test = new Test;
+            $test->name = $request->name;
+            $test->code = $code;
             $test->save();
 
             // Redirect
@@ -98,7 +89,7 @@ class TestController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the test
-        $test = Tes::findOrFail($id);
+        $test = Test::findOrFail($id);
 
         // View
         return view('admin/test/edit', [
@@ -125,18 +116,13 @@ class TestController extends \App\Http\Controllers\Controller
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
         else {
-            // Generate the permalink
-            $permalink = generate_permalink($request->name);
-            $i = 1;
-            while(count_existing_data('tes', 'path', $permalink, 'id_tes', $request->id) > 0){
-                $permalink = rename_permalink(generate_permalink($request->name), $i);
-                $i++;
-            }
+            // Generate code
+            $code = slugify($request->name, Test::where('id','!=',$request->id)->pluck('code')->toArray());
 
             // Update the test
-            $test = Tes::find($request->id);
-            $test->nama_tes = $request->name;
-            $test->path = $permalink;
+            $test = Test::find($request->id);
+            $test->name = $request->name;
+            $test->code = $code;
             $test->save();
 
             // Redirect
@@ -156,7 +142,7 @@ class TestController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the test
-        $test = Tes::find($request->id);
+        $test = Test::find($request->id);
 
         // Delete the test
         $test->delete();

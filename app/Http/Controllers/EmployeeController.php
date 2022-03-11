@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use Auth;
 use DataTables;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\KaryawanExport;
-use App\Imports\KaryawanImport;
-use App\Models\Karyawan;
-use App\Models\HRD;
-use App\Models\Kantor;
-use App\Models\Pelamar;
-use App\Models\Posisi;
+use Ajifatur\Helpers\DateTimeExt;
+use App\Exports\EmployeeExport;
+// use App\Imports\KaryawanImport;
+use App\Models\Company;
 use App\Models\User;
+use App\Models\UserAttribute;
+use App\Models\Office;
+use App\Models\Position;
 
 class EmployeeController extends \App\Http\Controllers\Controller
 {
@@ -32,12 +33,32 @@ class EmployeeController extends \App\Http\Controllers\Controller
         if($request->ajax()) {
             // Get employees
             if(Auth::user()->role->is_global === 1) {
-                $hrd = HRD::find($request->query('hrd'));
-                $employees = $hrd ? Karyawan::join('users','karyawan.id_user','=','users.id')->where('id_hrd','=',$hrd->id_hrd)->get() : Karyawan::join('users','karyawan.id_user','=','users.id')->get();
+                $company = Company::find($request->query('company'));
+                if($company) {
+                    $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
+                        return $query->has('company')->where('company_id','=',$company->id);
+                    })->where('role_id','=',role('employee'))->get();
+                }
+                else {
+                    $employees = User::whereHas('attribute', function (Builder $query) {
+                        return $query->has('company');
+                    })->where('role_id','=',role('employee'))->get();
+                }
             }
             elseif(Auth::user()->role->is_global === 0) {
-                $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-                $employees = Karyawan::join('users','karyawan.id_user','=','users.id')->where('id_hrd','=',$hrd->id_hrd)->get();
+                $company = Company::find(Auth::user()->attribute->company_id);
+                $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
+                    return $query->has('company')->where('company_id','=',$company->id);
+                })->where('role_id','=',role('employee'))->get();
+            }
+
+            // Set
+            if(count($employees) > 0) {
+                foreach($employees as $key=>$employee) {
+                    $employees[$key]->phone_number = $employee->attribute->phone_number;
+                    $employees[$key]->company_name = $employee->attribute->company->name;
+                    $employees[$key]->position_name = $employee->attribute->position ? $employee->attribute->position->name : '-';
+                }
             }
 
             // Return
@@ -45,39 +66,38 @@ class EmployeeController extends \App\Http\Controllers\Controller
                 ->addColumn('checkbox', '<input type="checkbox" class="form-check-input checkbox-one">')
                 ->editColumn('name', '
                     <span class="d-none">{{ $name }}</span>
-                    <a href="{{ route(\'admin.employee.detail\', [\'id\' => $id_karyawan]) }}">{{ ucwords($name) }}</a>
+                    <a href="{{ route(\'admin.employee.detail\', [\'id\' => $id]) }}">{{ ucwords($name) }}</a>
                     <br>
                     <small class="text-muted"><i class="bi-envelope me-2"></i>{{ $email }}</small>
                     <br>
-                    <small class="text-muted"><i class="bi-phone me-2"></i>{{ $nomor_hp }}</small>
-                ')
-                ->editColumn('posisi', '
-                    {{ get_posisi_name($posisi) }}
+                    <small class="text-muted"><i class="bi-phone me-2"></i>{{ $phone_number }}</small>
                 ')
                 ->editColumn('status', '
                     <span class="badge {{ $status == 1 ? "bg-success" : "bg-danger" }}">{{ status($status) }}</span>
                 ')
-                ->addColumn('company', '
-                    {{ get_perusahaan_name($id_hrd) }}
-                ')
                 ->addColumn('options', '
                     <div class="btn-group">
-                        <a href="{{ route(\'admin.employee.detail\', [\'id\' => $id_karyawan]) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
-                        <a href="{{ route(\'admin.employee.edit\', [\'id\' => $id_karyawan]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
-                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id_karyawan }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
+                        <a href="{{ route(\'admin.employee.detail\', [\'id\' => $id]) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Lihat Detail"><i class="bi-eye"></i></a>
+                        <a href="{{ route(\'admin.employee.edit\', [\'id\' => $id]) }}" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Edit"><i class="bi-pencil"></i></a>
+                        <a href="#" class="btn btn-sm btn-danger btn-delete" data-id="{{ $id }}" data-bs-toggle="tooltip" title="Hapus"><i class="bi-trash"></i></a>
                     </div>
                 ')
-                ->removeColumn('password')
-                ->rawColumns(['checkbox', 'name', 'username', 'posisi', 'status', 'company', 'options'])
+                ->addColumn('datetime', '
+                    <span class="d-none">{{ $created_at != null ? $created_at : "" }}</span>
+                    {{ $created_at != null ? date("d/m/Y", strtotime($created_at)) : "-" }}
+                    <br>
+                    <small class="text-muted">{{ date("H:i", strtotime($created_at))." WIB" }}</small>
+                ')
+                ->rawColumns(['checkbox', 'name', 'username', 'status', 'datetime', 'options'])
                 ->make(true);
         }
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
         // View
         return view('admin/employee/index', [
-            'hrds' => $hrds
+            'companies' => $companies
         ]);
     }
 
@@ -91,23 +111,23 @@ class EmployeeController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
-        // Get HRD
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
-        // Get tests
+        // Get offices and positions
         if(Auth::user()->role->is_global === 1) {
-            $positions = Posisi::orderBy('nama_posisi','asc')->get();
-            $offices = null;
+            $offices = [];
+            $positions = Position::orderBy('name','asc')->get();
         }
         elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
-            $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $offices = $company ? $company->offices()->orderBy('is_main','desc')->orderBy('name','asc')->get() : [];
+            $positions = $company ? $company->positions()->has('role')->orderBy('name','asc')->get() : [];
         }
 
         // View
         return view('admin/employee/create', [
-            'hrds' => $hrds,
+            'companies' => $companies,
             'positions' => $positions,
             'offices' => $offices,
         ]);
@@ -121,12 +141,12 @@ class EmployeeController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get the HRD
+    	// Get the company
     	if(Auth::user()->role->is_global === 1) {
-            $hrd = HRD::find($request->hrd);
+            $company = Company::find($request->company);
         }
     	elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+            $company = Company::find(Auth::user()->attribute->company_id);
         }
 
         // Validation
@@ -137,57 +157,61 @@ class EmployeeController extends \App\Http\Controllers\Controller
             'email' => 'required|email',
             'phone_number' => 'required|numeric',
             'status' => 'required',
-            'hrd' => Auth::user()->role->is_global === 1 ? 'required' : '',
+            'company' => Auth::user()->role->is_global === 1 ? 'required' : '',
             'office' => Auth::user()->role->is_global === 0 ? 'required' : '',
             'position' => Auth::user()->role->is_global === 0 ? 'required' : '',
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
+        else {
             // Generate username
-            $userdata = User::where('has_access','=',0)->where('username','like', $hrd->kode.'%')->latest('username')->first();
-            if(!$userdata)
-                $username = generate_username(null, $hrd->kode);
+            $data_user = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->where('company_id','=',$company->id);
+            })->where('username','like',$company->code.'%')->latest('username')->first();
+            if(!$data_user)
+                $username = generate_username(null, $company->code);
             else
-                $username = generate_username($userdata->username, $hrd->kode);
+                $username = generate_username($data_user->username, $company->code);
 
             // Save the user
             $user = new User;
             $user->role_id = role('employee');
             $user->name = $request->name;
-            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->username = $username;
-            $user->password_str = $username;
             $user->password = bcrypt($username);
+            $user->access_token = null;
             $user->avatar = '';
-            $user->has_access = 0;
             $user->status = $request->status;
-            $user->last_visit = date("Y-m-d H:i:s");
+            $user->last_visit = null;
             $user->save();
 
-            // Save the employee
-            $employee = new Karyawan;
-            $employee->id_user = $user->id;
-            $employee->id_hrd = isset($hrd) ? $hrd->id_hrd : $request->hrd;
-            $employee->nama_lengkap = $request->name;
-            $employee->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $employee->jenis_kelamin = $request->gender;
-            $employee->email = $request->email;
-            $employee->nomor_hp = $request->phone_number;
-            $employee->posisi = Auth::user()->role->is_global === 0 ? $request->position : 0;
-            $employee->kantor = Auth::user()->role->is_global === 0 ? $request->office : 0;
-            $employee->nik_cis = '';
-            $employee->nik = $request->identity_number != '' ? $request->identity_number : '';
-            $employee->alamat = $request->address != '' ? $request->address : '';
-            $employee->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
-            $employee->awal_bekerja = $request->start_date != '' ? generate_date_format($request->start_date, 'y-m-d') : null;
-            $employee->save();
+            // Save the user attributes
+            $user_attribute = new UserAttribute;
+            $user_attribute->user_id = $user->id;
+            $user_attribute->company_id = $company->id;
+            $user_attribute->office_id = Auth::user()->role->is_global === 0 ? $request->office : 0;
+            $user_attribute->position_id = Auth::user()->role->is_global === 0 ? $request->position : 0;
+            $user_attribute->vacancy_id = 0;
+            $user_attribute->birthdate = DateTimeExt::change($request->birthdate);
+            $user_attribute->birthplace = '';
+            $user_attribute->gender = $request->gender;
+            $user_attribute->country_code = 'ID';
+            $user_attribute->dial_code = '+62';
+            $user_attribute->phone_number = $request->phone_number;
+            $user_attribute->address = $request->address != '' ? $request->address : '';
+            $user_attribute->identity_number = $request->identity_number != '' ? $request->identity_number : '';
+            $user_attribute->religion = 0;
+            $user_attribute->relationship = 0;
+            $user_attribute->latest_education = $request->latest_education != '' ? $request->latest_education : '';
+            $user_attribute->job_experience = $request->job_experience != '' ? $request->job_experience : '';
+            $user_attribute->start_date = $request->start_date != '' ? DateTimeExt::change($request->start_date) : null;
+            $user_attribute->end_date = null;
+            $user_attribute->save();
 
             // Redirect
             return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil menambah data.']);
@@ -204,19 +228,18 @@ class EmployeeController extends \App\Http\Controllers\Controller
     {
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
-        
-        // Get the applicant
-        if(Auth::user()->role->is_global === 1)
-            $employee = Karyawan::findOrFail($id);
-        else {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
-            $employee = Karyawan::where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
-        }
 
-        if($employee) {
-            $employee->user = User::find($employee->id_user);
-            $employee->kantor = Kantor::find($employee->kantor);
-            $employee->posisi = Posisi::find($employee->posisi);
+        // Get the employee
+    	if(Auth::user()->role->is_global === 1) {
+            $employee = User::whereHas('attribute', function (Builder $query) {
+                return $query->has('company');
+            })->where('role_id','=',role('employee'))->findOrFail($id);
+        }
+    	if(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $employee = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->where('company_id','=',$company->id);
+            })->where('role_id','=',role('employee'))->findOrFail($id);
         }
 
         // View
@@ -237,25 +260,21 @@ class EmployeeController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Get the employee
-    	if(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->firstOrFail();
-            $employee = Karyawan::join('users','karyawan.id_user','=','users.id')->where('id_karyawan','=',$id)->where('id_hrd','=',$hrd->id_hrd)->firstOrFail();
+    	if(Auth::user()->role->is_global === 1) {
+            $employee = User::whereHas('attribute', function (Builder $query) {
+                return $query->has('company');
+            })->where('role_id','=',role('employee'))->findOrFail($id);
         }
-        else {
-            $employee = Karyawan::join('users','karyawan.id_user','=','users.id')->findOrFail($id);
+    	if(Auth::user()->role->is_global === 0) {
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $employee = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->where('company_id','=',$company->id);
+            })->where('role_id','=',role('employee'))->findOrFail($id);
         }
 
-        // Get positions and offices
-        if(Auth::user()->role->is_global === 1){
-            $hrd = HRD::find($employee->id_hrd);
-            $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
-        }
-        elseif(Auth::user()->role->is_global === 0){
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-            $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
-            $positions = Posisi::where('id_hrd','=',$hrd->id_hrd)->orderBy('nama_posisi','asc')->get();
-        }
+        // Get offices and positions
+        $offices = Office::has('company')->where('company_id','=',$employee->attribute->company_id)->orderBy('is_main','desc')->orderBy('name','asc')->get();
+        $positions = Position::has('company')->has('role')->where('company_id','=',$employee->attribute->company_id)->orderBy('name','asc')->get();
 
         // View
         return view('admin/employee/edit', [
@@ -281,39 +300,35 @@ class EmployeeController extends \App\Http\Controllers\Controller
             'email' => 'required|email',
             'phone_number' => 'required|numeric',
             'status' => 'required',
-            'office' => Auth::user()->role->is_global === 0 ? 'required' : '',
-            'position' => Auth::user()->role->is_global === 0 ? 'required' : '',
+            'office' => 'required',
+            'position' => 'required',
         ], validationMessages());
         
         // Check errors
-        if($validator->fails()){
+        if($validator->fails()) {
             // Back to form page with validation error messages
             return redirect()->back()->withErrors($validator->errors())->withInput();
         }
-        else{
-            // Update the employee
-            $employee = Karyawan::find($request->id);
-            $employee->nama_lengkap = $request->name;
-            $employee->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $employee->jenis_kelamin = $request->gender;
-            $employee->email = $request->email;
-            $employee->nomor_hp = $request->phone_number;
-            $employee->posisi = Auth::user()->role->is_global === 0 ? $request->position : 0;
-            $employee->kantor = Auth::user()->role->is_global === 0 ? $request->office : 0;
-            $employee->nik = $request->identity_number != '' ? $request->identity_number : '';
-            $employee->alamat = $request->address != '' ? $request->address : '';
-            $employee->pendidikan_terakhir = $request->latest_education != '' ? $request->latest_education : '';
-            $employee->awal_bekerja = $request->start_date != '' ? generate_date_format($request->start_date, 'y-m-d') : null;
-            $employee->save();
-
+        else {
             // Update the user
-            $user = User::find($employee->id_user);
+            $user = User::find($request->id);
             $user->name = $request->name;
-            $user->tanggal_lahir = generate_date_format($request->birthdate, 'y-m-d');
-            $user->jenis_kelamin = $request->gender;
             $user->email = $request->email;
             $user->status = $request->status;
             $user->save();
+
+            // Update the user attribute
+            $user->attribute->office_id = $request->office;
+            $user->attribute->position_id = $request->position;
+            $user->attribute->birthdate = DateTimeExt::change($request->birthdate);
+            $user->attribute->gender = $request->gender;
+            $user->attribute->phone_number = $request->phone_number;
+            $user->attribute->address = $request->address != '' ? $request->address : '';
+            $user->attribute->identity_number = $request->identity_number != '' ? $request->identity_number : '';
+            $user->attribute->latest_education = $request->latest_education != '' ? $request->latest_education : '';
+            $user->attribute->job_experience = $request->job_experience != '' ? $request->job_experience : '';
+            $user->attribute->start_date = $request->start_date != '' ? DateTimeExt::change($request->start_date) : null;
+            $user->attribute->save();
 
             // Redirect
             return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil mengupdate data.']);
@@ -332,22 +347,10 @@ class EmployeeController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the employee
-        $employee = Karyawan::find($request->id);
+        $employee = User::find($request->id);
 
         // Delete the employee
         $employee->delete();
-        
-        // Get the user
-        $user = User::find($employee->id_user);
-
-        // Delete the user
-        $user->delete();
-
-        // Get the applicant
-        $applicant = Pelamar::where('id_user','=',$employee->id_user)->first();
-
-        // Delete the applicant
-        if($applicant) $applicant->delete();
 
         // Redirect
         return redirect()->route('admin.employee.index')->with(['message' => 'Berhasil menghapus data.']);
@@ -364,31 +367,34 @@ class EmployeeController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
+        // Set memory limit
         ini_set("memory_limit", "-1");
 
+        // Get employees
         if(Auth::user()->role->is_global === 1) {
-            // Get the HRD
-            $hrd = HRD::find($request->query('hrd'));
-
-            // Get employees
-            $employees = $hrd ? Karyawan::where('id_hrd','=',$hrd->id_hrd)->get() : Karyawan::get();
-
-            // File name
-            $filename = $hrd ? 'Data Karyawan '.$hrd->perusahaan.' ('.date('Y-m-d-H-i-s').')' : 'Data Semua Karyawan ('.date('d-m-Y-H-i-s').')';
-
-            return Excel::download(new KaryawanExport($employees), $filename.'.xlsx');
+            $company = Company::find($request->query('company'));
+            if($company) {
+                $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
+                    return $query->has('company')->where('company_id','=',$company->id);
+                })->where('role_id','=',role('employee'))->get();
+            }
+            else {
+                $employees = User::whereHas('attribute', function (Builder $query) {
+                    return $query->has('company');
+                })->where('role_id','=',role('employee'))->get();
+            }
         }
         elseif(Auth::user()->role->is_global === 0) {
-            // Get the HRD
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
-
-            // Get employees
-            $employees = Karyawan::where('id_hrd','=',$hrd->id_hrd)->get();
-
-            // File name
-            $filename = 'Data Karyawan '.$hrd->perusahaan.' ('.date('Y-m-d-H-i-s').')';
-
-            return Excel::download(new KaryawanExport($employees), $filename.'.xlsx');
+            $company = Company::find(Auth::user()->attribute->company_id);
+            $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
+                return $query->has('company')->where('company_id','=',$company->id);
+            })->where('role_id','=',role('employee'))->get();
         }
+
+        // Set filename
+        $filename = $company ? 'Data Karyawan '.$company->name.' ('.date('Y-m-d-H-i-s').')' : 'Data Semua Karyawan ('.date('d-m-Y-H-i-s').')';
+
+        // Return
+        return Excel::download(new EmployeeExport($employees), $filename.'.xlsx');
     }
 }

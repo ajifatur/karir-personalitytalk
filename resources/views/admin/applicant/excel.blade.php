@@ -18,18 +18,18 @@
 	@foreach($applicants as $key=>$applicant)
 	<tr>
 		<td>{{ ($key+1) }}</td>
-        <td>{{ strtoupper($applicant->nama_lengkap) }}</td>
-        <td>{{ $applicant->tempat_lahir }}</td>
-        <td>{{ $applicant->tanggal_lahir != null ? generate_date($applicant->tanggal_lahir) : '-' }}</td>
-        <td>{{ gender($applicant->jenis_kelamin) }}</td>
-        <td>{{ $applicant->nama_agama }}</td>
+        <td>{{ strtoupper($applicant->name) }}</td>
+        <td>{{ $applicant->attribute->birthplace }}</td>
+        <td>{{ $applicant->attribute->birthdate != null ? date('d/m/Y', strtotime($applicant->attribute->birthdate)) : '-' }}</td>
+        <td>{{ gender($applicant->attribute->gender) }}</td>
+        <td>{{ religion($applicant->attribute->religion) }}</td>
         <td>{{ $applicant->email }}</td>
-        <td>{{ $applicant->nomor_hp }}</td>
-        <td>{{ $applicant->alamat }}</td>
-        <td>{{ $applicant->riwayat_pekerjaan }}</td>
-        <td>{{ get_posisi_name($applicant->posisi) }}</td>
+        <td>{{ $applicant->attribute->phone_number }}</td>
+        <td>{{ $applicant->attribute->address }}</td>
+        <td>{{ $applicant->attribute->job_experience }}</td>
+        <td>{{ $applicant->attribute->position ? $applicant->attribute->position->name : '' }}</td>
 		@if(Auth::user()->role->is_global === 1)
-        <td>{{ get_perusahaan_name($applicant->id_hrd) }}</td>
+        <td>{{ $applicant->attribute->company->name }}</td>
 		@endif
 	</tr>
 	@endforeach

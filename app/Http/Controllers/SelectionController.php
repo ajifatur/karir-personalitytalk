@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Seleksi;
-use App\Models\HRD;
-use App\Models\Kantor;
-use App\Models\Karyawan;
-use App\Models\Lowongan;
-use App\Models\Pelamar;
+use Ajifatur\Helpers\DateTimeExt;
+use App\Models\Selection;
+use App\Models\Company;
+use App\Models\Office;
 use App\Models\User;
 
 class SelectionController extends \App\Http\Controllers\Controller
@@ -26,77 +24,49 @@ class SelectionController extends \App\Http\Controllers\Controller
         // Check the access
         has_access(method(__METHOD__), Auth::user()->role_id);
 
+        // Get the company and selections
         if(Auth::user()->role->is_global === 1) {
-            if($request->query('hrd') != null && $request->query('result') != null) {
-                $hrd = HRD::find($request->query('hrd'));
+            if($request->query('company') != null && $request->query('result') != null) {
+                $company = Company::find($request->query('company'));
 
-                if($hrd && ($request->query('result') == 1 || $request->query('result') == 2 || $request->query('result') == 0 || $request->query('result') == 99))
-                    // Get selections
-                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$request->query('hrd'))->where('seleksi.hasil','=',$request->query('result'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
-                elseif($hrd && ($request->query('result') != 1 && $request->query('result') != 2 && $request->query('result') != 0 && $request->query('result') != 99))
-                    // Get selections
-                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$request->query('hrd'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
-                elseif(!$hrd && ($request->query('result') == 1 || $request->query('result') == 2 || $request->query('result') == 0 || $request->query('result') == 99))
-                    // Get selections
-                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.hasil','=',$request->query('result'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                if($company && in_array($request->query('result'), [1,2,0,99]))
+                    $selections = Selection::has('user')->has('company')->has('vacancy')->where('company_id','=',$company->id)->where('status','=',$request->query('result'))->orderBy('test_time','desc')->get();
+                elseif($company && !in_array($request->query('result'), [1,2,0,99]))
+                    $selections = Selection::has('user')->has('company')->has('vacancy')->where('company_id','=',$company->id)->orderBy('test_time','desc')->get();
+                elseif(!$company && in_array($request->query('result'), [1,2,0,99]))
+                    $selections = Selection::has('user')->has('company')->has('vacancy')->where('status','=',$request->query('result'))->orderBy('test_time','desc')->get();
                 else
-                    // Get selections
-                    $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                    $selections = Selection::has('user')->has('company')->has('vacancy')->orderBy('test_time','desc')->get();
             }
             else {
-                // Get selections
-                $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+                $selections = Selection::has('user')->has('company')->has('vacancy')->orderBy('test_time','desc')->get();
             }
-            
-            // Get offices
-            $offices = Kantor::all();
         }
         elseif(Auth::user()->role->is_global === 0) {
-			// Get the HRD
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+            $company = Company::find(Auth::user()->attribute->company_id);
 			
-            if($request->query('result') != null && ($request->query('result') == 1 || $request->query('result') == 2 || $request->query('result') == 0 || $request->query('result') == 99))
-                // Get selections
-                $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$hrd->id_hrd)->where('seleksi.hasil','=',$request->query('result'))->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
+            if($request->query('result') != null && in_array($request->query('result'), [1,2,0,99]))
+                $selections = Selection::has('user')->has('company')->has('vacancy')->where('company_id','=',$company->id)->where('status','=',$request->query('result'))->orderBy('test_time','desc')->get();
             else
-    			// Get selections
-                $selections = Seleksi::join('pelamar','seleksi.id_pelamar','=','pelamar.id_pelamar')->join('users','pelamar.id_user','=','users.id')->join('lowongan','seleksi.id_lowongan','=','lowongan.id_lowongan')->join('posisi','lowongan.posisi','=','posisi.id_posisi')->where('seleksi.id_hrd','=',$hrd->id_hrd)->orderBy('lowongan.status','desc')->orderBy('waktu_wawancara','desc')->get();
-            
-            // Get offices
-            $offices = Kantor::where('id_hrd','=',$hrd->id_hrd)->get();
+                $selections = Selection::has('user')->has('company')->has('vacancy')->where('company_id','=',$company->id)->orderBy('test_time','desc')->get();
         }
 
         // Set selections
-        if(count($selections)>0) {
+        if(count($selections) > 0) {
             foreach($selections as $key=>$selection) {
-                $employee = Karyawan::where('id_user','=',$selection->id_user)->first();
+                $employee = User::where('role_id','=',role('employee'))->find($selection->user_id);
                 $selections[$key]->isEmployee = !$employee ? false : true;
             }
         }
 
-        // Get HRDs
-        $hrds = HRD::orderBy('perusahaan','asc')->get();
+        // Get companies
+        $companies = Company::orderBy('name','asc')->get();
 
     	// View
         return view('admin/selection/index', [
             'selections' => $selections,
-            'hrds' => $hrds,
-            'offices' => $offices,
+            'companies' => $companies
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // Check the access
-        has_access(method(__METHOD__), Auth::user()->role_id);
-
-        // View
-        return view('admin/test/create');
     }
 
     /**
@@ -107,13 +77,13 @@ class SelectionController extends \App\Http\Controllers\Controller
      */
     public function store(Request $request)
     {
-    	// Get the HRD
+    	// Get the company
     	if(Auth::user()->role->is_global === 1) {
-            $applicant = Pelamar::find($request->applicant_id);
-            if($applicant) $hrd = HRD::find($applicant->id_hrd);
+            $applicant = User::find($request->user_id);
+            if($applicant) $company = $applicant->attribute->company;
         }
     	elseif(Auth::user()->role->is_global === 0) {
-            $hrd = HRD::where('id_user','=',Auth::user()->id)->first();
+            $company = Company::find(Auth::user()->attribute->company_id);
         }
 
         // Validation
@@ -130,21 +100,21 @@ class SelectionController extends \App\Http\Controllers\Controller
         }
         else {
             // Check selection
-            $check = Seleksi::where('id_pelamar','=',$request->applicant_id)->where('id_lowongan','=',$request->vacancy_id)->first();
+            $check = Selection::where('user_id','=',$request->user_id)->where('vacancy_id','=',$request->vacancy_id)->first();
 
             // If check is exist
             if($check) {
-                return redirect()->route('admin.applicant.detail', ['id' => $request->applicant_id])->with(['message' => 'Sudah masuk ke data seleksi.']);
+                return redirect()->route('admin.applicant.detail', ['id' => $request->user_id])->with(['message' => 'Sudah masuk ke data seleksi.']);
             }
 
             // Save the selection
-            $selection = new Seleksi;
-            $selection->id_hrd = isset($hrd) ? $hrd->id_hrd : 0;
-            $selection->id_pelamar = $request->applicant_id;
-            $selection->id_lowongan = $request->vacancy_id;
-            $selection->hasil = 99;
-            $selection->waktu_wawancara = generate_date_format($request->date, 'y-m-d')." ".$request->time.":00";
-            $selection->tempat_wawancara = $request->place;
+            $selection = new Selection;
+            $selection->company_id = $company->id;
+            $selection->user_id = $request->user_id;
+            $selection->vacancy_id = $request->vacancy_id;
+            $selection->status = 99;
+            $selection->test_time = DateTimeExt::change($request->date)." ".$request->time.":00";
+            $selection->test_place = $request->place;
             $selection->save();
 
             // Redirect
@@ -162,8 +132,8 @@ class SelectionController extends \App\Http\Controllers\Controller
     {        
         if($request->ajax()) {
             // Get the selection
-            $selection = Seleksi::find($request->id);
-            $selection->tanggal_wawancara = date('d/m/Y', strtotime($selection->waktu_wawancara));
+            $selection = Selection::find($request->id);
+            $selection->test_date = date('d/m/Y', strtotime($selection->test_time));
 
             return response()->json($selection, 200);
         }
@@ -192,10 +162,10 @@ class SelectionController extends \App\Http\Controllers\Controller
         }
         else {
             // Update the selection
-            $selection = Seleksi::find($request->id);
-            $selection->waktu_wawancara = $request->result == 99 ? generate_date_format($request->date, 'y-m-d')." ".$request->time.":00" : $selection->waktu_wawancara;
-            $selection->tempat_wawancara = $request->result == 99 ? $request->place : $selection->tempat_wawancara;
-            $selection->hasil = $request->result;
+            $selection = Selection::find($request->id);
+            $selection->test_time = $request->result == 99 ? DateTimeExt::change($request->date)." ".$request->time.":00" : $selection->test_time;
+            $selection->test_place = $request->result == 99 ? $request->place : $selection->test_place;
+            $selection->status = $request->result;
             $selection->save();
 
             // Redirect
@@ -215,7 +185,7 @@ class SelectionController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the selection
-        $selection = Seleksi::find($request->id);
+        $selection = Selection::find($request->id);
 
         // Delete the selection
         $selection->delete();
@@ -236,36 +206,11 @@ class SelectionController extends \App\Http\Controllers\Controller
         has_access(method(__METHOD__), Auth::user()->role_id);
         
         // Get the selection
-        $selection = Seleksi::find($request->id);
+        $selection = Selection::has('user')->find($request->id);
 
-        // Get the applicant
-        $applicant = Pelamar::find($selection->id_pelamar);
-
-        // Get the vacancy
-        $vacancy = Lowongan::find($applicant->posisi);
-
-        // Add to employee
-        $employee = new Karyawan;
-        $employee->id_user = $applicant->id_user;
-        $employee->id_hrd = $selection->id_hrd;
-        $employee->nama_lengkap = $applicant->nama_lengkap;
-        $employee->tanggal_lahir = $applicant->tanggal_lahir;
-        $employee->jenis_kelamin = $applicant->jenis_kelamin;
-        $employee->email = $applicant->email;
-        $employee->nomor_hp = $applicant->nomor_hp;
-        $employee->posisi = $vacancy ? $vacancy->posisi : 0;
-        $employee->kantor = 0;
-        $employee->nik_cis = '';
-        $employee->nik = $applicant->nomor_ktp;
-        $employee->alamat = $applicant->alamat;
-        $employee->pendidikan_terakhir = $applicant->pendidikan_terakhir;
-        $employee->awal_bekerja = null;
-        $employee->save();
-
-        // Get the user
-        $user = User::find($applicant->id_user);
-        $user->role_id = role('employee');
-        $user->save();
+        // Update the user role
+        $selection->user->role_id = role('employee');
+        $selection->user->save();
 
         // Redirect
         return redirect()->route('admin.selection.index')->with(['message' => 'Berhasil mengonversi data.']);
