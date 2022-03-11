@@ -443,8 +443,8 @@ class ApplicantRegisterController extends Controller
             
             // Generate username
             $data_user = User::whereHas('attribute', function (Builder $query) use ($vacancy) {
-                return $query->has('company')->has('position')->where('company_id','=',$vacancy->company_id);
-            })->latest('username')->first();
+                return $query->has('company')->where('company_id','=',$vacancy->company_id);
+            })->where('username','like',$vacancy->company->code.'%')->latest('username')->first();
             if(!$data_user)
                 $username = generate_username(null, $vacancy->company->code);
             else

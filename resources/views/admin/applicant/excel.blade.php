@@ -27,7 +27,7 @@
         <td>{{ $applicant->attribute->phone_number }}</td>
         <td>{{ $applicant->attribute->address }}</td>
         <td>{{ $applicant->attribute->job_experience }}</td>
-        <td>{{ $applicant->attribute->position->name }}</td>
+        <td>{{ $applicant->attribute->position ? $applicant->attribute->position->name : '' }}</td>
 		@if(Auth::user()->role->is_global === 1)
         <td>{{ $applicant->attribute->company->name }}</td>
 		@endif

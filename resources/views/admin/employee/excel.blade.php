@@ -29,7 +29,7 @@
         <td>{{ $employee->attribute->latest_education }}</td>
         <td>{{ $employee->attribute->start_date != null ? date('d/m/Y', strtotime($employee->attribute->start_date)) : '' }}</td>
         <td>{{ $employee->attribute->office ? $employee->attribute->office->name : '' }}</td>
-        <td>{{ $employee->attribute->position->name }}</td>
+        <td>{{ $employee->attribute->position ? $employee->attribute->position->name : '' }}</td>
 		@if(Auth::user()->role->is_global === 1)
         <td>{{ $employee->attribute->company->name }}</td>
         @endif

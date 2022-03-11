@@ -37,19 +37,19 @@ class ApplicantController extends \App\Http\Controllers\Controller
                 $company = Company::find($request->query('company'));
                 if($company) {
                     $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
-                        return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                        return $query->has('company')->where('company_id','=',$company->id);
                     })->where('role_id','=',role('applicant'))->get();
                 }
                 else {
                     $applicants = User::whereHas('attribute', function (Builder $query) {
-                        return $query->has('company')->has('position');
+                        return $query->has('company');
                     })->where('role_id','=',role('applicant'))->get();
                 }
             }
             elseif(Auth::user()->role->is_global === 0) {
                 $company = Company::find(Auth::user()->attribute->company_id);
                 $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
-                    return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                    return $query->has('company')->where('company_id','=',$company->id);
                 })->where('role_id','=',role('applicant'))->get();
             }
 
@@ -58,7 +58,7 @@ class ApplicantController extends \App\Http\Controllers\Controller
                 foreach($applicants as $key=>$applicant) {
                     $applicants[$key]->phone_number = $applicant->attribute->phone_number;
                     $applicants[$key]->company_name = $applicant->attribute->company->name;
-                    $applicants[$key]->position_name = $applicant->attribute->position->name;
+                    $applicants[$key]->position_name = $applicant->attribute->position ? $applicant->attribute->position->name : '-';
                 }
             }
 
@@ -163,8 +163,8 @@ class ApplicantController extends \App\Http\Controllers\Controller
             
             // Generate username
             $data_user = User::whereHas('attribute', function (Builder $query) use ($vacancy) {
-                return $query->has('company')->has('position')->where('company_id','=',$vacancy->company_id);
-            })->latest('username')->first();
+                return $query->has('company')->where('company_id','=',$vacancy->company_id);
+            })->where('username','like',$vacancy->company->code.'%')->latest('username')->first();
             if(!$data_user)
                 $username = generate_username(null, $vacancy->company->code);
             else
@@ -233,13 +233,13 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Get the applicant
         if(Auth::user()->role->is_global === 1) {
             $applicant = User::whereHas('attribute', function (Builder $query) {
-                return $query->has('company')->has('position')->has('vacancy');
+                return $query->has('company')->has('vacancy');
             })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
         elseif(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
             $applicant = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->has('vacancy')->where('company_id','=',$company->id);
+                return $query->has('company')->has('vacancy')->where('company_id','=',$company->id);
             })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
 
@@ -273,13 +273,13 @@ class ApplicantController extends \App\Http\Controllers\Controller
         // Get the applicant
         if(Auth::user()->role->is_global === 1) {
             $applicant = User::whereHas('attribute', function (Builder $query) {
-                return $query->has('company')->has('position');
+                return $query->has('company');
             })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
         elseif(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
             $applicant = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                return $query->has('company')->where('company_id','=',$company->id);
             })->where('role_id','=',role('applicant'))->findOrFail($id);
         }
 
@@ -410,19 +410,19 @@ class ApplicantController extends \App\Http\Controllers\Controller
             $company = Company::find($request->query('company'));
             if($company) {
                 $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
-                    return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                    return $query->has('company')->where('company_id','=',$company->id);
                 })->where('role_id','=',role('applicant'))->get();
             }
             else {
                 $applicants = User::whereHas('attribute', function (Builder $query) {
-                    return $query->has('company')->has('position');
+                    return $query->has('company');
                 })->where('role_id','=',role('applicant'))->get();
             }
         }
         elseif(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
             $applicants = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                return $query->has('company')->where('company_id','=',$company->id);
             })->where('role_id','=',role('applicant'))->get();
         }
 

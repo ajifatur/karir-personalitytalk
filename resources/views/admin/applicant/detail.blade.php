@@ -22,7 +22,7 @@
                 <ul class="list-unstyled mb-0">
                     <li class="mb-1"><i class="bi-calendar me-1"></i> Melamar tanggal {{ date('d/m/Y', strtotime($applicant->created_at)) }}</li>
                     <li class="mb-1"><i class="bi-clock me-1"></i> Melamar pukul {{ date('H:i', strtotime($applicant->created_at)) }} WIB</li>
-                    <li class="mb-1"><i class="bi-shuffle me-1"></i> Jabatan <a href="#">{{ $applicant->attribute->position->name }}</a></li>
+                    <li class="mb-1"><i class="bi-shuffle me-1"></i> Jabatan <a href="#">{{ $applicant->attribute->position ? $applicant->attribute->position->name : '-' }}</a></li>
                 </ul>
             </div>
             <hr class="my-0">

@@ -77,7 +77,7 @@
                     </li>
                     <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                         <div>Jabatan:</div>
-                        <div>{{ $employee->attribute->position->name }}</div>
+                        <div>{{ $employee->attribute->position ? $employee->attribute->position->name : '-' }}</div>
                     </li>
                 </ul>
             </div>

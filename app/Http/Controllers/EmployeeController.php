@@ -36,19 +36,19 @@ class EmployeeController extends \App\Http\Controllers\Controller
                 $company = Company::find($request->query('company'));
                 if($company) {
                     $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
-                        return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                        return $query->has('company')->where('company_id','=',$company->id);
                     })->where('role_id','=',role('employee'))->get();
                 }
                 else {
                     $employees = User::whereHas('attribute', function (Builder $query) {
-                        return $query->has('company')->has('position');
+                        return $query->has('company');
                     })->where('role_id','=',role('employee'))->get();
                 }
             }
             elseif(Auth::user()->role->is_global === 0) {
                 $company = Company::find(Auth::user()->attribute->company_id);
                 $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
-                    return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                    return $query->has('company')->where('company_id','=',$company->id);
                 })->where('role_id','=',role('employee'))->get();
             }
 
@@ -57,7 +57,7 @@ class EmployeeController extends \App\Http\Controllers\Controller
                 foreach($employees as $key=>$employee) {
                     $employees[$key]->phone_number = $employee->attribute->phone_number;
                     $employees[$key]->company_name = $employee->attribute->company->name;
-                    $employees[$key]->position_name = $employee->attribute->position->name;
+                    $employees[$key]->position_name = $employee->attribute->position ? $employee->attribute->position->name : '-';
                 }
             }
 
@@ -170,8 +170,8 @@ class EmployeeController extends \App\Http\Controllers\Controller
         else {
             // Generate username
             $data_user = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->where('company_id','=',$company->id);
-            })->latest('username')->first();
+                return $query->has('company')->where('company_id','=',$company->id);
+            })->where('username','like',$company->code.'%')->latest('username')->first();
             if(!$data_user)
                 $username = generate_username(null, $company->code);
             else
@@ -237,13 +237,13 @@ class EmployeeController extends \App\Http\Controllers\Controller
         // Get the employee
     	if(Auth::user()->role->is_global === 1) {
             $employee = User::whereHas('attribute', function (Builder $query) {
-                return $query->has('company')->has('position');
+                return $query->has('company');
             })->where('role_id','=',role('employee'))->findOrFail($id);
         }
     	if(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
             $employee = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                return $query->has('company')->where('company_id','=',$company->id);
             })->where('role_id','=',role('employee'))->findOrFail($id);
         }
 
@@ -267,13 +267,13 @@ class EmployeeController extends \App\Http\Controllers\Controller
         // Get the employee
     	if(Auth::user()->role->is_global === 1) {
             $employee = User::whereHas('attribute', function (Builder $query) {
-                return $query->has('company')->has('position');
+                return $query->has('company');
             })->where('role_id','=',role('employee'))->findOrFail($id);
         }
     	if(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
             $employee = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                return $query->has('company')->where('company_id','=',$company->id);
             })->where('role_id','=',role('employee'))->findOrFail($id);
         }
 
@@ -380,19 +380,19 @@ class EmployeeController extends \App\Http\Controllers\Controller
             $company = Company::find($request->query('company'));
             if($company) {
                 $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
-                    return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                    return $query->has('company')->where('company_id','=',$company->id);
                 })->where('role_id','=',role('employee'))->get();
             }
             else {
                 $employees = User::whereHas('attribute', function (Builder $query) {
-                    return $query->has('company')->has('position');
+                    return $query->has('company');
                 })->where('role_id','=',role('employee'))->get();
             }
         }
         elseif(Auth::user()->role->is_global === 0) {
             $company = Company::find(Auth::user()->attribute->company_id);
             $employees = User::whereHas('attribute', function (Builder $query) use ($company) {
-                return $query->has('company')->has('position')->where('company_id','=',$company->id);
+                return $query->has('company')->where('company_id','=',$company->id);
             })->where('role_id','=',role('employee'))->get();
         }
 
