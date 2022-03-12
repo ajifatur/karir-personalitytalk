@@ -57,7 +57,7 @@
 							<tr>
 								<td width="80">Jenis Kelamin</td>
 								<td width="10">:</td>
-								<td>{{ $stifin->gender == 'L' ? 'Laki-Laki' : 'Perempuan' }}</td>
+								<td>{{ gender($stifin->gender) }}</td>
 							</tr>
 						</table>
 					</td>
@@ -66,12 +66,12 @@
 							<tr>
 								<td width="80">Tanggal Tes</td>
 								<td width="10">:</td>
-								<td>{{ $stifin->test_at != null ? setFullDate($stifin->test_at) : '-' }}</td>
+								<td>{{ $stifin->test_at != null ? \Ajifatur\Helpers\DateTimeExt::full($stifin->test_at) : '-' }}</td>
 							</tr>
 							<tr>
 								<td width="80">Tujuan Tes</td>
 								<td width="10">:</td>
-								<td>{{ $stifin->aims ? $stifin->aims->aim : '-' }}</td>
+								<td>{{ $stifin->aim->name }}</td>
 							</tr>
 						</table>
 					</td>
@@ -81,14 +81,14 @@
 		<div id="title">
 			<p class="mb-1 h5">Deskripsi Tipe Kepribadian STIFIn</p>
 			<p class="mb-1 h5 font-weight-bold">{{ strtoupper($stifin->name) }}</p>
-			<p class="mb-1 h5">"{{ $stifin->tests->test_name }}" ({{ $stifin->tests->test_code }})</p>
+			<p class="mb-1 h5">"{{ $stifin->type->name }}" ({{ $stifin->type->code }})</p>
 		</div>
 		@yield('description')
 		<div class="description">
 			<table width="100%">
 				<tr>
 					<td style="text-align: left;">
-						Salam Pencerahan,<br/><br/><br/><br/><b>{{ $stifin->hrd->nama_lengkap }}</b><br/>Personality Genetic Consultant
+						Salam Pencerahan,<br/><br/><br/><br/><b>{{ $stifin->company->user->name }}</b><br/>Personality Genetic Consultant
 					</td>
 				</tr>
 			</table>

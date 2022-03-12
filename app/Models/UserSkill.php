@@ -21,4 +21,12 @@ class UserSkill extends Model
     protected $fillable = [
         'score'
     ];
+    
+    /**
+     * Get the skill that owns the user skill.
+     */
+    public function skill()
+    {
+        return $this->belongsTo(Skill::class, 'skill_id');
+    }
 }

@@ -11,15 +11,6 @@ class User extends \Ajifatur\FaturHelper\Models\User
     use Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'nama_user', 'tanggal_lahir', 'jenis_kelamin', 'username', 'email', 'password', 'password_str', 'foto', 'role', 'has_access', 'status', 'last_visit', 'created_at',
-    ];
-
-    /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
@@ -62,10 +53,26 @@ class User extends \Ajifatur\FaturHelper\Models\User
     }
 
     /**
-     * Get the attachments for the packet.
+     * Get the attachments for the user.
      */
     public function attachments()
     {
         return $this->hasMany(UserAttachment::class);
+    }
+
+    /**
+     * Get the skills for the user.
+     */
+    public function skills()
+    {
+        return $this->hasMany(UserSkill::class);
+    }
+
+    /**
+     * Get the results for the user.
+     */
+    public function results()
+    {
+        return $this->hasMany(Result::class);
     }
 }
