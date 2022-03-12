@@ -14,29 +14,29 @@
             <div class="card-header"><h5 class="card-title mb-0">Profil</h5></div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Nama:</span>
-                        <span>{{ $result->user->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Nama:</span>
+                        <span class="d-block">{{ $result->user->name }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Usia:</span>
-                        <span>{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Usia:</span>
+                        <span class="d-block">{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Jenis Kelamin:</span>
-                        <span>{{ gender($result->user->attribute->gender) }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Jenis Kelamin:</span>
+                        <span class="d-block">{{ gender($result->user->attribute->gender) }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Jabatan:</span>
-                        <span>{{ $result->user->attribute->position->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Jabatan:</span>
+                        <span class="d-block">{{ $result->user->attribute->position->name }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Role:</span>
-                        <span>{{ $result->user->role->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Role:</span>
+                        <span class="d-block">{{ $result->user->role->name }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Tes:</span>
-                        <span>{{ $result->test->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Tes:</span>
+                        <span class="d-block">{{ $result->test->name }}</span>
                     </li>
                 </ul>
             </div>
@@ -99,10 +99,10 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="center" bgcolor="#bebebe"><strong>3</strong></td>
-                                                    <td align="center" bgcolor="#eeeeee">{{ $array_selisih['D'] }}</td>
-                                                    <td align="center" bgcolor="#eeeeee">{{ $array_selisih['I'] }}</td>
-                                                    <td align="center" bgcolor="#eeeeee">{{ $array_selisih['S'] }}</td>
-                                                    <td align="center" bgcolor="#eeeeee">{{ $array_selisih['C'] }}</td>
+                                                    <td align="center" bgcolor="#eeeeee">{{ $differenceArray['D'] }}</td>
+                                                    <td align="center" bgcolor="#eeeeee">{{ $differenceArray['I'] }}</td>
+                                                    <td align="center" bgcolor="#eeeeee">{{ $differenceArray['S'] }}</td>
+                                                    <td align="center" bgcolor="#eeeeee">{{ $differenceArray['C'] }}</td>
                                                     <td align="center" bgcolor="#333"></td>
                                                     <td align="center" bgcolor="#333"></td>
                                                 </tr>
@@ -233,15 +233,15 @@
     <input type="hidden" name="mostChartImage" id="mostChartImage">
     <input type="hidden" name="leastChartImage" id="leastChartImage">
     <input type="hidden" name="changeChartImage" id="changeChartImage">
-    <input type="hidden" name="nama" value="{{ $result->user->name }}">
-    <input type="hidden" name="usia" value="{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}">
-    <input type="hidden" name="jenis_kelamin" value="{{ gender($result->user->attribute->gender) }}">
-    <input type="hidden" name="posisi" value="{{ $result->user->attribute->position }}">
-    <input type="hidden" name="tes" value="{{ $result->test->name }}">
+    <input type="hidden" name="name" value="{{ $result->user->name }}">
+    <input type="hidden" name="age" value="{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}">
+    <input type="hidden" name="gender" value="{{ gender($result->user->attribute->gender) }}">
+    <input type="hidden" name="position" value="{{ $result->user->attribute->position->name }}">
+    <input type="hidden" name="test" value="{{ $result->test->name }}">
     <input type="hidden" name="path" value="{{ $result->test->code }}">
-    <input type="hidden" name="id_paket" value="{{ $result->packet_id }}">
-    <input type="hidden" name="hasil" value="{{ json_encode($result->result) }}">
-    <input type="hidden" name="array_selisih" value="{{ json_encode($array_selisih) }}">
+    <input type="hidden" name="packet_id" value="{{ $result->packet_id }}">
+    <input type="hidden" name="result" value="{{ json_encode($result->result) }}">
+    <input type="hidden" name="differenceArray" value="{{ json_encode($differenceArray) }}">
     <input type="hidden" name="index" value="{{ json_encode($index) }}">
 </form>
 

@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
-	<title>Hasil Tes {{ $tes }}</title>
+	<title>Hasil Tes {{ $test }}</title>
 	<link rel="shortcut icon" href="{{ asset('assets/images/icon.png') }}">
 	<style>
 	    @page, body {margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px;}
@@ -32,17 +32,17 @@
     </script>
     <div id="header">
         <img src="{{ asset('assets/images/logo-2-black.png') }}" height="20">
-        <div class="page-number" data-nama="{{ $nama }}" data-site="www.psikologanda.com"></div>
+        <div class="page-number" data-nama="{{ $name }}" data-site="www.psikologanda.com"></div>
     </div>
-    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $tes }}</h5>
+    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $test }}</h5>
     <table width="100%" border="1" style="margin-top: 20px;">
         <tr>
-            <td align="center">Nama : {{ $nama }}</td>
-			@if($jenis_kelamin != '-')
-            <td align="center">Usia : {{ $usia }}</td>
-            <td align="center">Jenis Kelamin : {{ $jenis_kelamin }}</td>
+            <td align="center">Nama : {{ $name }}</td>
+			@if($gender != '-')
+            <td align="center">Usia : {{ $age }}</td>
+            <td align="center">Jenis Kelamin : {{ $gender }}</td>
 			@endif
-            <td align="center">Posisi : {{ $posisi }}</td>
+            <td align="center">Posisi : {{ $position }}</td>
         </tr>
     </table>
     <table width="100%">
@@ -89,6 +89,6 @@
         </tr>
     </table>
     <div class="title-deskripsi"><strong>Deskripsi</strong></div>
-    <div class="deskripsi">{!! html_entity_decode($deskripsi) !!}</div>
+    <div class="deskripsi">{!! html_entity_decode($desc) !!}</div>
 </body>
 </html>

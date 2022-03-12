@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
-	<title>Hasil Tes {{ $tes }}</title>
+	<title>Hasil Tes {{ $test }}</title>
 	<link rel="shortcut icon" href="{{ asset('assets/images/icon.png') }}">
 	<style>
 	    @page, body {margin-bottom: 10px;, padding-top: 10px; padding-bottom: 10px;}
@@ -32,15 +32,15 @@
     </script>
     <div id="header">
         <img src="{{ asset('assets/images/logo-2-black.png') }}" height="20">
-        <div class="page-number" data-nama="{{ $nama }}" data-site="www.psikologanda.com"></div>
+        <div class="page-number" data-nama="{{ $name }}" data-site="www.psikologanda.com"></div>
     </div>
-    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $tes }}</h5>
+    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $test }}</h5>
     <table width="100%" border="1" style="margin-top: 20px;">
         <tr>
-            <td align="center">Nama : {{ $nama }}</td>
-            <td align="center">Usia : {{ $usia }}</td>
-            <td align="center">Jenis Kelamin : {{ $jenis_kelamin }}</td>
-            <td align="center">Posisi : {{ $posisi }}</td>
+            <td align="center">Nama : {{ $name }}</td>
+            <td align="center">Usia : {{ $age }}</td>
+            <td align="center">Jenis Kelamin : {{ $gender }}</td>
+            <td align="center">Posisi : {{ $position }}</td>
         </tr>
     </table>
     <table width="100%" border="1">
@@ -51,16 +51,16 @@
             <td align="center"><strong>Deskripsi</strong></td>
         </tr>
         @php
-          $data = array();
+          $data = [];
         @endphp
         
-        @foreach($huruf as $key=>$h)
+        @foreach($letters as $key=>$letter)
           <tr>
               <td align="center">{{ $key+1 }}.</td>
-              <td align="center">{{ $h }}</td>
-              <td align="center">{{ $hasil->hasil[$h] }}</td>
-              <td style="padding-left: 10px; padding-right: 10px;">{{ analisisPapikostick($hasil->hasil[$h], $keterangan->keterangan[$h]) }}</td>
-              @php array_push($data, array('letter' => $h, 'number' => $hasil->hasil[$h])); @endphp
+              <td align="center">{{ $letter }}</td>
+              <td align="center">{{ $result->result[$letter] }}</td>
+              <td style="padding-left: 10px; padding-right: 10px;">{{ analisisPapikostick($result->result[$letter], $description->description[$letter]) }}</td>
+              @php array_push($data, array('letter' => $letter, 'number' => $result->result[$letter])); @endphp
           </tr>
         @endforeach
     </table>

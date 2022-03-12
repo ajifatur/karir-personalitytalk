@@ -77,22 +77,22 @@ class DISC1Controller extends \App\Http\Controllers\Controller
         // DISC
         $disc = array('D', 'I', 'S','C');
 
-        // Set the note
-        $keterangan = Keterangan::where('id_paket','=',$request->id_paket)->first();
-        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
-        $kode_keterangan = $request->kode_keterangan;
-        switch($kode_keterangan){
+        // Set the description
+        $description = Description::where('packet_id','=',$request->packet_id)->first();
+        $description->description = json_decode($description->description, true);
+        $description_code = $request->description_code;
+        switch($description_code){
             case 'D':
-                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "D")]["keterangan"];
+                $desc = $description->description[searchIndex($description->description, "disc", "D")]["keterangan"];
             break;
             case 'I':
-                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "I")]["keterangan"];
+                $desc = $description->description[searchIndex($description->description, "disc", "I")]["keterangan"];
             break;
             case 'S':
-                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "S")]["keterangan"];
+                $desc = $description->description[searchIndex($description->description, "disc", "S")]["keterangan"];
             break;
             case 'C':
-                $deskripsi = $keterangan->keterangan[searchIndex($keterangan->keterangan, "disc", "C")]["keterangan"];
+                $desc = $description->description[searchIndex($description->description, "disc", "C")]["keterangan"];
             break;
         }
         
@@ -100,12 +100,12 @@ class DISC1Controller extends \App\Http\Controllers\Controller
         $pdf = PDF::loadview('admin/result/disc-1/pdf', [
             'mostChartImage' => $request->mostChartImage,
             'leastChartImage' => $request->leastChartImage,
-            'deskripsi' => $deskripsi,
-            'nama' => $request->nama,
-            'usia' => $request->usia,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'posisi' => $request->posisi,
-            'tes' => $request->tes,
+            'desc' => $desc,
+            'name' => $request->name,
+            'age' => $request->age,
+            'gender' => $request->gender,
+            'position' => $request->position,
+            'test' => $request->test,
             'disc_score_m' => json_decode($request->disc_score_m, true),
             'disc_score_l' => json_decode($request->disc_score_l, true),
             'most' => $request->most,
@@ -114,6 +114,6 @@ class DISC1Controller extends \App\Http\Controllers\Controller
         ]);
         $pdf->setPaper('A4', 'portrait');
         
-        return $pdf->stream($request->nama . '_' . $request->tes . '.pdf');
+        return $pdf->stream($request->name . '_' . $request->test . '.pdf');
     }
 }

@@ -22,7 +22,7 @@ class DISC2Controller extends \App\Http\Controllers\Controller
         // has_access(method(__METHOD__), Auth::user()->role_id);
 
         // Set the diff
-        $array_selisih = [
+        $differenceArray = [
             'D' => $result->result['dm'] - $result->result['dl'],
             'I' => $result->result['im'] - $result->result['il'],
             'S' => $result->result['sm'] - $result->result['sl'],
@@ -143,10 +143,10 @@ class DISC2Controller extends \App\Http\Controllers\Controller
                 'C' => $array_2[$result->result['cl']][3],
             ],
             3 => [
-                'D' => $array_3[$array_selisih['D']][0],
-                'I' => $array_3[$array_selisih['I']][1],
-                'S' => $array_3[$array_selisih['S']][2],
-                'C' => $array_3[$array_selisih['C']][3],
+                'D' => $array_3[$differenceArray['D']][0],
+                'I' => $array_3[$differenceArray['I']][1],
+                'S' => $array_3[$differenceArray['S']][2],
+                'C' => $array_3[$differenceArray['C']][3],
             ],
         ];
 
@@ -185,7 +185,7 @@ class DISC2Controller extends \App\Http\Controllers\Controller
         // View
         return view('admin/result/disc-2/detail', [
             'result' => $result,
-            'array_selisih' => $array_selisih,
+            'differenceArray' => $differenceArray,
             'graph' => $graph,
             'index' => $index,
             'description' => $description,
@@ -205,28 +205,28 @@ class DISC2Controller extends \App\Http\Controllers\Controller
 		
 		// Set the index
 		$index = json_decode($request->index, true);
-
-        // Set the note
-        $keterangan = Keterangan::where('id_paket','=',$request->id_paket)->first();
-        $keterangan->keterangan = json_decode($keterangan->keterangan, true);
+		
+        // Set the description
+        $description = Description::where('packet_id','=',$request->packet_id)->first();
+        $description->description = json_decode($description->description, true);
 		
 		// Set the MOST, LEAST, CHANGE
-		$most = $keterangan->keterangan[$index['most'][0]];
-		$least = $keterangan->keterangan[$index['least'][0]];
-		$change = $keterangan->keterangan[$index['change'][0]];
+		$most = $description->description[$index['most'][0]];
+		$least = $description->description[$index['least'][0]];
+		$change = $description->description[$index['change'][0]];
         
         // PDF
         $pdf = PDF::loadview('admin/result/disc-2/pdf', [
             'mostChartImage' => $request->mostChartImage,
             'leastChartImage' => $request->leastChartImage,
             'changeChartImage' => $request->changeChartImage,
-            'nama' => $request->nama,
-            'usia' => $request->usia,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'posisi' => $request->posisi,
-            'tes' => $request->tes,
-            'hasil' => $request->result,
-            'array_selisih' => $request->array_selisih,
+            'name' => $request->name,
+            'age' => $request->age,
+            'gender' => $request->gender,
+            'position' => $request->position,
+            'test' => $request->test,
+            'result' => $request->result,
+            'differenceArray' => $request->differenceArray,
             'index' => $request->index,
             'disc' => $disc,
             'most' => $most,
@@ -235,6 +235,6 @@ class DISC2Controller extends \App\Http\Controllers\Controller
         ]);
         $pdf->setPaper('A4', 'portrait');
         
-        return $pdf->stream($request->nama . '_' . $request->tes . '.pdf');
+        return $pdf->stream($request->name . '_' . $request->test . '.pdf');
     }
 }

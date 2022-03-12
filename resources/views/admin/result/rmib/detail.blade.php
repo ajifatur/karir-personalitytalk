@@ -14,29 +14,29 @@
             <div class="card-header"><h5 class="card-title mb-0">Profil</h5></div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Nama:</span>
-                        <span>{{ $result->user->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Nama:</span>
+                        <span class="d-block">{{ $result->user->name }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Usia:</span>
-                        <span>{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Usia:</span>
+                        <span class="d-block">{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Jenis Kelamin:</span>
-                        <span>{{ gender($result->user->attribute->gender) }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Jenis Kelamin:</span>
+                        <span class="d-block">{{ gender($result->user->attribute->gender) }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Jabatan:</span>
-                        <span>{{ $result->user->attribute->position->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Jabatan:</span>
+                        <span class="d-block">{{ $result->user->attribute->position->name }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Role:</span>
-                        <span>{{ $result->user->role->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Role:</span>
+                        <span class="d-block">{{ $result->user->role->name }}</span>
                     </li>
-                    <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
-                        <span>Tes:</span>
-                        <span>{{ $result->test->name }}</span>
+                    <li class="list-group-item px-0 py-1">
+                        <span class="d-block fw-bold">Tes:</span>
+                        <span class="d-block">{{ $result->test->name }}</span>
                     </li>
                 </ul>
             </div>
@@ -167,11 +167,11 @@
 <form id="form-print" class="d-none" method="post" action="{{ route('admin.result.print') }}" target="_blank">
     @csrf
     <input type="hidden" name="id" value="{{ $result->id }}">
-    <input type="hidden" name="nama" value="{{ $result->user->name }}">
-    <input type="hidden" name="usia" value="{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}">
-    <input type="hidden" name="jenis_kelamin" value="{{ gender($result->user->attribute->gender) }}">
-    <input type="hidden" name="posisi" value="{{ $result->user->attribute->position->name }}">
-    <input type="hidden" name="tes" value="{{ $result->test->name }}">
+    <input type="hidden" name="name" value="{{ $result->user->name }}">
+    <input type="hidden" name="age" value="{{ generate_age($result->user->attribute->birthdate, $result->created_at).' tahun' }}">
+    <input type="hidden" name="gender" value="{{ gender($result->user->attribute->gender) }}">
+    <input type="hidden" name="position" value="{{ $result->user->attribute->position->name }}">
+    <input type="hidden" name="test" value="{{ $result->test->name }}">
     <input type="hidden" name="path" value="{{ $result->test->code }}">
 </form>
 

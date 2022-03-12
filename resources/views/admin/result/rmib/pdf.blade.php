@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous" />
-	<title>Hasil Tes {{ $tes }}</title>
+	<title>Hasil Tes {{ $test }}</title>
 	<link rel="shortcut icon" href="{{ asset('assets/images/icon.png') }}">
 	<style>
 	    @page, body {margin-bottom: 10px;, padding-top: 10px; padding-bottom: 10px;}
@@ -32,9 +32,9 @@
     </script>
     <div id="header">
         <img src="{{ asset('assets/images/logo-2-black.png') }}" height="20">
-        <div class="page-number" data-nama="{{ $nama }}" data-site="www.psikologanda.com"></div>
+        <div class="page-number" data-nama="{{ $name }}" data-site="www.psikologanda.com"></div>
     </div>
-    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $tes }}</h5>
+    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $test }}</h5>
     <table width="100%" border="0" style="margin-top: 20px;">
 		<tr>
 			<td width="50%">
@@ -42,12 +42,12 @@
 					<tr>
 						<td width="80">Nama</td>
 						<td width="5">:</td>
-						<td>{{ $nama }}</td>
+						<td>{{ $name }}</td>
 					</tr>
 					<tr>
 						<td width="80">Jenis Kelamin</td>
 						<td width="5">:</td>
-						<td>{{ $jenis_kelamin }}</td>
+						<td>{{ $gender }}</td>
 					</tr>
 				</table>
 			</td>
@@ -56,12 +56,12 @@
 					<tr>
 						<td width="80">Usia</td>
 						<td width="5">:</td>
-						<td>{{ $usia }}</td>
+						<td>{{ $age }}</td>
 					</tr>
 					<tr>
 						<td width="80">Posisi</td>
 						<td width="5">:</td>
-						<td>{{ $posisi }}</td>
+						<td>{{ $position }}</td>
 					</tr>
 				</table>
 			</td>
@@ -81,10 +81,10 @@
 			</li>
 			@endforeach
 		</ol>
-		@if(array_key_exists('occupations', $result->hasil))
+		@if(array_key_exists('occupations', $result->result))
 		<h6>Pekerjaan yang paling diinginkan:</h6>
 		<ol>
-			@foreach($result->hasil['occupations'] as $occupation)
+			@foreach($result->result['occupations'] as $occupation)
 			<li>{{ $occupation }}</li>
 			@endforeach
 		</ol>

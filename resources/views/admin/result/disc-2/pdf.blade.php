@@ -2,7 +2,7 @@
 <html>
 <head>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<title>Hasil Tes {{ $tes }}</title>
+	<title>Hasil Tes {{ $test }}</title>
 	<link rel="shortcut icon" href="{{ asset('assets/images/icon.png') }}">
 	<style>
 	    @page, body {margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px;}
@@ -19,8 +19,8 @@
 </head>
 <body>
 	@php
-		$hasil = json_decode($hasil, true);
-		$array_selisih = json_decode($array_selisih, true);
+		$result = json_decode($result, true);
+		$differenceArray = json_decode($differenceArray, true);
 		$index = json_decode($index, true);
 	@endphp
     <script type="text/pdf">
@@ -36,17 +36,17 @@
     </script>
     <div id="header">
         <img src="{{ asset('assets/images/logo-2-black.png') }}" height="20">
-        <div class="page-number" data-nama="{{ $nama }}" data-site="www.psikologanda.com"></div>
+        <div class="page-number" data-nama="{{ $name }}" data-site="www.psikologanda.com"></div>
     </div>
-    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $tes }}</h5>
+    <h5 class="text-center font-weight-bold mt-3 mb-4">Hasil Tes {{ $test }}</h5>
     <table width="100%" border="1" style="margin-top: 20px;">
         <tr>
-            <td align="center">Nama : {{ $nama }}</td>
-			@if($jenis_kelamin != '-')
-            <td align="center">Usia : {{ $usia }}</td>
-            <td align="center">Jenis Kelamin : {{ $jenis_kelamin }}</td>
+            <td align="center">Nama : {{ $name }}</td>
+			@if($gender != '-')
+            <td align="center">Usia : {{ $age }}</td>
+            <td align="center">Jenis Kelamin : {{ $gender }}</td>
 			@endif
-            <td align="center">Posisi : {{ $posisi }}</td>
+            <td align="center">Posisi : {{ $position }}</td>
         </tr>
     </table>
     <table width="100%">
@@ -63,28 +63,28 @@
                     </tr>
                     <tr>
                         <td align="center" height="20" bgcolor="#bebebe"><strong>1</strong></td>
-                        <td align="center" height="20">{{ $hasil['dm'] }}</td>
-                        <td align="center" height="20">{{ $hasil['im'] }}</td>
-                        <td align="center" height="20">{{ $hasil['sm'] }}</td>
-                        <td align="center" height="20">{{ $hasil['cm'] }}</td>
-                        <td align="center" height="20">{{ $hasil['bm'] }}</td>
+                        <td align="center" height="20">{{ $result['dm'] }}</td>
+                        <td align="center" height="20">{{ $result['im'] }}</td>
+                        <td align="center" height="20">{{ $result['sm'] }}</td>
+                        <td align="center" height="20">{{ $result['cm'] }}</td>
+                        <td align="center" height="20">{{ $result['bm'] }}</td>
                         <td align="center" height="20">24</td>
                     </tr>
                     <tr>
                         <td align="center" height="20" bgcolor="#bebebe"><strong>2</strong></td>
-                        <td align="center" height="20">{{ $hasil['dl'] }}</td>
-                        <td align="center" height="20">{{ $hasil['il'] }}</td>
-                        <td align="center" height="20">{{ $hasil['sl'] }}</td>
-                        <td align="center" height="20">{{ $hasil['cl'] }}</td>
-                        <td align="center" height="20">{{ $hasil['bl'] }}</td>
+                        <td align="center" height="20">{{ $result['dl'] }}</td>
+                        <td align="center" height="20">{{ $result['il'] }}</td>
+                        <td align="center" height="20">{{ $result['sl'] }}</td>
+                        <td align="center" height="20">{{ $result['cl'] }}</td>
+                        <td align="center" height="20">{{ $result['bl'] }}</td>
                         <td align="center" height="20">24</td>
                     </tr>
                     <tr>
                         <td align="center" height="20" bgcolor="#bebebe"><strong>3</strong></td>
-                        <td align="center" height="20">{{ $array_selisih['D'] }}</td>
-                        <td align="center" height="20">{{ $array_selisih['I'] }}</td>
-                        <td align="center" height="20">{{ $array_selisih['S'] }}</td>
-                        <td align="center" height="20">{{ $array_selisih['C'] }}</td>
+                        <td align="center" height="20">{{ $differenceArray['D'] }}</td>
+                        <td align="center" height="20">{{ $differenceArray['I'] }}</td>
+                        <td align="center" height="20">{{ $differenceArray['S'] }}</td>
+                        <td align="center" height="20">{{ $differenceArray['C'] }}</td>
                         <td align="center" height="20" bgcolor="#333"></td>
                         <td align="center" height="20" bgcolor="#333"></td>
                     </tr>
