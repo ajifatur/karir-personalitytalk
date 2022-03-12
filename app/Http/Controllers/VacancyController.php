@@ -281,7 +281,7 @@ class VacancyController extends \App\Http\Controllers\Controller
                 }
             }
             else {
-                $applicants[$key]->badge_color = 'info';
+                $applicants[$key]->badge_color = 'secondary';
                 $applicants[$key]->status = 'Belum Diseleksi';
             }
 
