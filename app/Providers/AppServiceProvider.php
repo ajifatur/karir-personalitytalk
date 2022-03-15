@@ -3,10 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\View;
-use App\Models\Tes;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,11 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // if(File::exists(base_path('vendor/ajifatur/faturhelper/src'))) {
-        //     foreach(glob(base_path('vendor/ajifatur/faturhelper/src').'/HelpersExt/*.php') as $filename){
-        //         require_once $filename;
-        //     }
-        // }        
+		//
     }
 
     /**
@@ -31,16 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('*', function($view){
-            if(Auth::check()){
-                if(Auth::user()->role_id == role('admin') || Auth::user()->role_id == role('hrd')) {
-                    // Get tes
-                    $tes = Tes::all();
-
-                    // Send variable
-                    view()->share('global_tes', $tes);
-                }
-            }
-        });
+		//
     }
 }
