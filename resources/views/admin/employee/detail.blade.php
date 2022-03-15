@@ -59,7 +59,7 @@
                             </li>
                             <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                                 <div class="fw-bold">Agama:</div>
-                                <div>{{ religion($employee->attribute->religion) }}</div>
+                                <div>{{ $employee->attribute->religion != null ? religion($employee->attribute->religion) : '' }}</div>
                             </li>
                             <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                                 <div class="fw-bold">Email:</div>
@@ -79,7 +79,7 @@
                             </li>
                             <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
                                 <div class="fw-bold">Status Hubungan:</div>
-                                <div>{{ relationship($employee->attribute->relationship) }}</div>
+                                <div>{{ $employee->attribute->relationship != null ? relationship($employee->attribute->relationship) : '' }}</div>
                             </li>
                             @if($employee->attribute->start_date != null)
                             <li class="list-group-item px-0 py-1 d-sm-flex justify-content-between">
