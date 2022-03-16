@@ -106,7 +106,7 @@
                 <div class="input-group">
                     <input type="text" id="url" class="form-control form-control-sm" value="{{ url('/') }}" readonly>
                     <button class="btn btn-sm btn-outline-primary btn-copy" type="button" data-bs-toggle="tooltip" title="Salin ke Clipboard"><i class="bi-clipboard"></i></button>
-                    <button class="btn btn-sm btn-outline-primary btn-link" type="button" data-bs-toggle="tooltip" title="Kunjungi URL"><i class="bi-link"></i></button>
+					<a href="" class="btn btn-sm btn-outline-primary btn-link" target="_blank" data-bs-toggle="tooltip" title="Kunjungi URL"><i class="bi-link"></i></a>
                 </div>
                 <input type="hidden" id="url-root" value="{{ url('/') }}">
             </div>
@@ -142,7 +142,7 @@
         var url = $(this).data("url");
         var url_root = $("#url-root").val();
         $("#url").val(url_root + '/lowongan/' + url);
-        $(".btn-link").attr('data-url', url_root + '/lowongan/' + url);
+        $(".btn-link").attr('href', url_root + '/lowongan/' + url);
         var modal = bootstrap.Modal.getOrCreateInstance(document.querySelector("#modal-url"));
         modal.show();
     });
@@ -157,13 +157,6 @@
         $(this).attr("data-bs-original-title", "Tersalin!");
         $(this).tooltip("show");
         $(this).attr("data-bs-original-title", "Salin ke Clipboard");
-    });
-
-    // Button Link
-    $(document).on("click", ".btn-link", function(e) {
-        e.preventDefault();
-        var url = $(this).data("url");
-        window.open(url, '_blank');
     });
 
     // Change Status
