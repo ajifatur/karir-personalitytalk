@@ -113,8 +113,10 @@ class PositionController extends \App\Http\Controllers\Controller
             // Save position skills
             if(count($request->skills) > 0) {
                 foreach($request->skills as $s) {
-                    $skill = Skill::firstOrCreate(['name' => $s]);
-                    if($skill) $position->skills()->attach($skill->id);
+					if($s != null) {
+						$skill = Skill::firstOrCreate(['name' => $s]);
+						if($skill) $position->skills()->attach($skill->id);
+					}
                 }
             }
 
@@ -187,8 +189,10 @@ class PositionController extends \App\Http\Controllers\Controller
             if(count($request->skills) > 0) {
                 $ids = [];
                 foreach($request->skills as $s) {
-                    $skill = Skill::firstOrCreate(['name' => $s]);
-                    if($skill) array_push($ids, $skill->id);
+					if($s != null) {
+						$skill = Skill::firstOrCreate(['name' => $s]);
+						if($skill) array_push($ids, $skill->id);
+					}
                 }
                 $position->skills()->sync($ids);
             }
