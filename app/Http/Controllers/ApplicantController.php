@@ -170,9 +170,6 @@ class ApplicantController extends \App\Http\Controllers\Controller
             else
                 $username = generate_username($data_user->username, $vacancy->company->code);
 
-            var_dump($data_user);
-            return;
-
             // Save the user
             $user = new User;
             $user->role_id = role('applicant');
