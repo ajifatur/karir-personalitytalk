@@ -83,9 +83,7 @@
 							                    <td align="center">
 							                        <table border="0" cellpadding="0" cellspacing="0" role="presentation">
 							                            <tr>
-							                                <td>
-							                                    <!-- <a href="{{ URL::to('/') }}/admin/pelamar/profile/{{ $pelamar->id_pelamar }}" class="button button-primary" target="_blank">Klik Disini</a> -->
-							                                </td>
+							                                <td></td>
 							                            </tr>
 							                        </table>
 							                    </td>
