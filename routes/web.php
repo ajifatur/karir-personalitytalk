@@ -149,7 +149,7 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::post('/admin/employee/update', 'EmployeeController@update')->name('admin.employee.update');
 	Route::post('/admin/employee/delete', 'EmployeeController@delete')->name('admin.employee.delete');
 	Route::get('/admin/employee/export', 'EmployeeController@export')->name('admin.employee.export');
-	// Route::post('/admin/employee/import', 'EmployeeController@import')->name('admin.employee.import');
+	Route::post('/admin/employee/import', 'EmployeeController@import')->name('admin.employee.import');
 
 	// Applicant
 	Route::get('/admin/applicant', 'ApplicantController@index')->name('admin.applicant.index');

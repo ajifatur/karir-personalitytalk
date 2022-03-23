@@ -22,7 +22,7 @@
 		<td>{{ ($key+1) }}</td>
         <td>{{ $employee->name }}</td>
         <td>{{ $employee->attribute->birthdate != null ? date('d/m/Y', strtotime($employee->attribute->birthdate)) : '' }}</td>
-        <td>{{ gender($employee->attribute->gender) }}</td>
+        <td>{{ $employee->attribute->gender }}</td>
         <td>{{ $employee->email }}</td>
         <td>{{ $employee->attribute->phone_number }}</td>
         <td>{{ $employee->attribute->address }}</td>

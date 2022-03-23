@@ -5,7 +5,7 @@ namespace App\Imports;
 use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class KaryawanImport implements ToArray, WithStartRow
+class EmployeeImport implements ToArray, WithStartRow
 {       
     /**
     * @param array $row
@@ -14,6 +14,7 @@ class KaryawanImport implements ToArray, WithStartRow
     */
     public function array(array $array)
     {
+        //
     }
 
     /**

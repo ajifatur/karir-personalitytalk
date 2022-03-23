@@ -9,6 +9,9 @@
     <div class="btn-group">
         <a href="{{ route('admin.employee.create') }}" class="btn btn-sm btn-primary"><i class="bi-plus me-1"></i> Tambah Karyawan</a>
         <a href="{{ route('admin.employee.export') }}" class="btn btn-sm btn-success"><i class="bi-file-excel me-1"></i> Ekspor Data</a>
+        @if((Auth::user()->role->is_global == 1 && Request::query('company') != null) || Auth::user()->role->is_global == 0)
+        <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modal-import"><i class="bi-upload me-1"></i> Impor Data</a>
+        @endif
     </div>
 </div>
 <div class="row">
@@ -57,6 +60,45 @@
 	</div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modal-import" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Impor Data</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ route('admin.employee.import') }}" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="company_id" value="{{ Auth::user()->role->is_global == 0 ? Auth::user()->attribute->company_id : Request::query('company') }}">
+                <div class="modal-body">
+                    <p>
+                        Tata cara mengimport data karyawan:
+                        <ol>
+                            <li>Ekspor terlebih dahulu data <strong><a href="{{ route('admin.employee.export') }}">Disini</a></strong>.</li>
+                            <li>Jika ingin menambah data baru, tambahkan data di bawah baris data terakhir dari file yang sudah diekspor tadi.</li>
+                            <li>Pastikan semua kolom tidak boleh kosong.</li>
+                            <li>Impor data dari file excel yang sudah diubah tadi di bawah ini:</li>
+                        </ol>
+                    </p>
+                    @if($errors->has('file'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div class="alert-message">File {{ $errors->first('file') }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                    <input type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+					<div class="small mt-2 text-muted">Hanya mendukung format: .XLS, .XLSX, dan .CSV</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="bi-save me-1"></i> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="bi-x-circle me-1"></i> Tutup</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <form class="form-delete d-none" method="post" action="{{ route('admin.employee.delete') }}">
     @csrf
     <input type="hidden" name="id">
@@ -95,5 +137,13 @@
 		else window.location.href = Spandiv.URL("{{ route('admin.employee.index') }}", {company: company});
     });
 </script>
+
+@if(count($errors) > 0)
+
+<script>
+    Spandiv.Modal("#modal-import").show();
+</script>
+
+@endif
 
 @endsection
