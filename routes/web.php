@@ -164,6 +164,7 @@ Route::group(['middleware' => ['admin']], function() {
 	/******************************** */
 
 	// Sync
+	/*
 	Route::get('/admin/sync/user', 'SyncController@user');
 	Route::get('/admin/sync/applicant', 'SyncController@applicant');
 	Route::get('/admin/sync/applicant/attachment', 'SyncController@applicantAttachment');
@@ -180,4 +181,5 @@ Route::group(['middleware' => ['admin']], function() {
 	Route::get('/admin/sync/selection', 'SyncController@selection');
 
 	Route::get('/admin/sync/internship-result', 'SyncController@internshipResult');
+	*/
 });
